@@ -33,8 +33,21 @@
         }
 
         .container {
-            max-width: 820px;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         header {
@@ -254,15 +267,23 @@
             border: var(--border-width) solid var(--black);
         }
 
-        .preview-table-wrapper {
+        .preview-table-container {
             border: var(--border-width) solid var(--black);
             overflow: hidden;
+            position: relative;
         }
 
         .preview-table {
             width: 100%;
             font-size: 12px;
             border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .preview-table.expanded {
+            table-layout: auto;
+            width: max-content;
+            min-width: 100%;
         }
 
         .preview-table th {
@@ -274,6 +295,9 @@
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .preview-table td {
@@ -282,9 +306,14 @@
             color: var(--black);
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            max-width: 130px;
+            max-width: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-table.expanded td {
+            max-width: none;
             white-space: nowrap;
         }
 
@@ -297,21 +326,33 @@
         }
 
         .preview-scroll {
-            max-height: 260px;
+            max-height: 280px;
             overflow-y: auto;
+            overflow-x: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .preview-scroll.expanded {
+            max-height: 60vh;
+            overflow-x: auto;
         }
 
         .preview-scroll::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
 
         .preview-scroll::-webkit-scrollbar-track {
-            background: var(--white);
-            border-left: var(--border-width) solid var(--black);
+            background: var(--gray-100);
         }
 
         .preview-scroll::-webkit-scrollbar-thumb {
             background: var(--black);
+            border-radius: 0;
+        }
+
+        .preview-scroll::-webkit-scrollbar-corner {
+            background: var(--gray-100);
         }
 
         .actions {
@@ -463,13 +504,13 @@
             justify-content: center;
             gap: 8px;
             padding: 14px;
-            background: var(--white);
+            background: var(--gray-100);
             border: none;
-            border-top: 1px solid var(--gray-200);
+            border-top: var(--border-width) solid var(--black);
             width: 100%;
             cursor: pointer;
             font-family: 'Instrument Sans', sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -478,68 +519,26 @@
         }
 
         .expand-toggle:hover {
-            background: var(--gray-100);
+            background: var(--gray-200);
         }
 
         .expand-toggle svg {
             width: 14px;
             height: 14px;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .expand-toggle.expanded svg {
             transform: rotate(180deg);
         }
 
-        /* Expandable preview container */
-        .preview-table-wrapper {
-            border: var(--border-width) solid var(--black);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .preview-scroll {
-            max-height: 280px;
-            overflow-y: auto;
-            overflow-x: auto;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .preview-scroll.expanded {
-            max-height: 70vh;
-        }
-
-        .preview-scroll::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        .preview-scroll::-webkit-scrollbar-track {
-            background: var(--white);
-            border-left: var(--border-width) solid var(--black);
-        }
-
-        .preview-scroll::-webkit-scrollbar-thumb {
+        .expand-toggle.expanded {
             background: var(--black);
+            color: var(--white);
         }
 
-        .preview-scroll::-webkit-scrollbar-corner {
-            background: var(--gray-100);
-        }
-
-        /* Expanded state shows all columns */
-        .preview-table.expanded {
-            min-width: max-content;
-        }
-
-        .preview-table th,
-        .preview-table td {
-            transition: padding 0.3s ease;
-        }
-
-        .preview-table.expanded th,
-        .preview-table.expanded td {
-            white-space: nowrap;
+        .expand-toggle.expanded:hover {
+            background: var(--gray-600);
         }
 
         /* Fade gradient overlay when collapsed */
@@ -547,12 +546,13 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            right: 8px;
-            height: 60px;
+            right: 0;
+            height: 50px;
             background: linear-gradient(to bottom, transparent, var(--white));
             pointer-events: none;
             opacity: 1;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
+            z-index: 5;
         }
 
         .preview-fade.hidden {
@@ -593,6 +593,199 @@
         .preview-table tbody tr.revealing {
             animation: rowReveal 0.25s ease forwards;
         }
+
+        /* Consumables Section */
+        .consumables-card {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            position: sticky;
+            top: 24px;
+        }
+
+        .consumables-header {
+            padding: 20px 24px;
+            border-bottom: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .consumables-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .consumables-title svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .consumables-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border: var(--border-width) solid var(--black);
+            background: var(--black);
+            color: var(--white);
+            letter-spacing: 0.5px;
+        }
+
+        .consumables-body {
+            padding: 0;
+        }
+
+        .consumables-empty {
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .consumables-empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            border: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .consumables-empty-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--gray-400);
+        }
+
+        .consumables-empty p {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .consumables-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .consumables-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--black);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .consumables-table th:last-child {
+            text-align: right;
+            width: 80px;
+        }
+
+        .consumables-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 12px;
+        }
+
+        .consumables-table td:last-child {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .consumables-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .consumables-table tbody tr:hover {
+            background: var(--gray-100);
+        }
+
+        .consumable-category {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+            padding: 10px 16px 6px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .consumable-item-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .consumable-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--black);
+            flex-shrink: 0;
+        }
+
+        .consumable-dot.laptop {
+            background: var(--black);
+        }
+
+        .consumable-dot.mobile {
+            background: var(--gray-600);
+        }
+
+        .consumables-footer {
+            padding: 14px 16px;
+            border-top: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--gray-100);
+        }
+
+        .consumables-total-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .consumables-total-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .consumables-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .consumables-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .consumables-scroll::-webkit-scrollbar-track {
+            background: var(--white);
+        }
+
+        .consumables-scroll::-webkit-scrollbar-thumb {
+            background: var(--black);
+        }
+
+        .zero-count {
+            color: var(--gray-400);
+        }
+
+        .has-count {
+            color: var(--black);
+        }
     </style>
 </head>
 <body>
@@ -600,11 +793,12 @@
         <header>
             <div class="header-top">
                 <h1>iPhone/iPad<br>Data Mapper</h1>
-                <span class="version-tag">V1.0</span>
+                <span class="version-tag">V2.0</span>
             </div>
-            <p class="subtitle">Upload source file to map device data to destination format</p>
+            <p class="subtitle">Upload source file to map device data and calculate consumables</p>
         </header>
 
+        <div class="main-grid">
         <div class="card">
             <div class="upload-section">
                 <div class="section-label">
@@ -652,7 +846,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="preview-table-wrapper">
+                    <div class="preview-table-container">
                         <div class="preview-scroll" id="previewScroll">
                             <table class="preview-table" id="previewTable">
                                 <thead id="previewHead">
@@ -704,6 +898,52 @@
                 </div>
             </div>
         </div>
+
+        <!-- Consumables Card -->
+        <div class="consumables-card">
+            <div class="consumables-header">
+                <div class="consumables-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 7h-9"/>
+                        <path d="M14 17H5"/>
+                        <circle cx="17" cy="17" r="3"/>
+                        <circle cx="7" cy="7" r="3"/>
+                    </svg>
+                    Consumable Count
+                </div>
+                <span class="consumables-badge" id="consumablesBadge">0 ITEMS</span>
+            </div>
+            <div class="consumables-body">
+                <div id="consumablesEmpty" class="consumables-empty">
+                    <div class="consumables-empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <p>Upload a source file to calculate consumables</p>
+                </div>
+                <div id="consumablesContent" style="display: none;">
+                    <div class="consumables-scroll">
+                        <table class="consumables-table">
+                            <thead>
+                                <tr>
+                                    <th>Consumable Item</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="consumablesBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="consumables-footer">
+                        <span class="consumables-total-label">Total Items</span>
+                        <span class="consumables-total-count" id="consumablesTotalCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div><!-- end main-grid -->
     </div>
 
     <div class="toast" id="toast">
@@ -719,6 +959,7 @@
     <script>
         let sourceData = [];
         let mappedData = [];
+        let consumableCounts = {};
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -738,6 +979,13 @@
         const expandBtnText = document.getElementById('expandBtnText');
         const columnIndicator = document.getElementById('columnIndicator');
         const columnCount = document.getElementById('columnCount');
+
+        // Consumables DOM elements
+        const consumablesBody = document.getElementById('consumablesBody');
+        const consumablesEmpty = document.getElementById('consumablesEmpty');
+        const consumablesContent = document.getElementById('consumablesContent');
+        const consumablesBadge = document.getElementById('consumablesBadge');
+        const consumablesTotalCount = document.getElementById('consumablesTotalCount');
 
         let isExpanded = false;
 
@@ -811,6 +1059,7 @@
 
             updateSourceUI(fileName, fileSize);
             mapData();
+            calculateConsumables();
             updateOutputUI();
         }
 
@@ -961,6 +1210,341 @@
                         'iPhone number (to be added by EE)': ''
                     };
                 });
+        }
+
+        // ===== CONSUMABLES CALCULATION =====
+
+        function isLaptopDevice(deviceType, modelRequired) {
+            const dt = (deviceType || '').toLowerCase();
+            const model = (modelRequired || '').toLowerCase();
+
+            // Check DEVICE TYPE column first
+            if (dt.includes('laptop')) return true;
+
+            // Check MODEL REQUIRED for laptop indicators
+            if (model.includes('dell') ||
+                model.includes('latitude') ||
+                model.includes('laptop') ||
+                model.includes('touchscreen')) {
+                // Exclude if it says "upgrade from" (might be a trade-in reference)
+                // but still count it as a laptop
+                return true;
+            }
+
+            return false;
+        }
+
+        function isMobileDevice(deviceType, modelRequired) {
+            const dt = (deviceType || '').toLowerCase();
+            const model = (modelRequired || '').toLowerCase();
+
+            // EXCLUDE iPads - they don't use iPhone consumables
+            if (model.includes('ipad')) return false;
+
+            // Check DEVICE TYPE column first
+            if (dt.includes('mobile') || dt.includes('phone') || dt.includes('iphone')) return true;
+
+            // Check MODEL REQUIRED for iPhone indicators
+            if (model.includes('iphone') ||
+                model.includes('apple iphone') ||
+                model.includes('4.7"') ||
+                model.includes('6.1"')) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function isHighSpecLaptop(modelRequired) {
+            if (!modelRequired) return false;
+            const model = modelRequired.toString().toLowerCase();
+
+            // Explicit high spec indicators
+            if (model.includes('high performance') ||
+                model.includes('high-performance') ||
+                model.includes('i7') ||
+                model.includes('enhanced') ||
+                model.includes('high spec') ||
+                model.includes('high-spec') ||
+                model.includes('performance')) {
+                return true;
+            }
+
+            // Higher model numbers (5340, 5330 are newer/higher spec than 5300, 5320)
+            if (model.includes('5340') || model.includes('5330')) {
+                return true;
+            }
+
+            // 32gb typically indicates higher spec
+            if (model.includes('32gb')) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function getPhoneModel(modelRequired, shippingModel) {
+            // Priority: check shipping model first (actual shipped device)
+            const shipping = (shippingModel || '').toString().toLowerCase();
+            const model = (modelRequired || '').toString().toLowerCase();
+
+            // Check shipping model first for explicit model
+            if (shipping.includes('iphone 12') || shipping.includes('12')) {
+                return 'iPhone 12';
+            }
+            if (shipping.includes('iphone 14') || shipping.includes('14')) {
+                return 'iPhone 14';
+            }
+            if (shipping.includes('iphone se') || shipping.includes(' se')) {
+                return 'iPhone SE';
+            }
+
+            // Check MODEL REQUIRED for iPhone 12 explicit mention
+            if (model.includes('iphone 12') || model.includes('apple iphone 12')) {
+                return 'iPhone 12';
+            }
+
+            // Check for iPhone SE variants (4.7" screens)
+            if (model.includes('iphone se') ||
+                model.includes('apple iphone se') ||
+                model.includes('se2') ||
+                model.includes('se 2nd') ||
+                model.includes('se 3rd') ||
+                model.includes('se (2nd') ||
+                model.includes('se (3rd') ||
+                model.includes('4.7')) {
+                return 'iPhone SE';
+            }
+
+            // Check for 6.1" phones (iPhone 11, XR, 14 - all use iPhone 14 case)
+            if (model.includes('6.1') ||
+                model.includes('iphone 11') ||
+                model.includes('apple iphone 11') ||
+                model.includes('iphone xr') ||
+                model.includes('apple iphone xr') ||
+                model.includes('iphone 14') ||
+                model.includes('apple iphone 14')) {
+                return 'iPhone 14';
+            }
+
+            // Default to iPhone 14 for standard/unspecified
+            return 'iPhone 14';
+        }
+
+        function isBundle(modelRequired) {
+            if (!modelRequired) return false;
+            const model = modelRequired.toString().toLowerCase();
+            // Check for bundle indicators
+            return model.includes('bundle') ||
+                   model.includes('standard bundle') ||
+                   model.includes('rugged bundle');
+        }
+
+        function calculateConsumables() {
+            // Reset counts
+            consumableCounts = {
+                // Laptop consumables
+                'Charger (Standard)': 0,
+                'Charger (High Spec)': 0,
+                'Laptop Bag': 0,
+                'Headset': 0,
+                'Mouse': 0,
+                // Mobile consumables
+                'USB Plug': 0,
+                'Lightning Cable': 0,
+                'Lightning EarPods': 0,
+                'iPhone SE Case': 0,
+                'iPhone SE Rugged Case': 0,
+                'iPhone SE Screen Protector': 0,
+                'iPhone 12 Case': 0,
+                'iPhone 12 Rugged Case': 0,
+                'iPhone 12 Screen Protector': 0,
+                'iPhone 14 Case': 0,
+                'iPhone 14 Rugged Case': 0,
+                'iPhone 14 Screen Protector': 0
+            };
+
+            sourceData.forEach(row => {
+                const deviceType = getVal(row, 'DEVICE TYPE', 'Device Type', 'Device type');
+                const nsRep = getVal(row, 'NS/REP', 'NS/Rep', 'Ns/Rep', 'NS REP', 'NSREP').toUpperCase().trim();
+                const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required', 'Model required');
+                const shippingModel = getVal(row, 'SHIPPING MODEL', 'Shipping Model', 'Shipping model');
+
+                // Determine NS vs REP - anything not explicitly REP is treated as NS
+                // This handles: "NS", "Yes", empty, "NEW", "NEW STARTER", etc.
+                const isREP = nsRep.includes('REP') || nsRep === 'REPLACEMENT';
+                const isNS = !isREP;
+
+                // Skip rows without NS/REP designation or desktop/shared devices
+                const modelLower = (modelRequired || '').toLowerCase();
+                if (modelLower.includes('shared desktop') || modelLower.includes('desktop')) {
+                    return; // Skip desktops
+                }
+
+                // ===== LAPTOP RULES =====
+                if (isLaptopDevice(deviceType, modelRequired)) {
+                    const isHighSpec = isHighSpecLaptop(modelRequired);
+
+                    if (isNS) {
+                        // NS Laptop: charger + bag + headset + mouse
+                        if (isHighSpec) {
+                            consumableCounts['Charger (High Spec)']++;
+                        } else {
+                            consumableCounts['Charger (Standard)']++;
+                        }
+                        consumableCounts['Laptop Bag']++;
+                        consumableCounts['Headset']++;
+                        consumableCounts['Mouse']++;
+                    } else if (isREP) {
+                        // REP Laptop: charger only
+                        if (isHighSpec) {
+                            consumableCounts['Charger (High Spec)']++;
+                        } else {
+                            consumableCounts['Charger (Standard)']++;
+                        }
+                    }
+                }
+
+                // ===== MOBILE/iPhone RULES =====
+                if (isMobileDevice(deviceType, modelRequired)) {
+                    const phoneModel = getPhoneModel(modelRequired, shippingModel);
+                    const isBundleRequest = isBundle(modelRequired);
+
+                    // All mobile devices get plug + cable
+                    consumableCounts['USB Plug']++;
+                    consumableCounts['Lightning Cable']++;
+
+                    // Bundle orders get EarPods + case + SP (regardless of NS/REP)
+                    if (isBundleRequest) {
+                        consumableCounts['Lightning EarPods']++;
+
+                        // Check if rugged bundle
+                        const isRugged = modelRequired.toLowerCase().includes('rugged');
+
+                        // Case & Screen Protector based on phone model and rugged status
+                        if (phoneModel === 'iPhone SE') {
+                            if (isRugged) {
+                                consumableCounts['iPhone SE Rugged Case']++;
+                            } else {
+                                consumableCounts['iPhone SE Case']++;
+                            }
+                            consumableCounts['iPhone SE Screen Protector']++;
+                        } else if (phoneModel === 'iPhone 12') {
+                            if (isRugged) {
+                                consumableCounts['iPhone 12 Rugged Case']++;
+                            } else {
+                                consumableCounts['iPhone 12 Case']++;
+                            }
+                            consumableCounts['iPhone 12 Screen Protector']++;
+                        } else {
+                            // Default to iPhone 14 (covers iPhone 11, XR, 14, 6.1" etc)
+                            if (isRugged) {
+                                consumableCounts['iPhone 14 Rugged Case']++;
+                            } else {
+                                consumableCounts['iPhone 14 Case']++;
+                            }
+                            consumableCounts['iPhone 14 Screen Protector']++;
+                        }
+                    }
+                }
+            });
+
+            updateConsumablesUI();
+        }
+
+        function updateConsumablesUI() {
+            // Filter to only show items with count > 0 or all items grouped
+            const laptopItems = [
+                { name: 'Charger (Standard)', count: consumableCounts['Charger (Standard)'] },
+                { name: 'Charger (High Spec)', count: consumableCounts['Charger (High Spec)'] },
+                { name: 'Laptop Bag', count: consumableCounts['Laptop Bag'] },
+                { name: 'Headset', count: consumableCounts['Headset'] },
+                { name: 'Mouse', count: consumableCounts['Mouse'] }
+            ];
+
+            const mobileItems = [
+                { name: 'USB Plug', count: consumableCounts['USB Plug'] },
+                { name: 'Lightning Cable', count: consumableCounts['Lightning Cable'] },
+                { name: 'Lightning EarPods', count: consumableCounts['Lightning EarPods'] },
+                { name: 'iPhone SE Case', count: consumableCounts['iPhone SE Case'] },
+                { name: 'iPhone SE Rugged Case', count: consumableCounts['iPhone SE Rugged Case'] },
+                { name: 'iPhone SE Screen Protector', count: consumableCounts['iPhone SE Screen Protector'] },
+                { name: 'iPhone 12 Case', count: consumableCounts['iPhone 12 Case'] },
+                { name: 'iPhone 12 Rugged Case', count: consumableCounts['iPhone 12 Rugged Case'] },
+                { name: 'iPhone 12 Screen Protector', count: consumableCounts['iPhone 12 Screen Protector'] },
+                { name: 'iPhone 14 Case', count: consumableCounts['iPhone 14 Case'] },
+                { name: 'iPhone 14 Rugged Case', count: consumableCounts['iPhone 14 Rugged Case'] },
+                { name: 'iPhone 14 Screen Protector', count: consumableCounts['iPhone 14 Screen Protector'] }
+            ];
+
+            // Calculate totals
+            const totalItems = Object.values(consumableCounts).reduce((a, b) => a + b, 0);
+            const hasLaptopItems = laptopItems.some(item => item.count > 0);
+            const hasMobileItems = mobileItems.some(item => item.count > 0);
+
+            if (totalItems === 0) {
+                consumablesEmpty.style.display = 'block';
+                consumablesContent.style.display = 'none';
+                consumablesBadge.textContent = '0 ITEMS';
+                return;
+            }
+
+            consumablesEmpty.style.display = 'none';
+            consumablesContent.style.display = 'block';
+            consumablesBadge.textContent = `${totalItems} ITEMS`;
+            consumablesTotalCount.textContent = totalItems;
+
+            let html = '';
+
+            // Laptop section
+            if (hasLaptopItems) {
+                html += `<tr><td colspan="2" class="consumable-category">Laptop Accessories</td></tr>`;
+                laptopItems.forEach(item => {
+                    if (item.count > 0) {
+                        html += `
+                            <tr>
+                                <td>
+                                    <div class="consumable-item-name">
+                                        <div class="consumable-dot laptop"></div>
+                                        ${item.name}
+                                    </div>
+                                </td>
+                                <td class="has-count">${item.count}</td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            // Mobile section
+            if (hasMobileItems) {
+                html += `<tr><td colspan="2" class="consumable-category">Mobile Accessories</td></tr>`;
+                mobileItems.forEach(item => {
+                    if (item.count > 0) {
+                        html += `
+                            <tr>
+                                <td>
+                                    <div class="consumable-item-name">
+                                        <div class="consumable-dot mobile"></div>
+                                        ${item.name}
+                                    </div>
+                                </td>
+                                <td class="has-count">${item.count}</td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            consumablesBody.innerHTML = html;
+        }
+
+        function clearConsumables() {
+            consumableCounts = {};
+            consumablesEmpty.style.display = 'block';
+            consumablesContent.style.display = 'none';
+            consumablesBadge.textContent = '0 ITEMS';
+            consumablesBody.innerHTML = '';
         }
 
         function updateSourceUI(fileName, fileSize) {
@@ -1153,6 +1737,7 @@
         function clearFile() {
             sourceData = [];
             mappedData = [];
+            clearConsumables();
 
             sourceContent.innerHTML = `
                 <div class="drop-zone" id="dropZone">
