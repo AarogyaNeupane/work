@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone/iPad Data Mapper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Söhne+Mono,monospace&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --white: #ffffff;
+            --black: #000000;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-400: #a3a3a3;
+            --gray-600: #525252;
+            --border-width: 1.5px;
+        }
+
+        body {
+            font-family: 'Instrument Sans', -apple-system, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            padding: 40px 24px;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .version-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border: var(--border-width) solid var(--black);
+            background: var(--white);
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-top: 8px;
+        }
+
+        .card {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+        }
+
+        .upload-section {
+            padding: 24px;
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-label svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .drop-zone {
+            padding: 36px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: var(--border-width) dashed var(--black);
+            background: var(--white);
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            background: var(--gray-100);
+        }
+
+        .drop-zone-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            border: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drop-zone-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .drop-zone p {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 4px;
+        }
+
+        .drop-zone .hint {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-loaded {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+        }
+
+        .file-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--black);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .file-meta {
+            font-size: 11px;
+            color: var(--gray-600);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-clear {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            color: var(--black);
+            padding: 8px 16px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-clear:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .status-message {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            font-size: 13px;
+            margin: 20px 24px 0;
+            border: var(--border-width) solid var(--black);
+        }
+
+        .status-message.success {
+            background: var(--white);
+        }
+
+        .status-message.error {
+            background: var(--gray-100);
+        }
+
+        .status-message svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .preview-section {
+            padding: 24px;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .preview-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .preview-count {
+            font-size: 11px;
+            color: var(--black);
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--white);
+            padding: 4px 10px;
+            border: var(--border-width) solid var(--black);
+        }
+
+        .preview-table-wrapper {
+            border: var(--border-width) solid var(--black);
+            overflow: hidden;
+        }
+
+        .preview-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+        .preview-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: var(--black);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--black);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            max-width: 130px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-table tbody tr:hover {
+            background: var(--gray-100);
+        }
+
+        .preview-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .preview-scroll {
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .preview-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .preview-scroll::-webkit-scrollbar-track {
+            background: var(--white);
+            border-left: var(--border-width) solid var(--black);
+        }
+
+        .preview-scroll::-webkit-scrollbar-thumb {
+            background: var(--black);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0;
+            border-top: var(--border-width) solid var(--black);
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 18px 24px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--gray-600);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            border-right: var(--border-width) solid var(--black);
+            padding: 18px 28px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+        }
+
+        .empty-state {
+            padding: 56px 24px;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            border: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--gray-400);
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'JetBrains Mono', monospace;
+            border: var(--border-width) solid var(--black);
+        }
+
+        .badge-new {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .badge-replacement {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.25s ease forwards;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--black);
+            color: var(--white);
+            padding: 16px 24px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            color: var(--white);
+        }
+
+        .more-records {
+            font-size: 11px;
+            color: var(--gray-600);
+            text-align: center;
+            padding: 12px;
+            border-top: 1px solid var(--gray-200);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .expand-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            background: var(--white);
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            width: 100%;
+            cursor: pointer;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--black);
+            transition: background 0.15s ease;
+        }
+
+        .expand-toggle:hover {
+            background: var(--gray-100);
+        }
+
+        .expand-toggle svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .expand-toggle.expanded svg {
+            transform: rotate(180deg);
+        }
+
+        /* Expandable preview container */
+        .preview-table-wrapper {
+            border: var(--border-width) solid var(--black);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-scroll {
+            max-height: 280px;
+            overflow-y: auto;
+            overflow-x: auto;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .preview-scroll.expanded {
+            max-height: 70vh;
+        }
+
+        .preview-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .preview-scroll::-webkit-scrollbar-track {
+            background: var(--white);
+            border-left: var(--border-width) solid var(--black);
+        }
+
+        .preview-scroll::-webkit-scrollbar-thumb {
+            background: var(--black);
+        }
+
+        .preview-scroll::-webkit-scrollbar-corner {
+            background: var(--gray-100);
+        }
+
+        /* Expanded state shows all columns */
+        .preview-table.expanded {
+            min-width: max-content;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            transition: padding 0.3s ease;
+        }
+
+        .preview-table.expanded th,
+        .preview-table.expanded td {
+            white-space: nowrap;
+        }
+
+        /* Fade gradient overlay when collapsed */
+        .preview-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 8px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--white));
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .preview-fade.hidden {
+            opacity: 0;
+        }
+
+        /* Column count indicator */
+        .column-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--gray-600);
+            font-family: 'JetBrains Mono', monospace;
+            margin-left: 12px;
+            padding: 3px 8px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+        }
+
+        .column-indicator svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Smooth row reveal animation */
+        @keyframes rowReveal {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-table tbody tr.revealing {
+            animation: rowReveal 0.25s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>iPhone/iPad<br>Data Mapper</h1>
+                <span class="version-tag">V1.0</span>
+            </div>
+            <p class="subtitle">Upload source file to map device data to destination format</p>
+        </header>
+
+        <div class="card">
+            <div class="upload-section">
+                <div class="section-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Upload Source File
+                </div>
+                <div id="sourceContent">
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <p>Drop your CSV file here</p>
+                        <span class="hint">or click to browse</span>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept=".csv">
+            </div>
+
+            <div id="statusArea"></div>
+
+            <div id="previewSection" style="display: none;">
+                <div class="preview-section">
+                    <div class="preview-header">
+                        <div style="display: flex; align-items: center;">
+                            <span class="preview-title">Mapped Output</span>
+                            <span class="preview-count" id="outputCount">0 records</span>
+                            <span class="column-indicator" id="columnIndicator" style="display: none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                                <span id="columnCount">6 cols</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="preview-table-wrapper">
+                        <div class="preview-scroll" id="previewScroll">
+                            <table class="preview-table" id="previewTable">
+                                <thead id="previewHead">
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Task Number</th>
+                                        <th>Full Name</th>
+                                        <th>Device</th>
+                                        <th>Bundle</th>
+                                        <th>Asset Tag</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="previewBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="preview-fade" id="previewFade"></div>
+                    </div>
+                    <button class="expand-toggle" id="expandBtn" style="display: none;">
+                        <span id="expandBtnText">Expand All Rows & Columns</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-secondary" id="resetBtn">Reset</button>
+                    <button class="btn-primary" id="downloadBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Mapped CSV
+                    </button>
+                </div>
+            </div>
+
+            <div id="emptyPreview">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/>
+                            <line x1="9" y1="21" x2="9" y2="9"/>
+                        </svg>
+                    </div>
+                    <p>Upload a source file to generate mapped output</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span class="toast-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+        </span>
+        <span id="toastMessage">File downloaded successfully</span>
+    </div>
+
+    <script>
+        let sourceData = [];
+        let mappedData = [];
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const sourceContent = document.getElementById('sourceContent');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const outputCount = document.getElementById('outputCount');
+        const previewBody = document.getElementById('previewBody');
+        const previewHead = document.getElementById('previewHead');
+        const previewTable = document.getElementById('previewTable');
+        const previewScroll = document.getElementById('previewScroll');
+        const previewFade = document.getElementById('previewFade');
+        const previewSection = document.getElementById('previewSection');
+        const emptyPreview = document.getElementById('emptyPreview');
+        const statusArea = document.getElementById('statusArea');
+        const expandBtn = document.getElementById('expandBtn');
+        const expandBtnText = document.getElementById('expandBtnText');
+        const columnIndicator = document.getElementById('columnIndicator');
+        const columnCount = document.getElementById('columnCount');
+
+        let isExpanded = false;
+
+        // Destination headers
+        const destHeaders = [
+            'STATUS', 'Tialis TASK NUMBER', 'PO (Order date)', 'COST CENTRE', 'Full Name',
+            'Employee ID', 'Employee Email', 'Agency', 'Equipment Account', 'Airtime Account',
+            'Device Type', 'Product code', 'Quanity', 'Device Operating System', 'Device Make',
+            'EID Number', 'Serial Number', 'IMEI Number', 'Organisational Group', 'Talk plan & Bundle',
+            'Data cap', 'Physical SIM Card Required', 'Physical SIM Card Number', 'Date Shipped',
+            'ASSET Tag', 'Device Bundle / Device Type', 'iPhone number (to be added by EE)'
+        ];
+
+        // Initialize event listeners
+        function initDropZone(zone) {
+            zone.addEventListener('click', () => fileInput.click());
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.name.endsWith('.csv')) {
+                    processFile(file);
+                }
+            });
+        }
+
+        initDropZone(dropZone);
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                processFile(e.target.files[0]);
+            }
+        });
+
+        downloadBtn.addEventListener('click', downloadCSV);
+        resetBtn.addEventListener('click', clearFile);
+        expandBtn.addEventListener('click', toggleExpand);
+
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                parseCSV(text, file.name, file.size);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text, fileName, fileSize) {
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length < 2) {
+                showStatus('error', 'File appears to be empty or invalid');
+                return;
+            }
+
+            const headers = parseCSVLine(lines[0]);
+            sourceData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header.trim()] = values[index] ? values[index].trim() : '';
+                });
+                sourceData.push(row);
+            }
+
+            updateSourceUI(fileName, fileSize);
+            mapData();
+            updateOutputUI();
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Get value with case-insensitive key lookup
+        function getVal(row, ...keys) {
+            for (const key of keys) {
+                if (row[key] !== undefined && row[key] !== '') return row[key];
+                // Try uppercase
+                const upper = key.toUpperCase();
+                if (row[upper] !== undefined && row[upper] !== '') return row[upper];
+                // Try title case
+                const title = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                if (row[title] !== undefined && row[title] !== '') return row[title];
+            }
+            return '';
+        }
+
+        function getDeviceType(modelRequired, deviceTypeCol) {
+            // First check MODEL REQUIRED
+            if (modelRequired) {
+                const model = modelRequired.toString().toLowerCase();
+                if (model.includes('iphone')) return 'iPhone';
+                if (model.includes('ipad')) return 'iPad';
+            }
+
+            // If MODEL REQUIRED is empty, check DEVICE TYPE column
+            if (deviceTypeCol) {
+                const deviceType = deviceTypeCol.toString().toLowerCase();
+                if (deviceType.includes('iphone')) return 'iPhone';
+                if (deviceType.includes('ipad')) return 'iPad';
+            }
+
+            return '';
+        }
+
+        function getBundleType(modelRequired) {
+            if (!modelRequired) return 'Single';
+            const model = modelRequired.toString().toLowerCase();
+            if (model.includes('bundle')) return 'Bundle';
+            return 'Single';
+        }
+
+        // Extract IMEI number - handles both "IMEI: 123456789" and plain "123456789" formats
+        function extractIMEI(imeiValue) {
+            if (!imeiValue) return '';
+
+            const str = imeiValue.toString().trim();
+
+            // Check for various IMEI prefix patterns and remove them
+            // Handles: "IMEI: ", "IMEI:", "imei: ", "imei:", "IMEI ", "imei ", etc.
+            const prefixPattern = /^imei\s*:\s*/i;
+            let cleaned = str.replace(prefixPattern, '').trim();
+
+            // Also handle case where it might just say "IMEI" followed by the number
+            const altPattern = /^imei\s+/i;
+            cleaned = cleaned.replace(altPattern, '').trim();
+
+            // Extract just the numeric portion (IMEI numbers are 15 digits)
+            // This also handles cases like "IMEI: 123456789012345 (some note)"
+            const numericMatch = cleaned.match(/\d{14,15}/);
+            if (numericMatch) {
+                return numericMatch[0];
+            }
+
+            // If no 14-15 digit number found, return the cleaned string
+            // (in case format is different but still valid)
+            return cleaned;
+        }
+
+        function getStatus(taskRef, incRef) {
+            const task = taskRef?.toString().toUpperCase() || '';
+            if (task.includes('SCTASK')) return 'New connection';
+            if (!task && incRef) return 'Replacement';
+            return 'Replacement';
+        }
+
+        function mapData() {
+            mappedData = sourceData
+                .filter(row => {
+                    const deviceType = getDeviceType(
+                        getVal(row, 'MODEL REQUIRED', 'Model Required'),
+                        getVal(row, 'DEVICE TYPE', 'Device Type')
+                    );
+                    return deviceType === 'iPhone' || deviceType === 'iPad';
+                })
+                .map(row => {
+                    const taskRef = getVal(row, 'TASK REF', 'Task Ref');
+                    const incRef = getVal(row, 'INC REF', 'Inc Ref');
+                    const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required');
+                    const deviceTypeCol = getVal(row, 'DEVICE TYPE', 'Device Type');
+                    const dateToBeShipped = getVal(row, 'DATE TO BE SHIPPED', 'Date To Be Shipped', 'Date to be shipped');
+
+                    // Use TASK REF if it exists and contains SCTASK, otherwise use INC REF
+                    let tialisTaskNumber = '';
+                    if (taskRef && taskRef.toString().toUpperCase().includes('SCTASK')) {
+                        tialisTaskNumber = taskRef;
+                    } else {
+                        tialisTaskNumber = incRef;
+                    }
+
+                    return {
+                        'STATUS': getStatus(taskRef, incRef),
+                        'Tialis TASK NUMBER': tialisTaskNumber,
+                        'PO (Order date)': dateToBeShipped,
+                        'COST CENTRE': '',
+                        'Full Name': getVal(row, "USER'S NAME", "User's Name", "USERS NAME"),
+                        'Employee ID': '',
+                        'Employee Email': '',
+                        'Agency': 'DEFRA AGENCY',
+                        'Equipment Account': '',
+                        'Airtime Account': '',
+                        'Device Type': getDeviceType(modelRequired, deviceTypeCol),
+                        'Product code': '',
+                        'Quanity': 1,
+                        'Device Operating System': 'iOS',
+                        'Device Make': 'Apple',
+                        'EID Number': getVal(row, 'EID NUMBER', 'EID Number', 'Eid Number'),
+                        'Serial Number': getVal(row, 'SERIAL NUMBER', 'Serial Number'),
+                        'IMEI Number': extractIMEI(getVal(row, 'IMEI NUMBER', 'IMEI Number', 'Imei Number')),
+                        'Organisational Group': '',
+                        'Talk plan & Bundle': '',
+                        'Data cap': '',
+                        'Physical SIM Card Required': '',
+                        'Physical SIM Card Number': '',
+                        'Date Shipped': dateToBeShipped,
+                        'ASSET Tag': getVal(row, 'ASSET TAG', 'Asset Tag'),
+                        'Device Bundle / Device Type': getBundleType(modelRequired),
+                        'iPhone number (to be added by EE)': ''
+                    };
+                });
+        }
+
+        function updateSourceUI(fileName, fileSize) {
+            const sizeStr = fileSize > 1024 ? `${(fileSize / 1024).toFixed(1)} KB` : `${fileSize} B`;
+
+            sourceContent.innerHTML = `
+                <div class="file-loaded animate-in">
+                    <div class="file-icon">CSV</div>
+                    <div class="file-details">
+                        <div class="file-name">${fileName}</div>
+                        <div class="file-meta">${sizeStr} &bull; ${sourceData.length} rows loaded</div>
+                    </div>
+                    <button class="btn-clear" onclick="clearFile()">Clear</button>
+                </div>
+            `;
+        }
+
+        function updateOutputUI() {
+            if (mappedData.length === 0) {
+                showStatus('error', 'No iPhone or iPad records found in the source file');
+                return;
+            }
+
+            // Reset expanded state when new data loads
+            isExpanded = false;
+            expandBtn.classList.remove('expanded');
+            expandBtnText.textContent = 'Expand All Rows & Columns';
+            previewScroll.classList.remove('expanded');
+            previewTable.classList.remove('expanded');
+            columnIndicator.style.display = 'none';
+
+            // Reset header to preview columns
+            previewHead.innerHTML = `
+                <tr>
+                    <th>Status</th>
+                    <th>Task Number</th>
+                    <th>Full Name</th>
+                    <th>Device</th>
+                    <th>Bundle</th>
+                    <th>Asset Tag</th>
+                </tr>
+            `;
+
+            showStatus('success', `Successfully mapped ${mappedData.length} iPhone/iPad records`);
+
+            outputCount.textContent = `${mappedData.length} records`;
+
+            // Show preview section, hide empty state
+            previewSection.style.display = 'block';
+            emptyPreview.style.display = 'none';
+
+            // Generate preview rows
+            const previewRows = mappedData.slice(0, 10);
+            previewBody.innerHTML = previewRows.map(row => `
+                <tr>
+                    <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
+                    <td>${row['Tialis TASK NUMBER'] || '-'}</td>
+                    <td>${row['Full Name'] || '-'}</td>
+                    <td>${row['Device Type'] || '-'}</td>
+                    <td>${row['Device Bundle / Device Type'] || '-'}</td>
+                    <td>${row['ASSET Tag'] || '-'}</td>
+                </tr>
+            `).join('');
+
+            // Always show expand button if there's data
+            if (mappedData.length > 0) {
+                expandBtn.style.display = 'flex';
+                previewFade.classList.remove('hidden');
+            } else {
+                expandBtn.style.display = 'none';
+            }
+        }
+
+        function toggleExpand() {
+            isExpanded = !isExpanded;
+
+            if (isExpanded) {
+                // Expand: show all rows and all columns
+                expandBtn.classList.add('expanded');
+                expandBtnText.textContent = 'Collapse';
+                previewScroll.classList.add('expanded');
+                previewTable.classList.add('expanded');
+                previewFade.classList.add('hidden');
+                columnIndicator.style.display = 'inline-flex';
+                columnCount.textContent = `${destHeaders.length} cols`;
+
+                // Update header to show all columns
+                previewHead.innerHTML = `
+                    <tr>
+                        ${destHeaders.map(h => `<th>${h}</th>`).join('')}
+                    </tr>
+                `;
+
+                // Update body to show all rows with all columns
+                previewBody.innerHTML = mappedData.map((row, idx) => `
+                    <tr class="revealing" style="animation-delay: ${Math.min(idx * 15, 300)}ms">
+                        ${destHeaders.map(header => {
+                            const val = row[header] ?? '';
+                            if (header === 'STATUS') {
+                                const badgeClass = val === 'New connection' ? 'badge-new' : 'badge-replacement';
+                                return `<td><span class="badge ${badgeClass}">${val}</span></td>`;
+                            }
+                            return `<td>${val || '-'}</td>`;
+                        }).join('')}
+                    </tr>
+                `).join('');
+
+            } else {
+                // Collapse: show preview (10 rows, 6 columns)
+                expandBtn.classList.remove('expanded');
+                expandBtnText.textContent = 'Expand All Rows & Columns';
+                previewScroll.classList.remove('expanded');
+                previewTable.classList.remove('expanded');
+                previewFade.classList.remove('hidden');
+                columnIndicator.style.display = 'none';
+
+                // Reset header to preview columns
+                previewHead.innerHTML = `
+                    <tr>
+                        <th>Status</th>
+                        <th>Task Number</th>
+                        <th>Full Name</th>
+                        <th>Device</th>
+                        <th>Bundle</th>
+                        <th>Asset Tag</th>
+                    </tr>
+                `;
+
+                // Reset body to preview rows
+                const previewRows = mappedData.slice(0, 10);
+                previewBody.innerHTML = previewRows.map(row => `
+                    <tr>
+                        <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
+                        <td>${row['Tialis TASK NUMBER'] || '-'}</td>
+                        <td>${row['Full Name'] || '-'}</td>
+                        <td>${row['Device Type'] || '-'}</td>
+                        <td>${row['Device Bundle / Device Type'] || '-'}</td>
+                        <td>${row['ASSET Tag'] || '-'}</td>
+                    </tr>
+                `).join('');
+
+                // Scroll back to top
+                previewScroll.scrollTop = 0;
+            }
+        }
+
+        function showStatus(type, message) {
+            const icon = type === 'success'
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+
+            statusArea.innerHTML = `
+                <div class="status-message ${type} animate-in">
+                    ${icon}
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        function downloadCSV() {
+            const csvContent = [
+                destHeaders.join(','),
+                ...mappedData.map(row =>
+                    destHeaders.map(header => {
+                        const value = String(row[header] ?? '');
+                        return value.includes(',') || value.includes('"') || value.includes('\n')
+                            ? `"${value.replace(/"/g, '""')}"`
+                            : value;
+                    }).join(',')
+                )
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Mapped_EE_Data_${dateStr}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast('CSV file downloaded successfully');
+        }
+
+        function clearFile() {
+            sourceData = [];
+            mappedData = [];
+
+            sourceContent.innerHTML = `
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <p>Drop your CSV file here</p>
+                    <span class="hint">or click to browse</span>
+                </div>
+            `;
+
+            // Rebind events
+            initDropZone(document.getElementById('dropZone'));
+
+            previewSection.style.display = 'none';
+            emptyPreview.style.display = 'block';
+            statusArea.innerHTML = '';
+            fileInput.value = '';
+
+            // Reset expanded state
+            isExpanded = false;
+            expandBtn.style.display = 'none';
+            expandBtn.classList.remove('expanded');
+            expandBtnText.textContent = 'Expand All Rows & Columns';
+            previewScroll.classList.remove('expanded');
+            previewTable.classList.remove('expanded');
+            previewFade.classList.remove('hidden');
+            columnIndicator.style.display = 'none';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
