@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iPhone/iPad Data Mapper</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Söhne+Mono,monospace&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Söhne+Mono,monospace&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -122,7 +126,8 @@
             background: var(--white);
         }
 
-        .drop-zone:hover, .drop-zone.dragover {
+        .drop-zone:hover,
+        .drop-zone.dragover {
             background: var(--gray-100);
         }
 
@@ -456,8 +461,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .animate-in {
@@ -584,6 +596,7 @@
                 opacity: 0;
                 transform: translateY(-4px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -790,8 +803,345 @@
         .has-count {
             color: var(--black);
         }
+
+        /* ===== NEW FEATURE STYLES ===== */
+
+        /* Search Box */
+        .search-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: var(--border-width) solid var(--black);
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 13px;
+            background: var(--white);
+            outline: none;
+            transition: background 0.15s ease;
+        }
+
+        .search-input:focus {
+            background: var(--gray-100);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border: var(--border-width) solid var(--black);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-100);
+        }
+
+        .btn-icon.active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .btn-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Duplicate/Filter Warning Panel */
+        .warning-panel {
+            margin: 16px 24px 0;
+            padding: 14px 18px;
+            border: var(--border-width) solid var(--black);
+            background: #fffbeb;
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .warning-header svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .warning-toggle {
+            margin-left: auto;
+            transition: transform 0.2s ease;
+        }
+
+        .warning-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .warning-details {
+            display: none;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .warning-details.show {
+            display: block;
+        }
+
+        .warning-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .warning-item-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--black);
+            flex-shrink: 0;
+        }
+
+        /* Filter Breakdown */
+        .filter-breakdown {
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+        }
+
+        .filter-item-label {
+            color: var(--gray-600);
+        }
+
+        .filter-item-count {
+            font-weight: 600;
+        }
+
+        /* Editable Cells */
+        .preview-table td[contenteditable="true"] {
+            cursor: text;
+            position: relative;
+        }
+
+        .preview-table td[contenteditable="true"]:focus {
+            outline: 2px solid var(--black);
+            outline-offset: -2px;
+            background: #fffef0;
+        }
+
+        .preview-table td.edited {
+            background: #f0fdf4;
+        }
+
+        .preview-table td.edited::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* Source Preview Toggle */
+        .source-preview-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--gray-200);
+        }
+
+        .source-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .source-toggle-btn:hover {
+            background: var(--gray-100);
+        }
+
+        .source-toggle-btn.active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .source-toggle-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .source-data-container {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .source-data-container.show {
+            display: block;
+        }
+
+        .source-table {
+            width: 100%;
+            font-size: 11px;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+
+        .source-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--gray-600);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        .source-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--gray-200);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .source-scroll {
+            max-height: 300px;
+            overflow: auto;
+            border: var(--border-width) solid var(--gray-400);
+        }
+
+        /* Consumables Download Button */
+        .consumables-actions {
+            display: flex;
+            gap: 0;
+            border-top: var(--border-width) solid var(--black);
+        }
+
+        .btn-consumables-download {
+            flex: 1;
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            padding: 14px 16px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-consumables-download:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .btn-consumables-download svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Reset Edits Button */
+        .reset-edits-btn {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            margin-left: 8px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .reset-edits-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .reset-edits-btn.show {
+            display: inline-flex;
+        }
+
+        .reset-edits-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Edit mode indicator */
+        .edit-mode-indicator {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            font-size: 10px;
+            font-weight: 500;
+            color: #166534;
+            margin-left: 12px;
+        }
+
+        .edit-mode-indicator.show {
+            display: inline-flex;
+        }
+
+        .edit-mode-indicator svg {
+            width: 12px;
+            height: 12px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -803,158 +1153,210 @@
         </header>
 
         <div class="main-grid">
-        <div class="card">
-            <div class="upload-section">
-                <div class="section-label">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    Upload Source File
+            <div class="card">
+                <div class="upload-section">
+                    <div class="section-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Upload Source File
+                    </div>
+                    <div id="sourceContent">
+                        <div class="drop-zone" id="dropZone">
+                            <div class="drop-zone-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <polyline points="10 9 9 9 8 9" />
+                                </svg>
+                            </div>
+                            <p>Drop your CSV or Excel file here</p>
+                            <span class="hint">Supports .csv, .xlsx, .xls</span>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
                 </div>
-                <div id="sourceContent">
-                    <div class="drop-zone" id="dropZone">
-                        <div class="drop-zone-icon">
+
+                <div id="statusArea"></div>
+
+                <div id="previewSection" style="display: none;">
+                    <div class="preview-section">
+                        <div class="preview-header">
+                            <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                <span class="preview-title">Mapped Output</span>
+                                <span class="preview-count" id="outputCount">0 records</span>
+                                <span class="column-indicator" id="columnIndicator" style="display: none;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="7" height="7" />
+                                        <rect x="14" y="3" width="7" height="7" />
+                                        <rect x="14" y="14" width="7" height="7" />
+                                        <rect x="3" y="14" width="7" height="7" />
+                                    </svg>
+                                    <span id="columnCount">6 cols</span>
+                                </span>
+                                <span class="edit-mode-indicator" id="editModeIndicator">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                    Edit Mode
+                                </span>
+                                <button class="reset-edits-btn" id="resetEditsBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="1 4 1 10 7 10" />
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                                    </svg>
+                                    Reset Edits
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Search Box -->
+                        <div class="search-container">
+                            <input type="text" class="search-input" id="searchInput"
+                                placeholder="Search by name, IMEI, task number, asset tag...">
+                            <button class="btn-icon" id="clearSearchBtn" title="Clear search">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                            <button class="btn-icon" id="sourceToggleBtn" title="Toggle source columns">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="12" y1="3" x2="12" y2="21" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="preview-table-container">
+                            <div class="preview-scroll" id="previewScroll">
+                                <table class="preview-table" id="previewTable">
+                                    <thead id="previewHead">
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Task Number</th>
+                                            <th>Full Name</th>
+                                            <th>Device</th>
+                                            <th>Bundle</th>
+                                            <th>Asset Tag</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="previewBody"></tbody>
+                                </table>
+                            </div>
+                            <div class="preview-fade" id="previewFade"></div>
+                        </div>
+                        <button class="expand-toggle" id="expandBtn" style="display: none;">
+                            <span id="expandBtnText">Expand All Rows &amp; Columns</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" y1="13" x2="8" y2="13"/>
-                                <line x1="16" y1="17" x2="8" y2="17"/>
-                                <polyline points="10 9 9 9 8 9"/>
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <!-- Source Preview Section -->
+                        <div class="source-preview-section" id="sourcePreviewSection" style="display: none;">
+                            <div class="source-scroll" id="sourceScroll">
+                                <table class="source-table" id="sourceTable">
+                                    <thead id="sourceHead"></thead>
+                                    <tbody id="sourceBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn-secondary" id="resetBtn">Reset</button>
+                        <button class="btn-primary" id="downloadBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Download Mapped CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div id="emptyPreview">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <line x1="3" y1="9" x2="21" y2="9" />
+                                <line x1="9" y1="21" x2="9" y2="9" />
                             </svg>
                         </div>
-                        <p>Drop your CSV file here</p>
-                        <span class="hint">or click to browse</span>
+                        <p>Upload a source file to generate mapped output</p>
                     </div>
                 </div>
-                <input type="file" id="fileInput" accept=".csv">
             </div>
 
-            <div id="statusArea"></div>
-
-            <div id="previewSection" style="display: none;">
-                <div class="preview-section">
-                    <div class="preview-header">
-                        <div style="display: flex; align-items: center;">
-                            <span class="preview-title">Mapped Output</span>
-                            <span class="preview-count" id="outputCount">0 records</span>
-                            <span class="column-indicator" id="columnIndicator" style="display: none;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="3" width="7" height="7"/>
-                                    <rect x="14" y="3" width="7" height="7"/>
-                                    <rect x="14" y="14" width="7" height="7"/>
-                                    <rect x="3" y="14" width="7" height="7"/>
-                                </svg>
-                                <span id="columnCount">6 cols</span>
-                            </span>
-                        </div>
+            <!-- Consumables Card -->
+            <div class="consumables-card">
+                <div class="consumables-header">
+                    <div class="consumables-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 7h-9" />
+                            <path d="M14 17H5" />
+                            <circle cx="17" cy="17" r="3" />
+                            <circle cx="7" cy="7" r="3" />
+                        </svg>
+                        Consumable Count
                     </div>
-                    <div class="preview-table-container">
-                        <div class="preview-scroll" id="previewScroll">
-                            <table class="preview-table" id="previewTable">
-                                <thead id="previewHead">
+                    <span class="consumables-badge" id="consumablesBadge">0 ITEMS</span>
+                </div>
+                <div class="consumables-body">
+                    <div id="consumablesEmpty" class="consumables-empty">
+                        <div class="consumables-empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg>
+                        </div>
+                        <p>Upload a source file to calculate consumables</p>
+                    </div>
+                    <div id="consumablesContent" style="display: none;">
+                        <div class="consumables-scroll">
+                            <table class="consumables-table">
+                                <thead>
                                     <tr>
-                                        <th>Status</th>
-                                        <th>Task Number</th>
-                                        <th>Full Name</th>
-                                        <th>Device</th>
-                                        <th>Bundle</th>
-                                        <th>Asset Tag</th>
+                                        <th>Consumable Item</th>
+                                        <th>Count</th>
                                     </tr>
                                 </thead>
-                                <tbody id="previewBody"></tbody>
+                                <tbody id="consumablesBody"></tbody>
                             </table>
                         </div>
-                        <div class="preview-fade" id="previewFade"></div>
-                    </div>
-                    <button class="expand-toggle" id="expandBtn" style="display: none;">
-                        <span id="expandBtnText">Expand All Rows & Columns</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="actions">
-                    <button class="btn-secondary" id="resetBtn">Reset</button>
-                    <button class="btn-primary" id="downloadBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Download Mapped CSV
-                    </button>
-                </div>
-            </div>
-
-            <div id="emptyPreview">
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="3" y1="9" x2="21" y2="9"/>
-                            <line x1="9" y1="21" x2="9" y2="9"/>
-                        </svg>
-                    </div>
-                    <p>Upload a source file to generate mapped output</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Consumables Card -->
-        <div class="consumables-card">
-            <div class="consumables-header">
-                <div class="consumables-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 7h-9"/>
-                        <path d="M14 17H5"/>
-                        <circle cx="17" cy="17" r="3"/>
-                        <circle cx="7" cy="7" r="3"/>
-                    </svg>
-                    Consumable Count
-                </div>
-                <span class="consumables-badge" id="consumablesBadge">0 ITEMS</span>
-            </div>
-            <div class="consumables-body">
-                <div id="consumablesEmpty" class="consumables-empty">
-                    <div class="consumables-empty-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                            <line x1="12" y1="22.08" x2="12" y2="12"/>
-                        </svg>
-                    </div>
-                    <p>Upload a source file to calculate consumables</p>
-                </div>
-                <div id="consumablesContent" style="display: none;">
-                    <div class="consumables-scroll">
-                        <table class="consumables-table">
-                            <thead>
-                                <tr>
-                                    <th>Consumable Item</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody id="consumablesBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="consumables-footer">
-                        <span class="consumables-total-label">Total Items</span>
-                        <span class="consumables-total-count" id="consumablesTotalCount">0</span>
+                        <div class="consumables-footer">
+                            <span class="consumables-total-label">Total Items</span>
+                            <span class="consumables-total-count" id="consumablesTotalCount">0</span>
+                        </div>
+                        <div class="consumables-actions">
+                            <button class="btn-consumables-download" id="downloadConsumablesBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                Download Consumables CSV
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div><!-- end main-grid -->
     </div>
 
     <div class="toast" id="toast">
         <span class="toast-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
         </span>
         <span id="toastMessage">File downloaded successfully</span>
@@ -963,7 +1365,34 @@
     <script>
         let sourceData = [];
         let mappedData = [];
+        let originalMappedData = []; // For reset edits functionality
         let consumableCounts = {};
+        let filterStats = { total: 0, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
+        let duplicateWarnings = { imei: [], serial: [], asset: [] };
+        let searchTerm = '';
+        let hasEdits = false;
+        let sourceRowMapping = []; // Maps output rows to source row indices
+
+        /*
+         * Expected Source File Column Structure:
+         * Column A: [varies]
+         * Column B: [varies]
+         * Column C: Month
+         * Column D: Stock Movement Date (ignored in output - present in source but not mapped)
+         * 
+         * Key columns used for mapping (accessed by name, not position):
+         * - TASK REF / INC REF: Used for Tialis TASK NUMBER and determining STATUS
+         * - USER'S NAME: Maps to Full Name
+         * - MODEL REQUIRED: Used to determine device type, bundle status, and phone/iPad model
+         * - DEVICE TYPE: Fallback for device type determination
+         * - DATE TO BE SHIPPED: Maps to PO (Order date) and Date Shipped
+         * - EID NUMBER: Maps to EID Number
+         * - SERIAL NUMBER: Maps to Serial Number
+         * - IMEI NUMBER: Maps to IMEI Number (with prefix stripping)
+         * - ASSET TAG: Maps to ASSET Tag
+         * - NS/REP: Used for consumables calculation
+         * - SHIPPING MODEL / SHIPPED MODEL: Used for determining phone/iPad model
+         */
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -990,14 +1419,26 @@
         const consumablesContent = document.getElementById('consumablesContent');
         const consumablesBadge = document.getElementById('consumablesBadge');
         const consumablesTotalCount = document.getElementById('consumablesTotalCount');
+        const downloadConsumablesBtn = document.getElementById('downloadConsumablesBtn');
+
+        // New feature DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const sourceToggleBtn = document.getElementById('sourceToggleBtn');
+        const sourcePreviewSection = document.getElementById('sourcePreviewSection');
+        const sourceHead = document.getElementById('sourceHead');
+        const sourceBody = document.getElementById('sourceBody');
+        const editModeIndicator = document.getElementById('editModeIndicator');
+        const resetEditsBtn = document.getElementById('resetEditsBtn');
 
         let isExpanded = false;
+        let isSourceVisible = false;
 
         // Destination headers
         const destHeaders = [
             'STATUS', 'Tialis TASK NUMBER', 'PO (Order date)', 'COST CENTRE', 'Full Name',
             'Employee ID', 'Employee Email', 'Agency', 'Equipment Account', 'Airtime Account',
-            'Device Type', 'Product code', 'Quanity', 'Device Operating System', 'Device Make',
+            'Device Type', 'Product code', 'Quantity', 'Device Operating System', 'Device Make',
             'EID Number', 'Serial Number', 'IMEI Number', 'Organisational Group', 'Talk plan & Bundle',
             'Data cap', 'Physical SIM Card Required', 'Physical SIM Card Number', 'Date Shipped',
             'ASSET Tag', 'Device Bundle / Device Type', 'iPhone number (to be added by EE)'
@@ -1015,13 +1456,22 @@
                 e.preventDefault();
                 zone.classList.remove('dragover');
                 const file = e.dataTransfer.files[0];
-                if (file && file.name.endsWith('.csv')) {
+                if (file && isValidFileType(file.name)) {
                     processFile(file);
                 }
             });
         }
 
         initDropZone(dropZone);
+
+        function isValidFileType(filename) {
+            const ext = filename.toLowerCase();
+            return ext.endsWith('.csv') || ext.endsWith('.xlsx') || ext.endsWith('.xls');
+        }
+
+        function getFileExtension(filename) {
+            return filename.toLowerCase().split('.').pop();
+        }
 
         fileInput.addEventListener('change', (e) => {
             if (e.target.files[0]) {
@@ -1033,13 +1483,402 @@
         resetBtn.addEventListener('click', clearFile);
         expandBtn.addEventListener('click', toggleExpand);
 
-        function processFile(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const text = e.target.result;
-                parseCSV(text, file.name, file.size);
+        // New feature event listeners
+        searchInput.addEventListener('input', handleSearch);
+        clearSearchBtn.addEventListener('click', clearSearch);
+        sourceToggleBtn.addEventListener('click', toggleSourcePreview);
+        resetEditsBtn.addEventListener('click', resetEdits);
+        downloadConsumablesBtn.addEventListener('click', downloadConsumablesCSV);
+
+        // ===== EXCEL DATE PARSING =====
+        function parseExcelDate(value) {
+            // Check if value is a number (Excel serial date)
+            const num = Number(value);
+            if (!isNaN(num) && num > 30000 && num < 60000) {
+                // Excel serial date: days since 1900-01-01 (with Excel bug for 1900 leap year)
+                const date = new Date((num - 25569) * 86400 * 1000);
+                const year = date.getUTCFullYear();
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            return value;
+        }
+
+        // ===== USB-C DEVICE DETECTION =====
+        function isUSBCDevice(modelRequired, shippingModel) {
+            const model = (modelRequired || '').toLowerCase();
+            const shipped = (shippingModel || '').toLowerCase();
+            const combined = model + ' ' + shipped;
+
+            // iPhone 15/16 series use USB-C
+            if (combined.includes('iphone 15') || combined.includes('iphone 16')) {
+                return true;
+            }
+
+            // iPad 10th Gen and later use USB-C
+            if (combined.includes('ipad')) {
+                if (combined.includes('10th') || combined.includes('10 gen') ||
+                    combined.includes('11th') || combined.includes('11 gen') ||
+                    combined.includes('pro') || combined.includes('air')) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // ===== SEARCH FUNCTIONALITY =====
+        function handleSearch() {
+            searchTerm = searchInput.value.toLowerCase().trim();
+            renderPreviewTable();
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            searchTerm = '';
+            renderPreviewTable();
+        }
+
+        function filterBySearch(data) {
+            if (!searchTerm) return data;
+            return data.filter(row => {
+                return Object.values(row).some(val =>
+                    String(val).toLowerCase().includes(searchTerm)
+                );
+            });
+        }
+
+        // ===== SOURCE PREVIEW TOGGLE =====
+        function toggleSourcePreview() {
+            isSourceVisible = !isSourceVisible;
+            sourceToggleBtn.classList.toggle('active', isSourceVisible);
+            sourcePreviewSection.style.display = isSourceVisible ? 'block' : 'none';
+
+            if (isSourceVisible) {
+                renderSourcePreview();
+            }
+        }
+
+        function renderSourcePreview() {
+            if (!sourceData.length) return;
+
+            // Get source headers (keys from first row)
+            const headers = Object.keys(sourceData[0]);
+
+            // Render header
+            sourceHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+            // Get filtered data matching current view
+            const filteredMapped = filterBySearch(mappedData);
+            const indicesToShow = filteredMapped.map(row => {
+                const idx = originalMappedData.findIndex(orig =>
+                    orig['IMEI Number'] === row['IMEI Number'] &&
+                    orig['Serial Number'] === row['Serial Number']
+                );
+                return sourceRowMapping[idx];
+            }).filter(idx => idx !== undefined);
+
+            // Show source rows that correspond to mapped output
+            const rowsToShow = indicesToShow.length > 0 ?
+                indicesToShow.map(idx => sourceData[idx]) :
+                sourceData.slice(0, mappedData.length);
+
+            sourceBody.innerHTML = rowsToShow.map(row => {
+                return `<tr>${headers.map(h => `<td>${row[h] || '-'}</td>`).join('')}</tr>`;
+            }).join('');
+        }
+
+        // ===== DUPLICATE DETECTION =====
+        function detectDuplicates() {
+            duplicateWarnings = { imei: [], serial: [], asset: [] };
+
+            const imeiMap = {};
+            const serialMap = {};
+            const assetMap = {};
+
+            mappedData.forEach((row, idx) => {
+                const imei = row['IMEI Number'];
+                const serial = row['Serial Number'];
+                const asset = row['ASSET Tag'];
+
+                if (imei && imei !== '-') {
+                    if (imeiMap[imei] !== undefined) {
+                        if (!duplicateWarnings.imei.find(d => d.value === imei)) {
+                            duplicateWarnings.imei.push({ value: imei, rows: [imeiMap[imei] + 1, idx + 1] });
+                        } else {
+                            duplicateWarnings.imei.find(d => d.value === imei).rows.push(idx + 1);
+                        }
+                    } else {
+                        imeiMap[imei] = idx;
+                    }
+                }
+
+                if (serial && serial !== '-') {
+                    if (serialMap[serial] !== undefined) {
+                        if (!duplicateWarnings.serial.find(d => d.value === serial)) {
+                            duplicateWarnings.serial.push({ value: serial, rows: [serialMap[serial] + 1, idx + 1] });
+                        } else {
+                            duplicateWarnings.serial.find(d => d.value === serial).rows.push(idx + 1);
+                        }
+                    } else {
+                        serialMap[serial] = idx;
+                    }
+                }
+
+                if (asset && asset !== '-') {
+                    if (assetMap[asset] !== undefined) {
+                        if (!duplicateWarnings.asset.find(d => d.value === asset)) {
+                            duplicateWarnings.asset.push({ value: asset, rows: [assetMap[asset] + 1, idx + 1] });
+                        } else {
+                            duplicateWarnings.asset.find(d => d.value === asset).rows.push(idx + 1);
+                        }
+                    } else {
+                        assetMap[asset] = idx;
+                    }
+                }
+            });
+        }
+
+        function renderDuplicateWarnings() {
+            const totalDupes = duplicateWarnings.imei.length + duplicateWarnings.serial.length + duplicateWarnings.asset.length;
+            if (totalDupes === 0) return '';
+
+            let detailsHtml = '';
+            if (duplicateWarnings.imei.length) {
+                detailsHtml += duplicateWarnings.imei.map(d =>
+                    `<div class="warning-item"><div class="warning-item-dot"></div>IMEI: ${d.value} (rows ${d.rows.join(', ')})</div>`
+                ).join('');
+            }
+            if (duplicateWarnings.serial.length) {
+                detailsHtml += duplicateWarnings.serial.map(d =>
+                    `<div class="warning-item"><div class="warning-item-dot"></div>Serial: ${d.value} (rows ${d.rows.join(', ')})</div>`
+                ).join('');
+            }
+            if (duplicateWarnings.asset.length) {
+                detailsHtml += duplicateWarnings.asset.map(d =>
+                    `<div class="warning-item"><div class="warning-item-dot"></div>Asset Tag: ${d.value} (rows ${d.rows.join(', ')})</div>`
+                ).join('');
+            }
+
+            return `
+                <div class="warning-panel animate-in">
+                    <div class="warning-header" onclick="toggleWarningDetails(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span>${totalDupes} Duplicate${totalDupes > 1 ? 's' : ''} Detected</span>
+                        <svg class="warning-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="warning-details">${detailsHtml}</div>
+                </div>
+            `;
+        }
+
+        function toggleWarningDetails(header) {
+            const details = header.nextElementSibling;
+            const toggle = header.querySelector('.warning-toggle');
+            details.classList.toggle('show');
+            toggle.classList.toggle('expanded');
+        }
+
+        // ===== FILTERING EXPLANATION =====
+        function renderFilterBreakdown() {
+            const filtered = filterStats.total - filterStats.iPhones - filterStats.iPads;
+            if (filtered === 0) return '';
+
+            return `
+                <div class="filter-breakdown">
+                    <div class="filter-item">
+                        <span class="filter-item-label">Total rows in file:</span>
+                        <span class="filter-item-count">${filterStats.total}</span>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-item-label">iPhones processed:</span>
+                        <span class="filter-item-count">${filterStats.iPhones}</span>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-item-label">iPads processed:</span>
+                        <span class="filter-item-count">${filterStats.iPads}</span>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-item-label">Laptops filtered:</span>
+                        <span class="filter-item-count">${filterStats.laptops}</span>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-item-label">Desktops filtered:</span>
+                        <span class="filter-item-count">${filterStats.desktops}</span>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-item-label">Unknown/Other:</span>
+                        <span class="filter-item-count">${filterStats.unknown}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== EDITABLE CELLS =====
+        function handleCellEdit(event) {
+            const cell = event.target;
+            const rowIdx = parseInt(cell.dataset.rowIndex);
+            const header = cell.dataset.header;
+            const newValue = cell.textContent.trim();
+            const oldValue = originalMappedData[rowIdx][header];
+
+            if (newValue !== String(oldValue)) {
+                mappedData[rowIdx][header] = newValue;
+                cell.classList.add('edited');
+                hasEdits = true;
+                editModeIndicator.classList.add('show');
+                resetEditsBtn.classList.add('show');
+            } else if (newValue === String(originalMappedData[rowIdx][header])) {
+                cell.classList.remove('edited');
+                // Check if any edits remain
+                checkForRemainingEdits();
+            }
+        }
+
+        function checkForRemainingEdits() {
+            hasEdits = mappedData.some((row, idx) =>
+                Object.keys(row).some(key => String(row[key]) !== String(originalMappedData[idx][key]))
+            );
+            editModeIndicator.classList.toggle('show', hasEdits);
+            resetEditsBtn.classList.toggle('show', hasEdits);
+        }
+
+        function resetEdits() {
+            mappedData = JSON.parse(JSON.stringify(originalMappedData));
+            hasEdits = false;
+            editModeIndicator.classList.remove('show');
+            resetEditsBtn.classList.remove('show');
+            renderPreviewTable();
+            showToast('All edits have been reset');
+        }
+
+        // ===== CONSUMABLES DOWNLOAD =====
+        function downloadConsumablesCSV() {
+            const rows = [['Category', 'Item', 'Count']];
+
+            const categories = {
+                'Laptop Accessories': ['Charger (Standard)', 'Charger (High Spec)', 'Laptop Bag', 'Headset', 'Mouse'],
+                'Mobile Accessories': ['USB Plug', 'USB-C Plug', 'Lightning Cable', 'USB-C Cable'],
+                'iPhone Accessories': ['Lightning EarPods', 'USB-C EarPods', 'iPhone SE Case', 'iPhone SE Rugged Case', 'iPhone SE Screen Protector', 'iPhone 12 Case', 'iPhone 12 Rugged Case', 'iPhone 12 Screen Protector', 'iPhone 14 Case', 'iPhone 14 Rugged Case', 'iPhone 14 Screen Protector', 'iPhone 15 Case', 'iPhone 15 Rugged Case', 'iPhone 15 Screen Protector'],
+                'iPad Accessories': ['iPad 9th Gen Case', 'iPad 9th Gen Rugged Case', 'iPad 9th Gen Screen Protector', 'iPad 10th Gen Case', 'iPad 10th Gen Rugged Case', 'iPad 10th Gen Screen Protector', 'iPad 11th Gen Case', 'iPad 11th Gen Rugged Case', 'iPad 11th Gen Screen Protector']
             };
-            reader.readAsText(file);
+
+            for (const [category, items] of Object.entries(categories)) {
+                items.forEach(item => {
+                    const count = consumableCounts[item] || 0;
+                    if (count > 0) {
+                        rows.push([category, item, count]);
+                    }
+                });
+            }
+
+            const csvContent = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Consumables_${dateStr}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast('Consumables CSV downloaded');
+        }
+
+        // ===== RENDER PREVIEW TABLE =====
+        function renderPreviewTable() {
+            const filteredData = filterBySearch(mappedData);
+            const totalCount = mappedData.length;
+            const filteredCount = filteredData.length;
+
+            // Update count display
+            if (searchTerm) {
+                outputCount.textContent = `${filteredCount} of ${totalCount} records`;
+            } else {
+                outputCount.textContent = `${totalCount} records`;
+            }
+
+            if (isExpanded) {
+                renderExpandedTable(filteredData);
+            } else {
+                renderCollapsedTable(filteredData);
+            }
+
+            // Update source preview if visible
+            if (isSourceVisible) {
+                renderSourcePreview();
+            }
+        }
+
+        function renderCollapsedTable(data) {
+            const previewRows = data.slice(0, 10);
+            previewBody.innerHTML = previewRows.map(row => `
+                <tr>
+                    <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
+                    <td>${row['Tialis TASK NUMBER'] || '-'}</td>
+                    <td>${row['Full Name'] || '-'}</td>
+                    <td>${row['Device Type'] || '-'}</td>
+                    <td>${row['Device Bundle / Device Type'] || '-'}</td>
+                    <td>${row['ASSET Tag'] || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderExpandedTable(data) {
+            previewBody.innerHTML = data.map((row, displayIdx) => {
+                // Find actual index in mappedData for editing
+                const actualIdx = mappedData.findIndex(m =>
+                    m['IMEI Number'] === row['IMEI Number'] &&
+                    m['Serial Number'] === row['Serial Number'] &&
+                    m['Full Name'] === row['Full Name']
+                );
+
+                return `
+                    <tr class="revealing" style="animation-delay: ${Math.min(displayIdx * 15, 300)}ms">
+                        ${destHeaders.map(header => {
+                    const val = row[header] ?? '';
+                    const isEdited = actualIdx >= 0 && String(mappedData[actualIdx][header]) !== String(originalMappedData[actualIdx][header]);
+                    const editedClass = isEdited ? 'edited' : '';
+                    if (header === 'STATUS') {
+                        const badgeClass = val === 'New connection' ? 'badge-new' : 'badge-replacement';
+                        return `<td contenteditable="true" data-row-index="${actualIdx}" data-header="${header}" class="${editedClass}" onblur="handleCellEdit(event)"><span class="badge ${badgeClass}">${val}</span></td>`;
+                    }
+                    return `<td contenteditable="true" data-row-index="${actualIdx}" data-header="${header}" class="${editedClass}" onblur="handleCellEdit(event)">${val || '-'}</td>`;
+                }).join('')}
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function processFile(file) {
+            const ext = getFileExtension(file.name);
+            const reader = new FileReader();
+
+            if (ext === 'csv') {
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    parseCSV(text, file.name, file.size);
+                };
+                reader.readAsText(file);
+            } else if (ext === 'xlsx' || ext === 'xls') {
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    parseExcel(data, file.name, file.size);
+                };
+                reader.readAsArrayBuffer(file);
+            }
         }
 
         function parseCSV(text, fileName, fileSize) {
@@ -1085,6 +1924,41 @@
             }
             result.push(current);
             return result;
+        }
+
+        function parseExcel(data, fileName, fileSize) {
+            try {
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Get the first sheet
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert to array of objects (header row becomes keys)
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+                if (jsonData.length < 1) {
+                    showStatus('error', 'Excel file appears to be empty or invalid');
+                    return;
+                }
+
+                sourceData = jsonData.map(row => {
+                    // Normalize: trim all string values
+                    const normalizedRow = {};
+                    for (const key in row) {
+                        const value = row[key];
+                        normalizedRow[key.trim()] = typeof value === 'string' ? value.trim() : String(value);
+                    }
+                    return normalizedRow;
+                });
+
+                updateSourceUI(fileName, fileSize, 'xlsx');
+                mapData();
+                calculateConsumables();
+                updateOutputUI();
+            } catch (error) {
+                showStatus('error', 'Failed to parse Excel file: ' + error.message);
+            }
         }
 
         // Get value with case-insensitive key lookup
@@ -1161,59 +2035,103 @@
         }
 
         function mapData() {
-            mappedData = sourceData
-                .filter(row => {
-                    const deviceType = getDeviceType(
-                        getVal(row, 'MODEL REQUIRED', 'Model Required'),
-                        getVal(row, 'DEVICE TYPE', 'Device Type')
-                    );
-                    return deviceType === 'iPhone' || deviceType === 'iPad';
-                })
-                .map(row => {
-                    const taskRef = getVal(row, 'TASK REF', 'Task Ref');
-                    const incRef = getVal(row, 'INC REF', 'Inc Ref');
-                    const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required');
-                    const deviceTypeCol = getVal(row, 'DEVICE TYPE', 'Device Type');
-                    const dateToBeShipped = getVal(row, 'DATE TO BE SHIPPED', 'Date To Be Shipped', 'Date to be shipped');
+            // Reset filter stats
+            filterStats = { total: sourceData.length, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
+            sourceRowMapping = [];
 
-                    // Use TASK REF if it exists and contains SCTASK, otherwise use INC REF
-                    let tialisTaskNumber = '';
-                    if (taskRef && taskRef.toString().toUpperCase().includes('SCTASK')) {
-                        tialisTaskNumber = taskRef;
-                    } else {
-                        tialisTaskNumber = incRef;
-                    }
+            // First pass: collect filter stats
+            sourceData.forEach((row, idx) => {
+                const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required');
+                const deviceTypeCol = getVal(row, 'DEVICE TYPE', 'Device Type');
+                const deviceType = getDeviceType(modelRequired, deviceTypeCol);
+                const modelLower = (modelRequired || '').toLowerCase();
+                const dtLower = (deviceTypeCol || '').toLowerCase();
 
-                    return {
-                        'STATUS': getStatus(taskRef, incRef),
-                        'Tialis TASK NUMBER': tialisTaskNumber,
-                        'PO (Order date)': dateToBeShipped,
-                        'COST CENTRE': '',
-                        'Full Name': getVal(row, "USER'S NAME", "User's Name", "USERS NAME"),
-                        'Employee ID': '',
-                        'Employee Email': '',
-                        'Agency': 'DEFRA AGENCY',
-                        'Equipment Account': '',
-                        'Airtime Account': '',
-                        'Device Type': getDeviceType(modelRequired, deviceTypeCol),
-                        'Product code': '',
-                        'Quanity': 1,
-                        'Device Operating System': 'iOS',
-                        'Device Make': 'Apple',
-                        'EID Number': getVal(row, 'EID NUMBER', 'EID Number', 'Eid Number'),
-                        'Serial Number': getVal(row, 'SERIAL NUMBER', 'Serial Number'),
-                        'IMEI Number': extractIMEI(getVal(row, 'IMEI NUMBER', 'IMEI Number', 'Imei Number')),
-                        'Organisational Group': '',
-                        'Talk plan & Bundle': '',
-                        'Data cap': '',
-                        'Physical SIM Card Required': '',
-                        'Physical SIM Card Number': '',
-                        'Date Shipped': dateToBeShipped,
-                        'ASSET Tag': getVal(row, 'ASSET TAG', 'Asset Tag'),
-                        'Device Bundle / Device Type': getBundleType(modelRequired),
-                        'iPhone number (to be added by EE)': ''
-                    };
+                if (deviceType === 'iPhone') {
+                    // Will be processed
+                } else if (deviceType === 'iPad') {
+                    // Will be processed
+                } else if (dtLower.includes('laptop') || modelLower.includes('dell') || modelLower.includes('latitude') || modelLower.includes('laptop')) {
+                    filterStats.laptops++;
+                } else if (modelLower.includes('desktop') || modelLower.includes('shared desktop')) {
+                    filterStats.desktops++;
+                } else {
+                    filterStats.unknown++;
+                }
+            });
+
+            // Second pass: create mapped data
+            mappedData = [];
+            sourceData.forEach((row, sourceIdx) => {
+                const deviceType = getDeviceType(
+                    getVal(row, 'MODEL REQUIRED', 'Model Required'),
+                    getVal(row, 'DEVICE TYPE', 'Device Type')
+                );
+
+                if (deviceType !== 'iPhone' && deviceType !== 'iPad') {
+                    return;
+                }
+
+                // Track which source indices map to output
+                sourceRowMapping.push(sourceIdx);
+
+                // Track device type stats
+                if (deviceType === 'iPhone') filterStats.iPhones++;
+                else if (deviceType === 'iPad') filterStats.iPads++;
+
+                const taskRef = getVal(row, 'TASK REF', 'Task Ref');
+                const incRef = getVal(row, 'INC REF', 'Inc Ref');
+                const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required');
+                const deviceTypeCol = getVal(row, 'DEVICE TYPE', 'Device Type');
+                let dateToBeShipped = getVal(row, 'DATE TO BE SHIPPED', 'Date To Be Shipped', 'Date to be shipped');
+
+                // Apply Excel date parsing
+                dateToBeShipped = parseExcelDate(dateToBeShipped);
+
+                // Use TASK REF if it exists and contains SCTASK, otherwise use INC REF
+                let tialisTaskNumber = '';
+                if (taskRef && taskRef.toString().toUpperCase().includes('SCTASK')) {
+                    tialisTaskNumber = taskRef;
+                } else {
+                    tialisTaskNumber = incRef;
+                }
+
+                mappedData.push({
+                    'STATUS': getStatus(taskRef, incRef),
+                    'Tialis TASK NUMBER': tialisTaskNumber,
+                    'PO (Order date)': dateToBeShipped,
+                    'COST CENTRE': '',
+                    'Full Name': getVal(row, "USER'S NAME", "User's Name", "USERS NAME"),
+                    'Employee ID': '',
+                    'Employee Email': '',
+                    'Agency': 'DEFRA AGENCY',
+                    'Equipment Account': '',
+                    'Airtime Account': '',
+                    'Device Type': getDeviceType(modelRequired, deviceTypeCol),
+                    'Product code': '',
+                    'Quanity': 1,
+                    'Device Operating System': 'iOS',
+                    'Device Make': 'Apple',
+                    'EID Number': getVal(row, 'EID NUMBER', 'EID Number', 'Eid Number'),
+                    'Serial Number': getVal(row, 'SERIAL NUMBER', 'Serial Number'),
+                    'IMEI Number': extractIMEI(getVal(row, 'IMEI NUMBER', 'IMEI Number', 'Imei Number')),
+                    'Organisational Group': '',
+                    'Talk plan & Bundle': '',
+                    'Data cap': '',
+                    'Physical SIM Card Required': '',
+                    'Physical SIM Card Number': '',
+                    'Date Shipped': dateToBeShipped,
+                    'ASSET Tag': getVal(row, 'ASSET TAG', 'Asset Tag'),
+                    'Device Bundle / Device Type': getBundleType(modelRequired),
+                    'iPhone number (to be added by EE)': ''
                 });
+            });
+
+            // Store original for reset functionality
+            originalMappedData = JSON.parse(JSON.stringify(mappedData));
+
+            // Detect duplicates
+            detectDuplicates();
         }
 
         // ===== CONSUMABLES CALCULATION =====
@@ -1329,8 +2247,8 @@
             const model = modelRequired.toString().toLowerCase();
             // Check for bundle indicators
             return model.includes('bundle') ||
-                   model.includes('standard bundle') ||
-                   model.includes('rugged bundle');
+                model.includes('standard bundle') ||
+                model.includes('rugged bundle');
         }
 
         function isIPadDevice(deviceType, modelRequired) {
@@ -1390,7 +2308,7 @@
         }
 
         function calculateConsumables() {
-            // Reset counts
+            // Reset counts - now includes USB-C variants
             consumableCounts = {
                 // Laptop consumables
                 'Charger (Standard)': 0,
@@ -1398,11 +2316,14 @@
                 'Laptop Bag': 0,
                 'Headset': 0,
                 'Mouse': 0,
-                // Mobile (iPhone + iPad shared)
+                // Mobile cables (Lightning vs USB-C)
                 'USB Plug': 0,
+                'USB-C Plug': 0,
                 'Lightning Cable': 0,
-                // iPhone specific
+                'USB-C Cable': 0,
+                // iPhone accessories
                 'Lightning EarPods': 0,
+                'USB-C EarPods': 0,
                 'iPhone SE Case': 0,
                 'iPhone SE Rugged Case': 0,
                 'iPhone SE Screen Protector': 0,
@@ -1412,10 +2333,16 @@
                 'iPhone 14 Case': 0,
                 'iPhone 14 Rugged Case': 0,
                 'iPhone 14 Screen Protector': 0,
+                'iPhone 15 Case': 0,
+                'iPhone 15 Rugged Case': 0,
+                'iPhone 15 Screen Protector': 0,
                 // iPad specific
                 'iPad 9th Gen Case': 0,
                 'iPad 9th Gen Rugged Case': 0,
                 'iPad 9th Gen Screen Protector': 0,
+                'iPad 10th Gen Case': 0,
+                'iPad 10th Gen Rugged Case': 0,
+                'iPad 10th Gen Screen Protector': 0,
                 'iPad 11th Gen Case': 0,
                 'iPad 11th Gen Rugged Case': 0,
                 'iPad 11th Gen Screen Protector': 0
@@ -1428,22 +2355,23 @@
                 const shippingModel = getVal(row, 'SHIPPING MODEL', 'Shipping Model', 'Shipping model');
 
                 // Determine NS vs REP - anything not explicitly REP is treated as NS
-                // This handles: "NS", "Yes", empty, "NEW", "NEW STARTER", etc.
                 const isREP = nsRep.includes('REP') || nsRep === 'REPLACEMENT';
                 const isNS = !isREP;
 
-                // Skip rows without NS/REP designation or desktop/shared devices
+                // Skip desktops
                 const modelLower = (modelRequired || '').toLowerCase();
                 if (modelLower.includes('shared desktop') || modelLower.includes('desktop')) {
-                    return; // Skip desktops
+                    return;
                 }
+
+                // Check if device uses USB-C
+                const usesUSBC = isUSBCDevice(modelRequired, shippingModel);
 
                 // ===== LAPTOP RULES =====
                 if (isLaptopDevice(deviceType, modelRequired)) {
                     const isHighSpec = isHighSpecLaptop(modelRequired);
 
                     if (isNS) {
-                        // NS Laptop: charger + bag + headset + mouse
                         if (isHighSpec) {
                             consumableCounts['Charger (High Spec)']++;
                         } else {
@@ -1453,7 +2381,6 @@
                         consumableCounts['Headset']++;
                         consumableCounts['Mouse']++;
                     } else if (isREP) {
-                        // REP Laptop: charger only
                         if (isHighSpec) {
                             consumableCounts['Charger (High Spec)']++;
                         } else {
@@ -1467,19 +2394,37 @@
                     const phoneModel = getPhoneModel(modelRequired, shippingModel);
                     const isBundleRequest = isBundle(modelRequired);
 
-                    // All mobile devices get plug + cable
-                    consumableCounts['USB Plug']++;
-                    consumableCounts['Lightning Cable']++;
+                    // All mobile devices get plug + cable (USB-C or Lightning)
+                    if (usesUSBC) {
+                        consumableCounts['USB-C Plug']++;
+                        consumableCounts['USB-C Cable']++;
+                    } else {
+                        consumableCounts['USB Plug']++;
+                        consumableCounts['Lightning Cable']++;
+                    }
 
-                    // Bundle orders get EarPods + case + SP (regardless of NS/REP)
+                    // Bundle orders get EarPods + case + SP
                     if (isBundleRequest) {
-                        consumableCounts['Lightning EarPods']++;
+                        if (usesUSBC) {
+                            consumableCounts['USB-C EarPods']++;
+                        } else {
+                            consumableCounts['Lightning EarPods']++;
+                        }
 
-                        // Check if rugged bundle
                         const isRugged = modelRequired.toLowerCase().includes('rugged');
 
-                        // Case & Screen Protector based on phone model and rugged status
-                        if (phoneModel === 'iPhone SE') {
+                        // Detect iPhone 15/16 for case matching
+                        const model = (modelRequired || '').toLowerCase();
+                        const isIPhone15Plus = model.includes('iphone 15') || model.includes('iphone 16');
+
+                        if (isIPhone15Plus) {
+                            if (isRugged) {
+                                consumableCounts['iPhone 15 Rugged Case']++;
+                            } else {
+                                consumableCounts['iPhone 15 Case']++;
+                            }
+                            consumableCounts['iPhone 15 Screen Protector']++;
+                        } else if (phoneModel === 'iPhone SE') {
                             if (isRugged) {
                                 consumableCounts['iPhone SE Rugged Case']++;
                             } else {
@@ -1494,7 +2439,6 @@
                             }
                             consumableCounts['iPhone 12 Screen Protector']++;
                         } else {
-                            // Default to iPhone 14 (covers iPhone 11, XR, 14, 6.1" etc)
                             if (isRugged) {
                                 consumableCounts['iPhone 14 Rugged Case']++;
                             } else {
@@ -1509,17 +2453,21 @@
                 if (isIPadDevice(deviceType, modelRequired)) {
                     const isBundleRequest = isIPadBundle(modelRequired);
 
-                    // Only process iPads with bundle in MODEL REQUIRED
                     if (isBundleRequest) {
                         const shippedModel = getVal(row, 'SHIPPED MODEL', 'Shipped Model', 'shipped model', 'SHIPPING MODEL', 'Shipping Model');
                         const iPadModel = getIPadModel(modelRequired, shippedModel);
                         const isRugged = isRuggedBundle(modelRequired);
 
-                        // iPad bundles get: plug + lightning cable (shared with iPhone) + case + screen protector
-                        consumableCounts['USB Plug']++;
-                        consumableCounts['Lightning Cable']++;
+                        // iPad bundles get appropriate cable/plug
+                        if (usesUSBC) {
+                            consumableCounts['USB-C Plug']++;
+                            consumableCounts['USB-C Cable']++;
+                        } else {
+                            consumableCounts['USB Plug']++;
+                            consumableCounts['Lightning Cable']++;
+                        }
 
-                        // Case & Screen Protector based on iPad model and rugged status
+                        // Case & Screen Protector based on iPad model
                         if (iPadModel === 'iPad 9th Gen') {
                             if (isRugged) {
                                 consumableCounts['iPad 9th Gen Rugged Case']++;
@@ -1527,8 +2475,15 @@
                                 consumableCounts['iPad 9th Gen Case']++;
                             }
                             consumableCounts['iPad 9th Gen Screen Protector']++;
+                        } else if (iPadModel === 'iPad 10th Gen') {
+                            if (isRugged) {
+                                consumableCounts['iPad 10th Gen Rugged Case']++;
+                            } else {
+                                consumableCounts['iPad 10th Gen Case']++;
+                            }
+                            consumableCounts['iPad 10th Gen Screen Protector']++;
                         } else {
-                            // Default to 11th Gen (covers 10th, 11th gen and unspecified)
+                            // Default to 11th Gen
                             if (isRugged) {
                                 consumableCounts['iPad 11th Gen Rugged Case']++;
                             } else {
@@ -1546,41 +2501,50 @@
         function updateConsumablesUI() {
             // Filter to only show items with count > 0 or all items grouped
             const laptopItems = [
-                { name: 'Charger (Standard)', count: consumableCounts['Charger (Standard)'] },
-                { name: 'Charger (High Spec)', count: consumableCounts['Charger (High Spec)'] },
-                { name: 'Laptop Bag', count: consumableCounts['Laptop Bag'] },
-                { name: 'Headset', count: consumableCounts['Headset'] },
-                { name: 'Mouse', count: consumableCounts['Mouse'] }
+                { name: 'Charger (Standard)', count: consumableCounts['Charger (Standard)'] || 0 },
+                { name: 'Charger (High Spec)', count: consumableCounts['Charger (High Spec)'] || 0 },
+                { name: 'Laptop Bag', count: consumableCounts['Laptop Bag'] || 0 },
+                { name: 'Headset', count: consumableCounts['Headset'] || 0 },
+                { name: 'Mouse', count: consumableCounts['Mouse'] || 0 }
             ];
 
-            // Shared mobile items (iPhone + iPad)
+            // Shared mobile items (iPhone + iPad) - now includes USB-C
             const sharedMobileItems = [
-                { name: 'USB Plug', count: consumableCounts['USB Plug'] },
-                { name: 'Lightning Cable', count: consumableCounts['Lightning Cable'] }
+                { name: 'USB Plug', count: consumableCounts['USB Plug'] || 0 },
+                { name: 'USB-C Plug', count: consumableCounts['USB-C Plug'] || 0 },
+                { name: 'Lightning Cable', count: consumableCounts['Lightning Cable'] || 0 },
+                { name: 'USB-C Cable', count: consumableCounts['USB-C Cable'] || 0 }
             ];
 
-            // iPhone specific items
+            // iPhone specific items - now includes USB-C EarPods and iPhone 15
             const iPhoneItems = [
-                { name: 'Lightning EarPods', count: consumableCounts['Lightning EarPods'] },
-                { name: 'iPhone SE Case', count: consumableCounts['iPhone SE Case'] },
-                { name: 'iPhone SE Rugged Case', count: consumableCounts['iPhone SE Rugged Case'] },
-                { name: 'iPhone SE Screen Protector', count: consumableCounts['iPhone SE Screen Protector'] },
-                { name: 'iPhone 12 Case', count: consumableCounts['iPhone 12 Case'] },
-                { name: 'iPhone 12 Rugged Case', count: consumableCounts['iPhone 12 Rugged Case'] },
-                { name: 'iPhone 12 Screen Protector', count: consumableCounts['iPhone 12 Screen Protector'] },
-                { name: 'iPhone 14 Case', count: consumableCounts['iPhone 14 Case'] },
-                { name: 'iPhone 14 Rugged Case', count: consumableCounts['iPhone 14 Rugged Case'] },
-                { name: 'iPhone 14 Screen Protector', count: consumableCounts['iPhone 14 Screen Protector'] }
+                { name: 'Lightning EarPods', count: consumableCounts['Lightning EarPods'] || 0 },
+                { name: 'USB-C EarPods', count: consumableCounts['USB-C EarPods'] || 0 },
+                { name: 'iPhone SE Case', count: consumableCounts['iPhone SE Case'] || 0 },
+                { name: 'iPhone SE Rugged Case', count: consumableCounts['iPhone SE Rugged Case'] || 0 },
+                { name: 'iPhone SE Screen Protector', count: consumableCounts['iPhone SE Screen Protector'] || 0 },
+                { name: 'iPhone 12 Case', count: consumableCounts['iPhone 12 Case'] || 0 },
+                { name: 'iPhone 12 Rugged Case', count: consumableCounts['iPhone 12 Rugged Case'] || 0 },
+                { name: 'iPhone 12 Screen Protector', count: consumableCounts['iPhone 12 Screen Protector'] || 0 },
+                { name: 'iPhone 14 Case', count: consumableCounts['iPhone 14 Case'] || 0 },
+                { name: 'iPhone 14 Rugged Case', count: consumableCounts['iPhone 14 Rugged Case'] || 0 },
+                { name: 'iPhone 14 Screen Protector', count: consumableCounts['iPhone 14 Screen Protector'] || 0 },
+                { name: 'iPhone 15 Case', count: consumableCounts['iPhone 15 Case'] || 0 },
+                { name: 'iPhone 15 Rugged Case', count: consumableCounts['iPhone 15 Rugged Case'] || 0 },
+                { name: 'iPhone 15 Screen Protector', count: consumableCounts['iPhone 15 Screen Protector'] || 0 }
             ];
 
-            // iPad specific items
+            // iPad specific items - now includes iPad 10th Gen
             const iPadItems = [
-                { name: 'iPad 9th Gen Case', count: consumableCounts['iPad 9th Gen Case'] },
-                { name: 'iPad 9th Gen Rugged Case', count: consumableCounts['iPad 9th Gen Rugged Case'] },
-                { name: 'iPad 9th Gen Screen Protector', count: consumableCounts['iPad 9th Gen Screen Protector'] },
-                { name: 'iPad 11th Gen Case', count: consumableCounts['iPad 11th Gen Case'] },
-                { name: 'iPad 11th Gen Rugged Case', count: consumableCounts['iPad 11th Gen Rugged Case'] },
-                { name: 'iPad 11th Gen Screen Protector', count: consumableCounts['iPad 11th Gen Screen Protector'] }
+                { name: 'iPad 9th Gen Case', count: consumableCounts['iPad 9th Gen Case'] || 0 },
+                { name: 'iPad 9th Gen Rugged Case', count: consumableCounts['iPad 9th Gen Rugged Case'] || 0 },
+                { name: 'iPad 9th Gen Screen Protector', count: consumableCounts['iPad 9th Gen Screen Protector'] || 0 },
+                { name: 'iPad 10th Gen Case', count: consumableCounts['iPad 10th Gen Case'] || 0 },
+                { name: 'iPad 10th Gen Rugged Case', count: consumableCounts['iPad 10th Gen Rugged Case'] || 0 },
+                { name: 'iPad 10th Gen Screen Protector', count: consumableCounts['iPad 10th Gen Screen Protector'] || 0 },
+                { name: 'iPad 11th Gen Case', count: consumableCounts['iPad 11th Gen Case'] || 0 },
+                { name: 'iPad 11th Gen Rugged Case', count: consumableCounts['iPad 11th Gen Rugged Case'] || 0 },
+                { name: 'iPad 11th Gen Screen Protector', count: consumableCounts['iPad 11th Gen Screen Protector'] || 0 }
             ];
 
             // Calculate totals
@@ -1695,12 +2659,13 @@
             consumablesBody.innerHTML = '';
         }
 
-        function updateSourceUI(fileName, fileSize) {
+        function updateSourceUI(fileName, fileSize, fileType = 'csv') {
             const sizeStr = fileSize > 1024 ? `${(fileSize / 1024).toFixed(1)} KB` : `${fileSize} B`;
+            const typeLabel = fileType.toUpperCase();
 
             sourceContent.innerHTML = `
                 <div class="file-loaded animate-in">
-                    <div class="file-icon">CSV</div>
+                    <div class="file-icon">${typeLabel}</div>
                     <div class="file-details">
                         <div class="file-name">${fileName}</div>
                         <div class="file-meta">${sizeStr} &bull; ${sourceData.length} rows loaded</div>
@@ -1736,7 +2701,28 @@
                 </tr>
             `;
 
-            showStatus('success', `Successfully mapped ${mappedData.length} iPhone/iPad records`);
+            // Build status message with optional warnings
+            let statusHtml = `Successfully mapped ${mappedData.length} iPhone/iPad records`;
+
+            // Add filter breakdown if rows were filtered
+            const filtered = filterStats.total - filterStats.iPhones - filterStats.iPads;
+            if (filtered > 0) {
+                statusHtml += ` (${filtered} non-iPhone/iPad rows filtered)`;
+            }
+
+            showStatus('success', statusHtml);
+
+            // Display duplicate warnings if any
+            const duplicateHtml = renderDuplicateWarnings();
+            if (duplicateHtml) {
+                statusArea.innerHTML += duplicateHtml;
+            }
+
+            // Display filter breakdown
+            const filterHtml = renderFilterBreakdown();
+            if (filterHtml) {
+                statusArea.innerHTML += filterHtml;
+            }
 
             outputCount.textContent = `${mappedData.length} records`;
 
@@ -1744,18 +2730,8 @@
             previewSection.style.display = 'block';
             emptyPreview.style.display = 'none';
 
-            // Generate preview rows
-            const previewRows = mappedData.slice(0, 10);
-            previewBody.innerHTML = previewRows.map(row => `
-                <tr>
-                    <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
-                    <td>${row['Tialis TASK NUMBER'] || '-'}</td>
-                    <td>${row['Full Name'] || '-'}</td>
-                    <td>${row['Device Type'] || '-'}</td>
-                    <td>${row['Device Bundle / Device Type'] || '-'}</td>
-                    <td>${row['ASSET Tag'] || '-'}</td>
-                </tr>
-            `).join('');
+            // Generate preview rows using the new render function
+            renderPreviewTable();
 
             // Always show expand button if there's data
             if (mappedData.length > 0) {
@@ -1786,19 +2762,8 @@
                     </tr>
                 `;
 
-                // Update body to show all rows with all columns
-                previewBody.innerHTML = mappedData.map((row, idx) => `
-                    <tr class="revealing" style="animation-delay: ${Math.min(idx * 15, 300)}ms">
-                        ${destHeaders.map(header => {
-                            const val = row[header] ?? '';
-                            if (header === 'STATUS') {
-                                const badgeClass = val === 'New connection' ? 'badge-new' : 'badge-replacement';
-                                return `<td><span class="badge ${badgeClass}">${val}</span></td>`;
-                            }
-                            return `<td>${val || '-'}</td>`;
-                        }).join('')}
-                    </tr>
-                `).join('');
+                // Use renderPreviewTable which handles editable cells and search filtering
+                renderPreviewTable();
 
             } else {
                 // Collapse: show preview (10 rows, 6 columns)
@@ -1821,18 +2786,8 @@
                     </tr>
                 `;
 
-                // Reset body to preview rows
-                const previewRows = mappedData.slice(0, 10);
-                previewBody.innerHTML = previewRows.map(row => `
-                    <tr>
-                        <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
-                        <td>${row['Tialis TASK NUMBER'] || '-'}</td>
-                        <td>${row['Full Name'] || '-'}</td>
-                        <td>${row['Device Type'] || '-'}</td>
-                        <td>${row['Device Bundle / Device Type'] || '-'}</td>
-                        <td>${row['ASSET Tag'] || '-'}</td>
-                    </tr>
-                `).join('');
+                // Use renderPreviewTable which handles search filtering
+                renderPreviewTable();
 
                 // Scroll back to top
                 previewScroll.scrollTop = 0;
@@ -1885,6 +2840,13 @@
         function clearFile() {
             sourceData = [];
             mappedData = [];
+            originalMappedData = [];
+            filterStats = { total: 0, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
+            duplicateWarnings = { imei: [], serial: [], asset: [] };
+            searchTerm = '';
+            hasEdits = false;
+            sourceRowMapping = [];
+            isSourceVisible = false;
             clearConsumables();
 
             sourceContent.innerHTML = `
@@ -1898,8 +2860,8 @@
                             <polyline points="10 9 9 9 8 9"/>
                         </svg>
                     </div>
-                    <p>Drop your CSV file here</p>
-                    <span class="hint">or click to browse</span>
+                    <p>Drop your CSV or Excel file here</p>
+                    <span class="hint">Supports .csv, .xlsx, .xls</span>
                 </div>
             `;
 
@@ -1920,6 +2882,15 @@
             previewTable.classList.remove('expanded');
             previewFade.classList.remove('hidden');
             columnIndicator.style.display = 'none';
+
+            // Reset new UI elements
+            searchInput.value = '';
+            sourceToggleBtn.classList.remove('active');
+            sourcePreviewSection.style.display = 'none';
+            editModeIndicator.classList.remove('show');
+            resetEditsBtn.classList.remove('show');
+            sourceHead.innerHTML = '';
+            sourceBody.innerHTML = '';
         }
 
         function showToast(message) {
@@ -1931,4 +2902,5 @@
         }
     </script>
 </body>
+
 </html>
