@@ -1175,6 +1175,195 @@
             width: 12px;
             height: 12px;
         }
+
+        /* Buy Me a Coffee Button */
+        .coffee-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            border: none;
+            color: white;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .coffee-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
+        .coffee-btn:active {
+            transform: translateY(0);
+        }
+
+        .coffee-btn .coffee-icon {
+            font-size: 16px;
+        }
+
+        /* Coffee Modal */
+        .coffee-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .coffee-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .coffee-modal {
+            background: white;
+            border: var(--border-width) solid var(--black);
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .coffee-modal-overlay.show .coffee-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .coffee-modal-header {
+            padding: 20px 24px;
+            border-bottom: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .coffee-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .coffee-modal-close {
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .coffee-modal-close:hover {
+            opacity: 1;
+        }
+
+        .coffee-modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .coffee-modal-body {
+            padding: 24px;
+        }
+
+        .coffee-image {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #6F4E37 0%, #8B5A2B 50%, #D2691E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            margin-bottom: 20px;
+            border: var(--border-width) solid var(--black);
+        }
+
+        .coffee-price {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .coffee-price-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .coffee-price-label {
+            font-size: 12px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .coffee-details {
+            background: var(--gray-100);
+            border: var(--border-width) solid var(--black);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .coffee-detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--gray-200);
+        }
+
+        .coffee-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .coffee-detail-label {
+            color: var(--gray-600);
+        }
+
+        .coffee-detail-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .coffee-pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--black);
+            color: white;
+            border: none;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .coffee-pay-btn:hover {
+            background: var(--gray-600);
+        }
+
+        .coffee-disclaimer {
+            text-align: center;
+            font-size: 10px;
+            color: var(--gray-400);
+            margin-top: 12px;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -1183,10 +1372,59 @@
         <header>
             <div class="header-top">
                 <h1>iPhone/iPad<br>Data Mapper</h1>
-                <span class="version-tag">V2.1</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="coffee-btn" id="coffeeBtn">
+                        <span class="coffee-icon">☕</span>
+                        Buy me a coffee
+                    </button>
+                    <span class="version-tag">V2.1</span>
+                </div>
             </div>
             <p class="subtitle">Upload source file to map device data and calculate consumables</p>
         </header>
+
+        <!-- Coffee Modal -->
+        <div class="coffee-modal-overlay" id="coffeeModal">
+            <div class="coffee-modal">
+                <div class="coffee-modal-header">
+                    <span class="coffee-modal-title">☕ Support the Developer</span>
+                    <button class="coffee-modal-close" id="coffeeModalClose">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="coffee-modal-body">
+                    <div class="coffee-image">☕</div>
+                    <div class="coffee-price">
+                        <div class="coffee-price-amount">£100</div>
+                        <div class="coffee-price-label">Premium Artisan Coffee Experience™</div>
+                    </div>
+                    <div class="coffee-details">
+                        <div class="coffee-detail-row">
+                            <span class="coffee-detail-label">Recipient</span>
+                            <span class="coffee-detail-value">Totally Real Person</span>
+                        </div>
+                        <div class="coffee-detail-row">
+                            <span class="coffee-detail-label">Account</span>
+                            <span class="coffee-detail-value">XX-XX-42</span>
+                        </div>
+                        <div class="coffee-detail-row">
+                            <span class="coffee-detail-label">Sort Code</span>
+                            <span class="coffee-detail-value">00-00-00</span>
+                        </div>
+                        <div class="coffee-detail-row">
+                            <span class="coffee-detail-label">Reference</span>
+                            <span class="coffee-detail-value">COFFEE-VIP-2024</span>
+                        </div>
+                    </div>
+                    <button class="coffee-pay-btn" id="coffeePayBtn">💳 Proceed to Payment</button>
+                    <p class="coffee-disclaimer">*This is a joke. No actual payment will be processed. Please don't
+                        actually send money! 😄</p>
+                </div>
+            </div>
+        </div>
 
         <div class="main-grid">
             <div class="card">
@@ -1525,6 +1763,36 @@
         sourceToggleBtn.addEventListener('click', toggleSourcePreview);
         resetEditsBtn.addEventListener('click', resetEdits);
         downloadConsumablesBtn.addEventListener('click', downloadConsumablesCSV);
+
+        // Coffee Modal functionality
+        const coffeeBtn = document.getElementById('coffeeBtn');
+        const coffeeModal = document.getElementById('coffeeModal');
+        const coffeeModalClose = document.getElementById('coffeeModalClose');
+        const coffeePayBtn = document.getElementById('coffeePayBtn');
+
+        coffeeBtn.addEventListener('click', () => {
+            coffeeModal.classList.add('show');
+        });
+
+        coffeeModalClose.addEventListener('click', () => {
+            coffeeModal.classList.remove('show');
+        });
+
+        coffeeModal.addEventListener('click', (e) => {
+            if (e.target === coffeeModal) {
+                coffeeModal.classList.remove('show');
+            }
+        });
+
+        coffeePayBtn.addEventListener('click', () => {
+            coffeePayBtn.textContent = '✨ Thanks for the thought! ✨';
+            coffeePayBtn.style.background = 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)';
+            setTimeout(() => {
+                coffeeModal.classList.remove('show');
+                coffeePayBtn.innerHTML = '💳 Proceed to Payment';
+                coffeePayBtn.style.background = '';
+            }, 2000);
+        });
 
         // ===== EXCEL DATE PARSING =====
         function parseExcelDate(value) {
