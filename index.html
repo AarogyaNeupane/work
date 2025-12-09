@@ -2813,11 +2813,18 @@
         }
 
         function downloadCSV() {
+            // Columns that contain long numeric values that should be treated as text
+            const numericTextColumns = ['EID Number', 'IMEI Number', 'Serial Number', 'Physical SIM Card Number'];
+
             const csvContent = [
                 destHeaders.join(','),
                 ...mappedData.map(row =>
                     destHeaders.map(header => {
                         const value = String(row[header] ?? '');
+                        // Force text format for long numeric columns to prevent Excel E+14 notation
+                        if (numericTextColumns.includes(header) && value) {
+                            return `="${value}"`;
+                        }
                         return value.includes(',') || value.includes('"') || value.includes('\n')
                             ? `"${value.replace(/"/g, '""')}"`
                             : value;
