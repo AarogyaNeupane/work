@@ -276,6 +276,8 @@
             border: var(--border-width) solid var(--black);
             overflow: hidden;
             position: relative;
+            max-width: 100%;
+            contain: inline-size;
         }
 
         .preview-table {
@@ -289,6 +291,10 @@
             table-layout: auto;
             width: max-content;
             min-width: 100%;
+        }
+
+        .preview-table.expanded th {
+            white-space: nowrap;
         }
 
         .preview-table th {
@@ -333,13 +339,13 @@
         .preview-scroll {
             max-height: 280px;
             overflow-y: auto;
-            overflow-x: hidden;
+            overflow-x: auto;
             transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .preview-scroll.expanded {
             max-height: 60vh;
-            overflow-x: auto;
+            overflow: auto;
         }
 
         .preview-scroll::-webkit-scrollbar {
@@ -1015,8 +1021,15 @@
             display: block;
         }
 
+        .source-preview-section {
+            max-width: 100%;
+            overflow: hidden;
+            contain: inline-size;
+        }
+
         .source-table {
-            width: 100%;
+            width: max-content;
+            min-width: 100%;
             font-size: 11px;
             border-collapse: collapse;
             table-layout: auto;
@@ -1033,6 +1046,7 @@
             letter-spacing: 0.5px;
             position: sticky;
             top: 0;
+            z-index: 10;
             white-space: nowrap;
         }
 
@@ -1042,12 +1056,34 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             white-space: nowrap;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .source-scroll {
-            max-height: 300px;
+            max-height: 280px;
             overflow: auto;
             border: var(--border-width) solid var(--gray-400);
+            max-width: 100%;
+        }
+
+        .source-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .source-scroll::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .source-scroll::-webkit-scrollbar-thumb {
+            background: var(--gray-600);
+            border-radius: 0;
+        }
+
+        .source-scroll::-webkit-scrollbar-corner {
+            background: var(--gray-100);
         }
 
         /* Consumables Download Button */
@@ -1765,8 +1801,7 @@
 
             const categories = {
                 'Laptop Accessories': ['Charger (Standard)', 'Charger (High Spec)', 'Laptop Bag', 'Headset', 'Mouse'],
-                'Mobile Accessories': ['USB Plug', 'USB-C Plug', 'Lightning Cable', 'USB-C Cable'],
-                'iPhone Accessories': ['Lightning EarPods', 'USB-C EarPods', 'iPhone SE Case', 'iPhone SE Rugged Case', 'iPhone SE Screen Protector', 'iPhone 12 Case', 'iPhone 12 Rugged Case', 'iPhone 12 Screen Protector', 'iPhone 14 Case', 'iPhone 14 Rugged Case', 'iPhone 14 Screen Protector', 'iPhone 15 Case', 'iPhone 15 Rugged Case', 'iPhone 15 Screen Protector'],
+                'iPhone Accessories': ['USB-C Plug', 'Lightning Cable', 'USB-C Cable', 'Lightning EarPods', 'USB-C EarPods', 'iPhone SE Case', 'iPhone SE Rugged Case', 'iPhone SE Screen Protector', 'iPhone 12 Case', 'iPhone 12 Rugged Case', 'iPhone 12 Screen Protector', 'iPhone 14 Case', 'iPhone 14 Rugged Case', 'iPhone 14 Screen Protector', 'iPhone 15 Case', 'iPhone 15 Rugged Case', 'iPhone 15 Screen Protector', 'iPhone 16 Case', 'iPhone 16 Rugged Case', 'iPhone 16 Screen Protector'],
                 'iPad Accessories': ['iPad 9th Gen Case', 'iPad 9th Gen Rugged Case', 'iPad 9th Gen Screen Protector', 'iPad 10th Gen Case', 'iPad 10th Gen Rugged Case', 'iPad 10th Gen Screen Protector', 'iPad 11th Gen Case', 'iPad 11th Gen Rugged Case', 'iPad 11th Gen Screen Protector']
             };
 
@@ -2196,45 +2231,32 @@
 
         function getPhoneModel(modelRequired, shippingModel) {
             // Priority: check shipping model first (actual shipped device)
+            // Use regex with stricter patterns to avoid false matches (e.g., "12" in "12345")
             const shipping = (shippingModel || '').toString().toLowerCase();
             const model = (modelRequired || '').toString().toLowerCase();
 
-            // Check shipping model first for explicit model
-            if (shipping.includes('iphone 12') || shipping.includes('12')) {
-                return 'iPhone 12';
-            }
-            if (shipping.includes('iphone 14') || shipping.includes('14')) {
-                return 'iPhone 14';
-            }
-            if (shipping.includes('iphone se') || shipping.includes(' se')) {
+            // Check shipping model first (newest models first)
+            if (/iphone\s*16/i.test(shipping)) return 'iPhone 16';
+            if (/iphone\s*15/i.test(shipping)) return 'iPhone 15';
+            if (/iphone\s*14/i.test(shipping)) return 'iPhone 14';
+            if (/iphone\s*12/i.test(shipping)) return 'iPhone 12';
+            if (/iphone\s*se/i.test(shipping)) return 'iPhone SE';
+
+            // Fall back to MODEL REQUIRED (newest models first)
+            if (/iphone\s*16/i.test(model)) return 'iPhone 16';
+            if (/iphone\s*15/i.test(model)) return 'iPhone 15';
+            if (/iphone\s*14/i.test(model)) return 'iPhone 14';
+            if (/iphone\s*12/i.test(model)) return 'iPhone 12';
+
+            // iPhone SE variants (4.7" screens)
+            if (/iphone\s*se/i.test(model) ||
+                model.includes('se2') || model.includes('se 2nd') || model.includes('se 3rd') ||
+                model.includes('se (2nd') || model.includes('se (3rd') || model.includes('4.7')) {
                 return 'iPhone SE';
             }
 
-            // Check MODEL REQUIRED for iPhone 12 explicit mention
-            if (model.includes('iphone 12') || model.includes('apple iphone 12')) {
-                return 'iPhone 12';
-            }
-
-            // Check for iPhone SE variants (4.7" screens)
-            if (model.includes('iphone se') ||
-                model.includes('apple iphone se') ||
-                model.includes('se2') ||
-                model.includes('se 2nd') ||
-                model.includes('se 3rd') ||
-                model.includes('se (2nd') ||
-                model.includes('se (3rd') ||
-                model.includes('4.7')) {
-                return 'iPhone SE';
-            }
-
-            // Check for 6.1" phones (iPhone 11, XR, 14 - all use iPhone 14 case)
-            if (model.includes('6.1') ||
-                model.includes('iphone 11') ||
-                model.includes('apple iphone 11') ||
-                model.includes('iphone xr') ||
-                model.includes('apple iphone xr') ||
-                model.includes('iphone 14') ||
-                model.includes('apple iphone 14')) {
+            // 6.1" phones (iPhone 11, XR - use iPhone 14 case as they're similar size)
+            if (model.includes('6.1') || /iphone\s*11/i.test(model) || /iphone\s*xr/i.test(model)) {
                 return 'iPhone 14';
             }
 
@@ -2317,7 +2339,6 @@
                 'Headset': 0,
                 'Mouse': 0,
                 // Mobile cables (Lightning vs USB-C)
-                'USB Plug': 0,
                 'USB-C Plug': 0,
                 'Lightning Cable': 0,
                 'USB-C Cable': 0,
@@ -2336,6 +2357,9 @@
                 'iPhone 15 Case': 0,
                 'iPhone 15 Rugged Case': 0,
                 'iPhone 15 Screen Protector': 0,
+                'iPhone 16 Case': 0,
+                'iPhone 16 Rugged Case': 0,
+                'iPhone 16 Screen Protector': 0,
                 // iPad specific
                 'iPad 9th Gen Case': 0,
                 'iPad 9th Gen Rugged Case': 0,
@@ -2394,12 +2418,11 @@
                     const phoneModel = getPhoneModel(modelRequired, shippingModel);
                     const isBundleRequest = isBundle(modelRequired);
 
-                    // All mobile devices get plug + cable (USB-C or Lightning)
+                    // All mobile devices get USB-C plug + cable (Lightning or USB-C)
+                    consumableCounts['USB-C Plug']++;
                     if (usesUSBC) {
-                        consumableCounts['USB-C Plug']++;
                         consumableCounts['USB-C Cable']++;
                     } else {
-                        consumableCounts['USB Plug']++;
                         consumableCounts['Lightning Cable']++;
                     }
 
@@ -2413,11 +2436,15 @@
 
                         const isRugged = modelRequired.toLowerCase().includes('rugged');
 
-                        // Detect iPhone 15/16 for case matching
-                        const model = (modelRequired || '').toLowerCase();
-                        const isIPhone15Plus = model.includes('iphone 15') || model.includes('iphone 16');
-
-                        if (isIPhone15Plus) {
+                        // Use phoneModel directly (now includes iPhone 15/16)
+                        if (phoneModel === 'iPhone 16') {
+                            if (isRugged) {
+                                consumableCounts['iPhone 16 Rugged Case']++;
+                            } else {
+                                consumableCounts['iPhone 16 Case']++;
+                            }
+                            consumableCounts['iPhone 16 Screen Protector']++;
+                        } else if (phoneModel === 'iPhone 15') {
                             if (isRugged) {
                                 consumableCounts['iPhone 15 Rugged Case']++;
                             } else {
@@ -2439,6 +2466,7 @@
                             }
                             consumableCounts['iPhone 12 Screen Protector']++;
                         } else {
+                            // Default: iPhone 14 (includes 11, XR, etc.)
                             if (isRugged) {
                                 consumableCounts['iPhone 14 Rugged Case']++;
                             } else {
@@ -2453,19 +2481,19 @@
                 if (isIPadDevice(deviceType, modelRequired)) {
                     const isBundleRequest = isIPadBundle(modelRequired);
 
+                    // ALL iPads get USB-C plug + cable (not just bundles)
+                    consumableCounts['USB-C Plug']++;
+                    if (usesUSBC) {
+                        consumableCounts['USB-C Cable']++;
+                    } else {
+                        consumableCounts['Lightning Cable']++;
+                    }
+
+                    // Bundle orders additionally get case + screen protector
                     if (isBundleRequest) {
                         const shippedModel = getVal(row, 'SHIPPED MODEL', 'Shipped Model', 'shipped model', 'SHIPPING MODEL', 'Shipping Model');
                         const iPadModel = getIPadModel(modelRequired, shippedModel);
                         const isRugged = isRuggedBundle(modelRequired);
-
-                        // iPad bundles get appropriate cable/plug
-                        if (usesUSBC) {
-                            consumableCounts['USB-C Plug']++;
-                            consumableCounts['USB-C Cable']++;
-                        } else {
-                            consumableCounts['USB Plug']++;
-                            consumableCounts['Lightning Cable']++;
-                        }
 
                         // Case & Screen Protector based on iPad model
                         if (iPadModel === 'iPad 9th Gen') {
@@ -2508,16 +2536,11 @@
                 { name: 'Mouse', count: consumableCounts['Mouse'] || 0 }
             ];
 
-            // Shared mobile items (iPhone + iPad) - now includes USB-C
-            const sharedMobileItems = [
-                { name: 'USB Plug', count: consumableCounts['USB Plug'] || 0 },
+            // iPhone accessories - includes cables/plugs and phone-specific items
+            const iPhoneItems = [
                 { name: 'USB-C Plug', count: consumableCounts['USB-C Plug'] || 0 },
                 { name: 'Lightning Cable', count: consumableCounts['Lightning Cable'] || 0 },
-                { name: 'USB-C Cable', count: consumableCounts['USB-C Cable'] || 0 }
-            ];
-
-            // iPhone specific items - now includes USB-C EarPods and iPhone 15
-            const iPhoneItems = [
+                { name: 'USB-C Cable', count: consumableCounts['USB-C Cable'] || 0 },
                 { name: 'Lightning EarPods', count: consumableCounts['Lightning EarPods'] || 0 },
                 { name: 'USB-C EarPods', count: consumableCounts['USB-C EarPods'] || 0 },
                 { name: 'iPhone SE Case', count: consumableCounts['iPhone SE Case'] || 0 },
@@ -2531,7 +2554,10 @@
                 { name: 'iPhone 14 Screen Protector', count: consumableCounts['iPhone 14 Screen Protector'] || 0 },
                 { name: 'iPhone 15 Case', count: consumableCounts['iPhone 15 Case'] || 0 },
                 { name: 'iPhone 15 Rugged Case', count: consumableCounts['iPhone 15 Rugged Case'] || 0 },
-                { name: 'iPhone 15 Screen Protector', count: consumableCounts['iPhone 15 Screen Protector'] || 0 }
+                { name: 'iPhone 15 Screen Protector', count: consumableCounts['iPhone 15 Screen Protector'] || 0 },
+                { name: 'iPhone 16 Case', count: consumableCounts['iPhone 16 Case'] || 0 },
+                { name: 'iPhone 16 Rugged Case', count: consumableCounts['iPhone 16 Rugged Case'] || 0 },
+                { name: 'iPhone 16 Screen Protector', count: consumableCounts['iPhone 16 Screen Protector'] || 0 }
             ];
 
             // iPad specific items - now includes iPad 10th Gen
@@ -2550,7 +2576,6 @@
             // Calculate totals
             const totalItems = Object.values(consumableCounts).reduce((a, b) => a + b, 0);
             const hasLaptopItems = laptopItems.some(item => item.count > 0);
-            const hasSharedMobileItems = sharedMobileItems.some(item => item.count > 0);
             const hasIPhoneItems = iPhoneItems.some(item => item.count > 0);
             const hasIPadItems = iPadItems.some(item => item.count > 0);
 
@@ -2588,27 +2613,7 @@
                 });
             }
 
-            // Shared Mobile section (USB Plug, Lightning Cable)
-            if (hasSharedMobileItems) {
-                html += `<tr><td colspan="2" class="consumable-category">Mobile Accessories</td></tr>`;
-                sharedMobileItems.forEach(item => {
-                    if (item.count > 0) {
-                        html += `
-                            <tr>
-                                <td>
-                                    <div class="consumable-item-name">
-                                        <div class="consumable-dot mobile"></div>
-                                        ${item.name}
-                                    </div>
-                                </td>
-                                <td class="has-count">${item.count}</td>
-                            </tr>
-                        `;
-                    }
-                });
-            }
-
-            // iPhone specific section
+            // iPhone Accessories section (includes cables, plugs, cases, screen protectors)
             if (hasIPhoneItems) {
                 html += `<tr><td colspan="2" class="consumable-category">iPhone Accessories</td></tr>`;
                 iPhoneItems.forEach(item => {
