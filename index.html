@@ -1176,6 +1176,119 @@
             height: 12px;
         }
 
+        /* Info Button */
+        .info-btn-wrapper {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .info-btn {
+            width: 32px;
+            height: 32px;
+            border: var(--border-width) solid var(--black);
+            background: var(--white);
+            color: var(--black);
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .info-btn:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .info-tooltip {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 320px;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            padding: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-btn-wrapper:hover .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .info-tooltip-header {
+            padding: 14px 18px;
+            background: var(--black);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-tooltip-header svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .info-tooltip-body {
+            padding: 16px 18px;
+        }
+
+        .info-step {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .info-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-step-number {
+            width: 22px;
+            height: 22px;
+            background: var(--black);
+            color: var(--white);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-step-content {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .info-step-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .info-step-desc {
+            font-size: 11px;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
         /* Buy Me a Coffee Button */
         .coffee-btn {
             display: flex;
@@ -1378,6 +1491,49 @@
                         Buy me a coffee
                     </button>
                     <span class="version-tag">V2.1</span>
+                    <div class="info-btn-wrapper">
+                        <button class="info-btn">i</button>
+                        <div class="info-tooltip">
+                            <div class="info-tooltip-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="16" x2="12" y2="12"/>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                </svg>
+                                How to Use
+                            </div>
+                            <div class="info-tooltip-body">
+                                <div class="info-step">
+                                    <span class="info-step-number">1</span>
+                                    <div class="info-step-content">
+                                        <div class="info-step-title">Upload File</div>
+                                        <div class="info-step-desc">Drag and drop or click to upload your source CSV/Excel file</div>
+                                    </div>
+                                </div>
+                                <div class="info-step">
+                                    <span class="info-step-number">2</span>
+                                    <div class="info-step-content">
+                                        <div class="info-step-title">Review Data</div>
+                                        <div class="info-step-desc">Preview mapped data in the table. Click expand to see all columns and rows</div>
+                                    </div>
+                                </div>
+                                <div class="info-step">
+                                    <span class="info-step-number">3</span>
+                                    <div class="info-step-content">
+                                        <div class="info-step-title">Check Consumables</div>
+                                        <div class="info-step-desc">Review accessory counts on the right panel for order preparation</div>
+                                    </div>
+                                </div>
+                                <div class="info-step">
+                                    <span class="info-step-number">4</span>
+                                    <div class="info-step-content">
+                                        <div class="info-step-title">Download</div>
+                                        <div class="info-step-desc">Click the download button to export the mapped data as CSV</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <p class="subtitle">Upload source file to map device data and calculate consumables</p>
