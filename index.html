@@ -2223,7 +2223,7 @@
 
             const categories = {
                 'Laptop Accessories': ['Charger (Standard)', 'Charger (High Spec)', 'Laptop Bag', 'Headset', 'Mouse'],
-                'iPhone Accessories': ['Lightning Cable', 'USB-C Cable', 'Lightning EarPods', 'USB-C EarPods', 'iPhone SE Case', 'iPhone SE Rugged Case', 'iPhone SE Screen Protector', 'iPhone 12 Case', 'iPhone 12 Rugged Case', 'iPhone 12 Screen Protector', 'iPhone 14 Case', 'iPhone 14 Rugged Case', 'iPhone 14 Screen Protector', 'iPhone 15 Case', 'iPhone 15 Rugged Case', 'iPhone 15 Screen Protector', 'iPhone 16 Case', 'iPhone 16 Rugged Case', 'iPhone 16 Screen Protector'],
+                'iPhone Accessories': ['USB-C Plug', 'Lightning Cable', 'USB-C Cable', 'Lightning EarPods', 'USB-C EarPods', 'iPhone SE Case', 'iPhone SE Rugged Case', 'iPhone SE Screen Protector', 'iPhone 12 Case', 'iPhone 12 Rugged Case', 'iPhone 12 Screen Protector', 'iPhone 14 Case', 'iPhone 14 Rugged Case', 'iPhone 14 Screen Protector', 'iPhone 15 Case', 'iPhone 15 Rugged Case', 'iPhone 15 Screen Protector', 'iPhone 16 Case', 'iPhone 16 Rugged Case', 'iPhone 16 Screen Protector'],
                 'iPad Accessories': ['iPad 9th Gen Case', 'iPad 9th Gen Rugged Case', 'iPad 9th Gen Screen Protector', 'iPad 10th Gen Case', 'iPad 10th Gen Rugged Case', 'iPad 10th Gen Screen Protector', 'iPad 11th Gen Case', 'iPad 11th Gen Rugged Case', 'iPad 11th Gen Screen Protector']
             };
 
@@ -2761,6 +2761,7 @@
                 'Headset': 0,
                 'Mouse': 0,
                 // Mobile cables (Lightning vs USB-C)
+                'USB-C Plug': 0,
                 'Lightning Cable': 0,
                 'USB-C Cable': 0,
                 // iPhone accessories
@@ -2839,7 +2840,8 @@
                     const phoneModel = getPhoneModel(modelRequired, shippingModel);
                     const isBundleRequest = isBundle(modelRequired);
 
-                    // All mobile devices get cable (Lightning or USB-C)
+                    // All mobile devices get USB-C plug + cable (Lightning or USB-C)
+                    consumableCounts['USB-C Plug']++;
                     if (usesUSBC) {
                         consumableCounts['USB-C Cable']++;
                     } else {
@@ -2901,7 +2903,8 @@
                 if (isIPadDevice(deviceType, modelRequired)) {
                     const isBundleRequest = isIPadBundle(modelRequired);
 
-                    // ALL iPads get cable (not just bundles)
+                    // ALL iPads get USB-C plug + cable (not just bundles)
+                    consumableCounts['USB-C Plug']++;
                     if (usesUSBC) {
                         consumableCounts['USB-C Cable']++;
                     } else {
@@ -2955,8 +2958,9 @@
                 { name: 'Mouse', count: consumableCounts['Mouse'] || 0 }
             ];
 
-            // iPhone accessories - includes cables and phone-specific items
+            // iPhone accessories - includes cables/plugs and phone-specific items
             const iPhoneItems = [
+                { name: 'USB-C Plug', count: consumableCounts['USB-C Plug'] || 0 },
                 { name: 'Lightning Cable', count: consumableCounts['Lightning Cable'] || 0 },
                 { name: 'USB-C Cable', count: consumableCounts['USB-C Cable'] || 0 },
                 { name: 'Lightning EarPods', count: consumableCounts['Lightning EarPods'] || 0 },
@@ -3031,7 +3035,7 @@
                 });
             }
 
-            // iPhone Accessories section (includes cables, cases, screen protectors)
+            // iPhone Accessories section (includes cables, plugs, cases, screen protectors)
             if (hasIPhoneItems) {
                 html += `<tr><td colspan="2" class="consumable-category">iPhone Accessories</td></tr>`;
                 iPhoneItems.forEach(item => {
