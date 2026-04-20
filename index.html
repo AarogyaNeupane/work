@@ -1774,7 +1774,7 @@
 
         .diff-row {
             min-height: 40px;
-            padding: 6px 10px;
+            padding: 0 10px;
             border-bottom: 1px solid var(--diff-border);
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
@@ -1817,14 +1817,15 @@
         .diff-row-content {
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: flex-end;
             justify-content: center;
-            gap: 4px;
+            gap: 8px;
+            min-height: 40px;
         }
 
         .diff-row-content.is-empty {
-            min-height: 100%;
+            min-height: 40px;
         }
 
         .diff-marker {
@@ -1842,18 +1843,10 @@
 
         .diff-value {
             text-align: right;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1;
             font-weight: 700;
             color: inherit;
-        }
-
-        .diff-meta {
-            text-align: right;
-            font-size: 10px;
-            color: var(--diff-text-muted);
-            white-space: nowrap;
-            line-height: 1;
         }
 
         .inventory-summary-strip {
@@ -2761,15 +2754,11 @@
             const valueMarkup = row.label
                 ? `<div class="diff-value">${escapeHtml(row.label)}</div>`
                 : '';
-            const metaMarkup = row.meta
-                ? `<div class="diff-meta">${escapeHtml(row.meta)}</div>`
-                : '';
 
             return `
                 <div class="diff-row-content">
                     <span class="diff-marker is-changed" aria-hidden="true"></span>
                     ${valueMarkup}
-                    ${metaMarkup}
                 </div>
             `;
         }
