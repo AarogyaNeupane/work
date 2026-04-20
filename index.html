@@ -36,6 +36,8 @@
             --diff-success-text: #116329;
             --diff-header-bg: #f6f8fa;
             --diff-header-text: #24292f;
+            --inventory-header-height: 46px;
+            --inventory-row-height: 54px;
             --border-width: 1.5px;
         }
 
@@ -810,15 +812,29 @@
         }
 
         .inventory-grid-shell .tabulator-header .tabulator-col .tabulator-col-content {
-            padding: 10px 12px;
+            padding: 0 12px;
+            min-height: var(--inventory-header-height);
+            display: flex;
+            align-items: center;
         }
 
         .inventory-grid-shell .tabulator-cell,
         .inventory-grid-shell .tabulator-row-header .tabulator-cell {
             border-right: 1px solid #d8dee4;
             border-bottom: 1px solid #d8dee4;
-            padding: 10px 12px;
-            min-height: 40px;
+            padding: 0 12px;
+            min-height: var(--inventory-row-height);
+            height: var(--inventory-row-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .inventory-grid-shell .tabulator-row {
+            min-height: var(--inventory-row-height);
+        }
+
+        .inventory-grid-shell .tabulator-row-header .tabulator-cell {
+            justify-content: center;
         }
 
         .inventory-grid-shell .tabulator-row .tabulator-cell:last-child {
@@ -1773,8 +1789,9 @@
         }
 
         .diff-row {
-            min-height: 40px;
-            padding: 6px 8px;
+            min-height: var(--inventory-row-height);
+            height: var(--inventory-row-height);
+            padding: 0 10px;
             border-bottom: 1px solid var(--diff-border);
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
@@ -1786,7 +1803,8 @@
         }
 
         .diff-row.is-grid-head {
-            min-height: 37px;
+            min-height: var(--inventory-header-height);
+            height: var(--inventory-header-height);
             background: var(--diff-header-bg);
             border-bottom: 1px solid var(--diff-border);
         }
@@ -1815,40 +1833,29 @@
         }
 
         .diff-row-content {
-            display: grid;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
             gap: 4px;
-            align-items: center;
         }
 
         .diff-row-content.is-empty {
             min-height: 100%;
         }
 
-        .diff-status {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 18px;
-            width: fit-content;
-            padding: 0 6px;
+        .diff-marker {
+            width: 8px;
+            height: 8px;
             border-radius: 999px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-            background: #eaeef2;
-            color: var(--diff-text-muted);
+            background: #b1bac4;
+            box-shadow: 0 0 0 4px rgba(177, 186, 196, 0.16);
         }
 
-        .diff-status.is-grid-head,
-        .diff-status.is-header {
-            background: #ddf4ff;
-            color: #0969da;
-        }
-
-        .diff-status.is-changed {
-            background: var(--diff-success-bg);
-            color: var(--diff-success-text);
+        .diff-marker.is-changed {
+            background: var(--diff-success-border);
+            box-shadow: 0 0 0 4px rgba(26, 127, 55, 0.14);
         }
 
         .diff-value {
@@ -1864,6 +1871,7 @@
             font-size: 10px;
             color: var(--diff-text-muted);
             white-space: nowrap;
+            line-height: 1;
         }
 
         .inventory-summary-strip {
@@ -2756,11 +2764,18 @@
                 return '<div class="diff-row-content is-empty">&nbsp;</div>';
             }
 
-            const statusLabel = row.status === 'changed'
-                ? 'Changed'
-                : row.status === 'unchanged'
-                    ? 'Unchanged'
-                    : 'Header';
+            if (row.status === 'grid-head' || row.status === 'header') {
+                return '<div class="diff-row-content is-empty">&nbsp;</div>';
+            }
+
+            if (row.status === 'unchanged') {
+                return `
+                    <div class="diff-row-content">
+                        <span class="diff-marker" aria-hidden="true"></span>
+                    </div>
+                `;
+            }
+
             const valueMarkup = row.label
                 ? `<div class="diff-value">${escapeHtml(row.label)}</div>`
                 : '';
@@ -2770,7 +2785,7 @@
 
             return `
                 <div class="diff-row-content">
-                    <span class="diff-status is-${row.status}">${statusLabel}</span>
+                    <span class="diff-marker is-changed" aria-hidden="true"></span>
                     ${valueMarkup}
                     ${metaMarkup}
                 </div>
