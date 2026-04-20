@@ -53,18 +53,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .consumables-update-grid,
-            .consumables-update-preview-grid {
+            .consumables-update-grid {
                 grid-template-columns: 1fr;
             }
 
             .consumables-update-actions {
                 flex-direction: column;
                 align-items: stretch;
-            }
-
-            .selector-grid {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -267,6 +262,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
             margin-bottom: 16px;
         }
 
@@ -286,98 +283,16 @@
             border: var(--border-width) solid var(--black);
         }
 
-        .preview-table-container {
-            border: var(--border-width) solid var(--black);
-            overflow: hidden;
-            position: relative;
-            max-width: 100%;
-            contain: inline-size;
+        .preview-summary-copy {
+            display: grid;
+            gap: 8px;
+            max-width: 720px;
         }
 
-        .preview-table {
-            width: 100%;
-            font-size: 12px;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .preview-table.expanded {
-            table-layout: auto;
-            width: max-content;
-            min-width: 100%;
-        }
-
-        .preview-table.expanded th {
-            white-space: nowrap;
-        }
-
-        .preview-table th {
-            text-align: left;
-            padding: 12px 14px;
-            background: var(--black);
-            color: var(--white);
-            font-weight: 600;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .preview-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--gray-200);
-            color: var(--black);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .preview-table.expanded td {
-            max-width: none;
-            white-space: nowrap;
-        }
-
-        .preview-table tbody tr:hover {
-            background: var(--gray-100);
-        }
-
-        .preview-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .preview-scroll {
-            max-height: 280px;
-            overflow-y: auto;
-            overflow-x: auto;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .preview-scroll.expanded {
-            max-height: 60vh;
-            overflow: auto;
-        }
-
-        .preview-scroll::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        .preview-scroll::-webkit-scrollbar-track {
-            background: var(--gray-100);
-        }
-
-        .preview-scroll::-webkit-scrollbar-thumb {
-            background: var(--black);
-            border-radius: 0;
-        }
-
-        .preview-scroll::-webkit-scrollbar-corner {
-            background: var(--gray-100);
+        .preview-summary-note {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.5;
         }
 
         .actions {
@@ -459,27 +374,6 @@
             color: var(--gray-600);
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: 'JetBrains Mono', monospace;
-            border: var(--border-width) solid var(--black);
-        }
-
-        .badge-new {
-            background: var(--black);
-            color: var(--white);
-        }
-
-        .badge-replacement {
-            background: var(--white);
-            color: var(--black);
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -519,112 +413,6 @@
 
         .toast-icon {
             color: var(--white);
-        }
-
-        .more-records {
-            font-size: 11px;
-            color: var(--gray-600);
-            text-align: center;
-            padding: 12px;
-            border-top: 1px solid var(--gray-200);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .expand-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px;
-            background: var(--gray-100);
-            border: none;
-            border-top: var(--border-width) solid var(--black);
-            width: 100%;
-            cursor: pointer;
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--black);
-            transition: background 0.15s ease;
-        }
-
-        .expand-toggle:hover {
-            background: var(--gray-200);
-        }
-
-        .expand-toggle svg {
-            width: 14px;
-            height: 14px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .expand-toggle.expanded svg {
-            transform: rotate(180deg);
-        }
-
-        .expand-toggle.expanded {
-            background: var(--black);
-            color: var(--white);
-        }
-
-        .expand-toggle.expanded:hover {
-            background: var(--gray-600);
-        }
-
-        /* Fade gradient overlay when collapsed */
-        .preview-fade {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: linear-gradient(to bottom, transparent, var(--white));
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-            z-index: 5;
-        }
-
-        .preview-fade.hidden {
-            opacity: 0;
-        }
-
-        /* Column count indicator */
-        .column-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 10px;
-            color: var(--gray-600);
-            font-family: 'JetBrains Mono', monospace;
-            margin-left: 12px;
-            padding: 3px 8px;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
-        }
-
-        .column-indicator svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        /* Smooth row reveal animation */
-        @keyframes rowReveal {
-            from {
-                opacity: 0;
-                transform: translateY(-4px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .preview-table tbody tr.revealing {
-            animation: rowReveal 0.25s ease forwards;
         }
 
         /* Generated Usage Summary */
@@ -1177,60 +965,6 @@
         }
         }
 
-        /* ===== NEW FEATURE STYLES ===== */
-
-        /* Search Box */
-        .search-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 10px 14px;
-            border: var(--border-width) solid var(--black);
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 13px;
-            background: var(--white);
-            outline: none;
-            transition: background 0.15s ease;
-        }
-
-        .search-input:focus {
-            background: var(--gray-100);
-        }
-
-        .search-input::placeholder {
-            color: var(--gray-400);
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            border: var(--border-width) solid var(--black);
-            background: var(--white);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
-        }
-
-        .btn-icon:hover {
-            background: var(--gray-100);
-        }
-
-        .btn-icon.active {
-            background: var(--black);
-            color: var(--white);
-        }
-
-        .btn-icon svg {
-            width: 16px;
-            height: 16px;
-        }
-
         /* Duplicate/Filter Warning Panel */
         .warning-panel {
             margin: 16px 24px 0;
@@ -1313,198 +1047,6 @@
 
         .filter-item-count {
             font-weight: 600;
-        }
-
-        /* Editable Cells */
-        .preview-table td[contenteditable="true"] {
-            cursor: text;
-            position: relative;
-        }
-
-        .preview-table td[contenteditable="true"]:focus {
-            outline: 2px solid var(--black);
-            outline-offset: -2px;
-            background: #fffef0;
-        }
-
-        .preview-table td.edited {
-            background: #f0fdf4;
-        }
-
-        .preview-table td.edited::after {
-            content: '';
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 6px;
-            height: 6px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-
-        /* Source Preview Toggle */
-        .source-preview-section {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px dashed var(--gray-200);
-        }
-
-        .source-toggle-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            background: var(--white);
-            border: var(--border-width) solid var(--black);
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .source-toggle-btn:hover {
-            background: var(--gray-100);
-        }
-
-        .source-toggle-btn.active {
-            background: var(--black);
-            color: var(--white);
-        }
-
-        .source-toggle-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .source-data-container {
-            display: none;
-            margin-top: 12px;
-        }
-
-        .source-data-container.show {
-            display: block;
-        }
-
-        .source-preview-section {
-            max-width: 100%;
-            overflow: hidden;
-            contain: inline-size;
-        }
-
-        .source-table {
-            width: max-content;
-            min-width: 100%;
-            font-size: 11px;
-            border-collapse: collapse;
-            table-layout: auto;
-        }
-
-        .source-table th {
-            text-align: left;
-            padding: 10px 12px;
-            background: var(--gray-600);
-            color: var(--white);
-            font-weight: 600;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
-        }
-
-        .source-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--gray-200);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            white-space: nowrap;
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .source-scroll {
-            max-height: 280px;
-            overflow: auto;
-            border: var(--border-width) solid var(--gray-400);
-            max-width: 100%;
-        }
-
-        .source-scroll::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        .source-scroll::-webkit-scrollbar-track {
-            background: var(--gray-100);
-        }
-
-        .source-scroll::-webkit-scrollbar-thumb {
-            background: var(--gray-600);
-            border-radius: 0;
-        }
-
-        .source-scroll::-webkit-scrollbar-corner {
-            background: var(--gray-100);
-        }
-
-        /* Reset Edits Button */
-        .reset-edits-btn {
-            display: none;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            margin-left: 8px;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .reset-edits-btn:hover {
-            background: var(--gray-200);
-        }
-
-        .reset-edits-btn.show {
-            display: inline-flex;
-        }
-
-        .reset-edits-btn svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        /* Edit mode indicator */
-        .edit-mode-indicator {
-            display: none;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            font-size: 10px;
-            font-weight: 500;
-            color: #166534;
-            margin-left: 12px;
-        }
-
-        .edit-mode-indicator.show {
-            display: inline-flex;
-        }
-
-        .edit-mode-indicator svg {
-            width: 12px;
-            height: 12px;
         }
 
         /* Info Button */
@@ -1844,15 +1386,15 @@
                                 <div class="info-step">
                                     <span class="info-step-number">2</span>
                                     <div class="info-step-content">
-                                        <div class="info-step-title">Review Data</div>
-                                        <div class="info-step-desc">Preview mapped data in the table. Click expand to see all columns and rows</div>
+                                        <div class="info-step-title">Check Summary</div>
+                                        <div class="info-step-desc">Process the file and confirm the mapped record count in the compact summary before downloading</div>
                                     </div>
                                 </div>
                                 <div class="info-step">
                                     <span class="info-step-number">3</span>
                                     <div class="info-step-content">
                                         <div class="info-step-title">Check Consumables</div>
-                                        <div class="info-step-desc">Copy the generated usage summary, paste your current inventory and usage tables, then update the counts below</div>
+                                        <div class="info-step-desc">Paste your 2-column inventory table and let the generated consumables reduce the counts on the right</div>
                                     </div>
                                 </div>
                                 <div class="info-step">
@@ -1945,83 +1487,11 @@
                 <div id="previewSection" style="display: none;">
                     <div class="preview-section">
                         <div class="preview-header">
-                            <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                            <div class="preview-summary-copy">
                                 <span class="preview-title">Mapped Output</span>
-                                <span class="preview-count" id="outputCount">0 records</span>
-                                <span class="column-indicator" id="columnIndicator" style="display: none;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="3" width="7" height="7" />
-                                        <rect x="14" y="3" width="7" height="7" />
-                                        <rect x="14" y="14" width="7" height="7" />
-                                        <rect x="3" y="14" width="7" height="7" />
-                                    </svg>
-                                    <span id="columnCount">6 cols</span>
-                                </span>
-                                <span class="edit-mode-indicator" id="editModeIndicator">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
-                                    Edit Mode
-                                </span>
-                                <button class="reset-edits-btn" id="resetEditsBtn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="1 4 1 10 7 10" />
-                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-                                    </svg>
-                                    Reset Edits
-                                </button>
+                                <p class="preview-summary-note">File processed and ready to export. Use the count below with the warnings above to sanity-check the mapped output, then download the CSV.</p>
                             </div>
-                        </div>
-                        <!-- Search Box -->
-                        <div class="search-container">
-                            <input type="text" class="search-input" id="searchInput"
-                                placeholder="Search by name, IMEI, task number, asset tag...">
-                            <button class="btn-icon" id="clearSearchBtn" title="Clear search">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                </svg>
-                            </button>
-                            <button class="btn-icon" id="sourceToggleBtn" title="Toggle source columns">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                                    <line x1="12" y1="3" x2="12" y2="21" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="preview-table-container">
-                            <div class="preview-scroll" id="previewScroll">
-                                <table class="preview-table" id="previewTable">
-                                    <thead id="previewHead">
-                                        <tr>
-                                            <th>Status</th>
-                                            <th>Task Number</th>
-                                            <th>Full Name</th>
-                                            <th>Device</th>
-                                            <th>Bundle</th>
-                                            <th>Asset Tag</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="previewBody"></tbody>
-                                </table>
-                            </div>
-                            <div class="preview-fade" id="previewFade"></div>
-                        </div>
-                        <button class="expand-toggle" id="expandBtn" style="display: none;">
-                            <span id="expandBtnText">Expand All Rows &amp; Columns</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </button>
-                        <!-- Source Preview Section -->
-                        <div class="source-preview-section" id="sourcePreviewSection" style="display: none;">
-                            <div class="source-scroll" id="sourceScroll">
-                                <table class="source-table" id="sourceTable">
-                                    <thead id="sourceHead"></thead>
-                                    <tbody id="sourceBody"></tbody>
-                                </table>
-                            </div>
+                            <span class="preview-count" id="outputCount">0 records</span>
                         </div>
                     </div>
 
@@ -2065,7 +1535,7 @@
                         </svg>
                         Generated Usage Summary
                     </div>
-                    <p class="consumables-kicker">Non-zero shipment-derived usage you can copy directly into the updater below.</p>
+                    <p class="consumables-kicker">Non-zero consumables generated from the uploaded shipment file. These are the only counts removed from your pasted inventory.</p>
                     <span class="consumables-badge" id="consumablesBadge">0 ITEMS</span>
                 </div>
                 <div class="consumables-body">
@@ -2085,10 +1555,7 @@
                             <div class="generated-usage-list" id="consumablesBody"></div>
                         </div>
                         <div class="consumables-footer">
-                            <div>
-                                <span class="consumables-total-label">Total Items</span>
-                                <p class="generated-usage-note">Copied output includes the exact item labels and counts shown here.</p>
-                            </div>
+                            <span class="consumables-total-label">Total Items</span>
                             <span class="consumables-total-count" id="consumablesTotalCount">0</span>
                         </div>
                         <div class="consumables-actions">
@@ -2115,10 +1582,10 @@
                             <line x1="8" y1="12" x2="16" y2="12" />
                             <line x1="8" y1="16" x2="13" y2="16" />
                         </svg>
-                        Paste-and-Update Tool
+                        Excel-Style Inventory Update
                     </div>
                     <h2>Consumable Count</h2>
-                    <p>Paste the current inventory table and the usage table copied from Excel. The updated preview and copied tab-delimited output are always generated from the same final table matrix.</p>
+                    <p>Paste one 2-column inventory table from Excel. The app subtracts the generated consumable counts from the uploaded shipment file and mirrors the updated 2-column result on the right.</p>
                 </div>
                 <div class="consumables-update-actions">
                     <button class="btn-workspace-action is-primary" id="updateCountsBtn" disabled>Update counts</button>
@@ -2132,78 +1599,26 @@
                         <div class="paste-panel-header">
                             <div>
                                 <h3 class="paste-panel-title">Current Inventory</h3>
-                                <p class="paste-helper">Paste the full inventory table exactly as copied from Excel.</p>
+                                <p class="paste-helper">Paste a plain 2-column Excel table: item name in the first column and count in the second.</p>
                             </div>
                             <span class="paste-panel-meta">TAB-DELIMITED</span>
                         </div>
                         <textarea id="inventoryPasteInput" class="paste-textarea" spellcheck="false" placeholder="Paste the current consumables inventory table here"></textarea>
-                        <div class="selector-panel" id="inventorySelectors" hidden>
-                            <p class="paste-helper" id="inventorySelectorMessage">Choose the inventory item and count columns to continue.</p>
-                            <div class="selector-grid">
-                                <label class="selector-field">
-                                    <span>Item column</span>
-                                    <select id="inventoryItemColumn"></select>
-                                </label>
-                                <label class="selector-field">
-                                    <span>Count column</span>
-                                    <select id="inventoryCountColumn"></select>
-                                </label>
-                            </div>
-                        </div>
                     </section>
 
                     <section class="paste-panel">
                         <div class="paste-panel-header">
                             <div>
-                                <h3 class="paste-panel-title">Usage To Remove</h3>
-                                <p class="paste-helper">Paste the usage rows copied from Excel or from the generated summary above.</p>
+                                <h3 class="paste-panel-title">Updated Inventory</h3>
+                                <p class="paste-helper">This is the same 2-column table shape with shipment-generated consumables removed.</p>
                             </div>
-                            <span class="paste-panel-meta">TAB-DELIMITED</span>
+                            <span class="paste-panel-meta">READ-ONLY</span>
                         </div>
-                        <textarea id="usagePasteInput" class="paste-textarea" spellcheck="false" placeholder="Paste the usage/counts-to-remove table here"></textarea>
-                        <div class="selector-panel" id="usageSelectors" hidden>
-                            <p class="paste-helper" id="usageSelectorMessage">Choose the usage item and count columns to continue.</p>
-                            <div class="selector-grid">
-                                <label class="selector-field">
-                                    <span>Item column</span>
-                                    <select id="usageItemColumn"></select>
-                                </label>
-                                <label class="selector-field">
-                                    <span>Count column</span>
-                                    <select id="usageCountColumn"></select>
-                                </label>
-                            </div>
-                        </div>
+                        <textarea id="updatedInventoryOutput" class="output-textarea" spellcheck="false" readonly placeholder="Updated inventory will appear here after you paste your table and click Update counts"></textarea>
                     </section>
                 </div>
 
-                <div class="consumables-update-messages" id="consumablesUpdateMessages"></div>
-                <div class="consumables-update-summary" id="consumablesUpdateSummary" hidden></div>
-
-                <div class="consumables-update-result" id="consumablesUpdateResult" hidden>
-                    <div class="consumables-update-preview-grid">
-                        <section class="update-preview-card">
-                            <div class="update-preview-header">
-                                <h3>Updated Inventory Preview</h3>
-                                <p>The table below matches the same matrix used to build the copy-ready output.</p>
-                            </div>
-                            <div class="update-preview-scroll">
-                                <table class="update-preview-table">
-                                    <thead id="consumablesUpdateHead"></thead>
-                                    <tbody id="consumablesUpdateBody"></tbody>
-                                </table>
-                            </div>
-                        </section>
-
-                        <section class="update-output-card">
-                            <div>
-                                <h3>Copy-Ready Output</h3>
-                                <p>Use this tab-delimited text if you want to inspect the exact copied result before pasting it back into Excel.</p>
-                            </div>
-                            <textarea id="updatedTableOutput" class="output-textarea" spellcheck="false" readonly></textarea>
-                        </section>
-                    </div>
-                </div>
+                <div class="consumables-update-messages" id="consumablesUpdateMessage"></div>
             </div>
         </section>
     </div>
@@ -2221,13 +1636,9 @@
     <script>
         let sourceData = [];
         let mappedData = [];
-        let originalMappedData = []; // For reset edits functionality
         let consumableCounts = {};
         let filterStats = { total: 0, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
         let duplicateWarnings = { imei: [], serial: [], asset: [] };
-        let searchTerm = '';
-        let hasEdits = false;
-        let sourceRowMapping = []; // Maps output rows to source row indices
 
         /*
          * Expected Source File Column Structure:
@@ -2256,18 +1667,9 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const resetBtn = document.getElementById('resetBtn');
         const outputCount = document.getElementById('outputCount');
-        const previewBody = document.getElementById('previewBody');
-        const previewHead = document.getElementById('previewHead');
-        const previewTable = document.getElementById('previewTable');
-        const previewScroll = document.getElementById('previewScroll');
-        const previewFade = document.getElementById('previewFade');
         const previewSection = document.getElementById('previewSection');
         const emptyPreview = document.getElementById('emptyPreview');
         const statusArea = document.getElementById('statusArea');
-        const expandBtn = document.getElementById('expandBtn');
-        const expandBtnText = document.getElementById('expandBtnText');
-        const columnIndicator = document.getElementById('columnIndicator');
-        const columnCount = document.getElementById('columnCount');
 
         // Generated usage summary DOM elements
         const consumablesBody = document.getElementById('consumablesBody');
@@ -2279,63 +1681,15 @@
 
         // Consumables update workspace DOM elements
         const inventoryPasteInput = document.getElementById('inventoryPasteInput');
-        const usagePasteInput = document.getElementById('usagePasteInput');
         const updateCountsBtn = document.getElementById('updateCountsBtn');
         const copyUpdatedTableBtn = document.getElementById('copyUpdatedTableBtn');
-        const inventorySelectors = document.getElementById('inventorySelectors');
-        const usageSelectors = document.getElementById('usageSelectors');
-        const inventorySelectorMessage = document.getElementById('inventorySelectorMessage');
-        const usageSelectorMessage = document.getElementById('usageSelectorMessage');
-        const inventoryItemColumn = document.getElementById('inventoryItemColumn');
-        const inventoryCountColumn = document.getElementById('inventoryCountColumn');
-        const usageItemColumn = document.getElementById('usageItemColumn');
-        const usageCountColumn = document.getElementById('usageCountColumn');
-        const consumablesUpdateMessages = document.getElementById('consumablesUpdateMessages');
-        const consumablesUpdateSummary = document.getElementById('consumablesUpdateSummary');
-        const consumablesUpdateResult = document.getElementById('consumablesUpdateResult');
-        const consumablesUpdateHead = document.getElementById('consumablesUpdateHead');
-        const consumablesUpdateBody = document.getElementById('consumablesUpdateBody');
-        const updatedTableOutput = document.getElementById('updatedTableOutput');
-
-        // New feature DOM elements
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const sourceToggleBtn = document.getElementById('sourceToggleBtn');
-        const sourcePreviewSection = document.getElementById('sourcePreviewSection');
-        const sourceHead = document.getElementById('sourceHead');
-        const sourceBody = document.getElementById('sourceBody');
-        const editModeIndicator = document.getElementById('editModeIndicator');
-        const resetEditsBtn = document.getElementById('resetEditsBtn');
-
-        let isExpanded = false;
-        let isSourceVisible = false;
+        const updatedInventoryOutput = document.getElementById('updatedInventoryOutput');
+        const consumablesUpdateMessage = document.getElementById('consumablesUpdateMessage');
         let consumablesUpdateState = {
             inventoryText: '',
-            usageText: '',
-            selectors: {
-                inventoryItemColumn: '',
-                inventoryCountColumn: '',
-                usageItemColumn: '',
-                usageCountColumn: '',
-            },
-            selectorOptions: {
-                inventory: [],
-                usage: [],
-            },
-            selectorVisibility: {
-                inventory: false,
-                usage: false,
-            },
-            selectorMessages: {
-                inventory: '',
-                usage: '',
-            },
-            errors: [],
-            warnings: [],
-            unmatchedItems: [],
-            flooredItems: [],
-            summary: null,
-            finalMatrix: [],
+            message: '',
+            parsedRows: [],
+            updatedRows: [],
             outputTsv: '',
         };
 
@@ -2424,24 +1778,12 @@
 
         downloadBtn.addEventListener('click', downloadCSV);
         resetBtn.addEventListener('click', clearFile);
-        expandBtn.addEventListener('click', toggleExpand);
-
-        // New feature event listeners
-        searchInput.addEventListener('input', handleSearch);
-        clearSearchBtn.addEventListener('click', clearSearch);
-        sourceToggleBtn.addEventListener('click', toggleSourcePreview);
-        resetEditsBtn.addEventListener('click', resetEdits);
         copyGeneratedUsageBtn.addEventListener('click', copyGeneratedUsage);
-        inventoryPasteInput.addEventListener('input', () => handleConsumablesPasteInput('inventory', inventoryPasteInput.value));
-        usagePasteInput.addEventListener('input', () => handleConsumablesPasteInput('usage', usagePasteInput.value));
-        inventoryItemColumn.addEventListener('change', () => handleSelectorChange('inventoryItemColumn', inventoryItemColumn.value));
-        inventoryCountColumn.addEventListener('change', () => handleSelectorChange('inventoryCountColumn', inventoryCountColumn.value));
-        usageItemColumn.addEventListener('change', () => handleSelectorChange('usageItemColumn', usageItemColumn.value));
-        usageCountColumn.addEventListener('change', () => handleSelectorChange('usageCountColumn', usageCountColumn.value));
+        inventoryPasteInput.addEventListener('input', () => handleConsumablesPasteInput(inventoryPasteInput.value));
         updateCountsBtn.addEventListener('click', updateConsumableCounts);
         copyUpdatedTableBtn.addEventListener('click', copyUpdatedConsumablesTable);
 
-        updatedTableOutput.value = '';
+        updatedInventoryOutput.value = '';
         updateConsumablesUI();
         renderConsumablesUpdateUI();
 
@@ -2511,67 +1853,6 @@
             }
 
             return false;
-        }
-
-        // ===== SEARCH FUNCTIONALITY =====
-        function handleSearch() {
-            searchTerm = searchInput.value.toLowerCase().trim();
-            renderPreviewTable();
-        }
-
-        function clearSearch() {
-            searchInput.value = '';
-            searchTerm = '';
-            renderPreviewTable();
-        }
-
-        function filterBySearch(data) {
-            if (!searchTerm) return data;
-            return data.filter(row => {
-                return Object.values(row).some(val =>
-                    String(val).toLowerCase().includes(searchTerm)
-                );
-            });
-        }
-
-        // ===== SOURCE PREVIEW TOGGLE =====
-        function toggleSourcePreview() {
-            isSourceVisible = !isSourceVisible;
-            sourceToggleBtn.classList.toggle('active', isSourceVisible);
-            sourcePreviewSection.style.display = isSourceVisible ? 'block' : 'none';
-
-            if (isSourceVisible) {
-                renderSourcePreview();
-            }
-        }
-
-        function renderSourcePreview() {
-            if (!sourceData.length) return;
-
-            // Get source headers (keys from first row)
-            const headers = Object.keys(sourceData[0]);
-
-            // Render header
-            sourceHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-
-            // Get filtered data matching current view
-            const filteredMapped = filterBySearch(mappedData);
-            const indicesToShow = filteredMapped.map(row => {
-                const idx = originalMappedData.findIndex(orig =>
-                    orig['IMEI Number'] === row['IMEI Number'] &&
-                    orig['Serial Number'] === row['Serial Number']
-                );
-                return sourceRowMapping[idx];
-            }).filter(idx => idx !== undefined);
-
-            // Show source rows that correspond to mapped output
-            const rowsToShow = indicesToShow.length > 0 ?
-                indicesToShow.map(idx => sourceData[idx]) :
-                sourceData.slice(0, mappedData.length);
-
-            sourceBody.innerHTML = rowsToShow.map(row => {
-                return `<tr>${headers.map(h => `<td>${row[h] || '-'}</td>`).join('')}</tr>`;
-            }).join('');
         }
 
         // ===== DUPLICATE DETECTION =====
@@ -2706,44 +1987,6 @@
             `;
         }
 
-        // ===== EDITABLE CELLS =====
-        function handleCellEdit(event) {
-            const cell = event.target;
-            const rowIdx = parseInt(cell.dataset.rowIndex);
-            const header = cell.dataset.header;
-            const newValue = cell.textContent.trim();
-            const oldValue = originalMappedData[rowIdx][header];
-
-            if (newValue !== String(oldValue)) {
-                mappedData[rowIdx][header] = newValue;
-                cell.classList.add('edited');
-                hasEdits = true;
-                editModeIndicator.classList.add('show');
-                resetEditsBtn.classList.add('show');
-            } else if (newValue === String(originalMappedData[rowIdx][header])) {
-                cell.classList.remove('edited');
-                // Check if any edits remain
-                checkForRemainingEdits();
-            }
-        }
-
-        function checkForRemainingEdits() {
-            hasEdits = mappedData.some((row, idx) =>
-                Object.keys(row).some(key => String(row[key]) !== String(originalMappedData[idx][key]))
-            );
-            editModeIndicator.classList.toggle('show', hasEdits);
-            resetEditsBtn.classList.toggle('show', hasEdits);
-        }
-
-        function resetEdits() {
-            mappedData = JSON.parse(JSON.stringify(originalMappedData));
-            hasEdits = false;
-            editModeIndicator.classList.remove('show');
-            resetEditsBtn.classList.remove('show');
-            renderPreviewTable();
-            showToast('All edits have been reset');
-        }
-
         function escapeHtml(value) {
             return String(value ?? '')
                 .replace(/&/g, '&amp;')
@@ -2836,71 +2079,6 @@
 
         async function copyUpdatedConsumablesTable() {
             await copyTextToClipboard(consumablesUpdateState.outputTsv, 'Updated table copied');
-        }
-
-        // ===== RENDER PREVIEW TABLE =====
-        function renderPreviewTable() {
-            const filteredData = filterBySearch(mappedData);
-            const totalCount = mappedData.length;
-            const filteredCount = filteredData.length;
-
-            // Update count display
-            if (searchTerm) {
-                outputCount.textContent = `${filteredCount} of ${totalCount} records`;
-            } else {
-                outputCount.textContent = `${totalCount} records`;
-            }
-
-            if (isExpanded) {
-                renderExpandedTable(filteredData);
-            } else {
-                renderCollapsedTable(filteredData);
-            }
-
-            // Update source preview if visible
-            if (isSourceVisible) {
-                renderSourcePreview();
-            }
-        }
-
-        function renderCollapsedTable(data) {
-            const previewRows = data.slice(0, 10);
-            previewBody.innerHTML = previewRows.map(row => `
-                <tr>
-                    <td><span class="badge ${row.STATUS === 'New connection' ? 'badge-new' : 'badge-replacement'}">${row.STATUS}</span></td>
-                    <td>${row['Tialis TASK NUMBER'] || '-'}</td>
-                    <td>${row['Full Name'] || '-'}</td>
-                    <td>${row['Device Type'] || '-'}</td>
-                    <td>${row['Device Bundle / Device Type'] || '-'}</td>
-                    <td>${row['ASSET Tag'] || '-'}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderExpandedTable(data) {
-            previewBody.innerHTML = data.map((row, displayIdx) => {
-                // Find actual index in mappedData for editing
-                const actualIdx = mappedData.findIndex(m =>
-                    m['IMEI Number'] === row['IMEI Number'] &&
-                    m['Serial Number'] === row['Serial Number'] &&
-                    m['Full Name'] === row['Full Name']
-                );
-
-                return `
-                    <tr class="revealing" style="animation-delay: ${Math.min(displayIdx * 15, 300)}ms">
-                        ${destHeaders.map(header => {
-                    const val = row[header] ?? '';
-                    const isEdited = actualIdx >= 0 && String(mappedData[actualIdx][header]) !== String(originalMappedData[actualIdx][header]);
-                    const editedClass = isEdited ? 'edited' : '';
-                    if (header === 'STATUS') {
-                        const badgeClass = val === 'New connection' ? 'badge-new' : 'badge-replacement';
-                        return `<td contenteditable="true" data-row-index="${actualIdx}" data-header="${header}" class="${editedClass}" onblur="handleCellEdit(event)"><span class="badge ${badgeClass}">${val}</span></td>`;
-                    }
-                    return `<td contenteditable="true" data-row-index="${actualIdx}" data-header="${header}" class="${editedClass}" onblur="handleCellEdit(event)">${val || '-'}</td>`;
-                }).join('')}
-                    </tr>
-                `;
-            }).join('');
         }
 
         function processFile(file) {
@@ -3078,7 +2256,6 @@
         function mapData() {
             // Reset filter stats
             filterStats = { total: sourceData.length, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
-            sourceRowMapping = [];
 
             // First pass: collect filter stats
             sourceData.forEach((row, idx) => {
@@ -3112,9 +2289,6 @@
                 if (deviceType !== 'iPhone' && deviceType !== 'iPad') {
                     return;
                 }
-
-                // Track which source indices map to output
-                sourceRowMapping.push(sourceIdx);
 
                 // Track device type stats
                 if (deviceType === 'iPhone') filterStats.iPhones++;
@@ -3167,9 +2341,6 @@
                     'iPhone number (to be added by EE)': ''
                 });
             });
-
-            // Store original for reset functionality
-            originalMappedData = JSON.parse(JSON.stringify(mappedData));
 
             // Detect duplicates
             detectDuplicates();
@@ -3529,6 +2700,8 @@
                 }
             });
 
+            resetConsumablesUpdateFeedback();
+            renderConsumablesUpdateUI();
             updateConsumablesUI();
         }
 
@@ -3566,187 +2739,51 @@
             consumablesBadge.textContent = '0 ITEMS';
             consumablesTotalCount.textContent = '0';
             consumablesBody.innerHTML = '';
-            updateConsumablesActionState();
-        }
-
-        function resetConsumablesUpdateFeedback() {
-            consumablesUpdateState.errors = [];
-            consumablesUpdateState.warnings = [];
-            consumablesUpdateState.unmatchedItems = [];
-            consumablesUpdateState.flooredItems = [];
-            consumablesUpdateState.summary = null;
-            consumablesUpdateState.finalMatrix = [];
-            consumablesUpdateState.outputTsv = '';
-        }
-
-        function resetConsumablesSelectorState(tableKey) {
-            if (tableKey === 'inventory') {
-                consumablesUpdateState.selectors.inventoryItemColumn = '';
-                consumablesUpdateState.selectors.inventoryCountColumn = '';
-            } else {
-                consumablesUpdateState.selectors.usageItemColumn = '';
-                consumablesUpdateState.selectors.usageCountColumn = '';
-            }
-
-            consumablesUpdateState.selectorOptions[tableKey] = [];
-            consumablesUpdateState.selectorVisibility[tableKey] = false;
-            consumablesUpdateState.selectorMessages[tableKey] = '';
-        }
-
-        function handleConsumablesPasteInput(tableKey, value) {
-            if (tableKey === 'inventory') {
-                consumablesUpdateState.inventoryText = value;
-            } else {
-                consumablesUpdateState.usageText = value;
-            }
-
             resetConsumablesUpdateFeedback();
-            resetConsumablesSelectorState(tableKey);
             renderConsumablesUpdateUI();
         }
 
-        function handleSelectorChange(key, value) {
-            consumablesUpdateState.selectors[key] = value;
+        function resetConsumablesUpdateFeedback() {
+            consumablesUpdateState.message = '';
+            consumablesUpdateState.parsedRows = [];
+            consumablesUpdateState.updatedRows = [];
+            consumablesUpdateState.outputTsv = '';
+        }
+
+        function handleConsumablesPasteInput(value) {
+            consumablesUpdateState.inventoryText = value;
             resetConsumablesUpdateFeedback();
             renderConsumablesUpdateUI();
         }
 
         function updateConsumablesActionState() {
             const hasInventoryText = consumablesUpdateState.inventoryText.trim().length > 0;
-            const hasUsageText = consumablesUpdateState.usageText.trim().length > 0;
-            updateCountsBtn.disabled = !(hasInventoryText && hasUsageText);
+            const hasGeneratedUsage = getGeneratedUsageRows().length > 0;
+            updateCountsBtn.disabled = !hasInventoryText;
             copyUpdatedTableBtn.disabled = !consumablesUpdateState.outputTsv;
-            copyGeneratedUsageBtn.disabled = getGeneratedUsageRows().length === 0;
+            copyGeneratedUsageBtn.disabled = !hasGeneratedUsage;
         }
 
-        function populateSelectorOptions(selectElement, headers, selectedValue) {
-            const options = ['<option value="">Choose column</option>'];
-            headers.forEach((header, index) => {
-                const label = String(header ?? '').trim() || `Column ${index + 1}`;
-                const selected = String(index) === String(selectedValue) ? ' selected' : '';
-                options.push(`<option value="${index}"${selected}>${escapeHtml(label)}</option>`);
-            });
-            selectElement.innerHTML = options.join('');
-        }
-
-        function renderConsumablesUpdateSelectors() {
-            inventorySelectors.hidden = !consumablesUpdateState.selectorVisibility.inventory;
-            usageSelectors.hidden = !consumablesUpdateState.selectorVisibility.usage;
-
-            if (consumablesUpdateState.selectorVisibility.inventory) {
-                inventorySelectorMessage.textContent = consumablesUpdateState.selectorMessages.inventory;
-                populateSelectorOptions(
-                    inventoryItemColumn,
-                    consumablesUpdateState.selectorOptions.inventory,
-                    consumablesUpdateState.selectors.inventoryItemColumn
-                );
-                populateSelectorOptions(
-                    inventoryCountColumn,
-                    consumablesUpdateState.selectorOptions.inventory,
-                    consumablesUpdateState.selectors.inventoryCountColumn
-                );
-            }
-
-            if (consumablesUpdateState.selectorVisibility.usage) {
-                usageSelectorMessage.textContent = consumablesUpdateState.selectorMessages.usage;
-                populateSelectorOptions(
-                    usageItemColumn,
-                    consumablesUpdateState.selectorOptions.usage,
-                    consumablesUpdateState.selectors.usageItemColumn
-                );
-                populateSelectorOptions(
-                    usageCountColumn,
-                    consumablesUpdateState.selectorOptions.usage,
-                    consumablesUpdateState.selectors.usageCountColumn
-                );
-            }
-        }
-
-        function renderConsumablesUpdateMessages() {
-            const messageBlocks = [];
-
-            if (consumablesUpdateState.errors.length) {
-                messageBlocks.push(`
-                    <div class="update-message is-error">
-                        <h3>Validation errors</h3>
-                        <ul>${consumablesUpdateState.errors.map((message) => `<li>${escapeHtml(message)}</li>`).join('')}</ul>
-                    </div>
-                `);
-            }
-
-            const warningItems = [
-                ...consumablesUpdateState.warnings,
-                ...consumablesUpdateState.unmatchedItems.map((item) => `No inventory match for "${item.name}" (${formatCountValue(item.count)}).`),
-                ...consumablesUpdateState.flooredItems.map((item) => `"${item}" was floored at 0.`),
-            ];
-
-            if (warningItems.length) {
-                messageBlocks.push(`
-                    <div class="update-message is-warning">
-                        <h3>Warnings</h3>
-                        <ul>${warningItems.map((message) => `<li>${escapeHtml(message)}</li>`).join('')}</ul>
-                    </div>
-                `);
-            }
-
-            consumablesUpdateMessages.innerHTML = messageBlocks.join('');
-        }
-
-        function renderConsumablesUpdateSummary() {
-            if (!consumablesUpdateState.summary) {
-                consumablesUpdateSummary.hidden = true;
-                consumablesUpdateSummary.innerHTML = '';
+        function renderConsumablesUpdateMessage() {
+            if (!consumablesUpdateState.message) {
+                consumablesUpdateMessage.innerHTML = '';
                 return;
             }
 
-            const chips = [
-                { label: 'Inventory Rows', value: consumablesUpdateState.summary.inventoryRows },
-                { label: 'Updated Rows', value: consumablesUpdateState.summary.updatedRows },
-                { label: 'Matched Items', value: consumablesUpdateState.summary.matchedItems },
-                { label: 'Unmatched Items', value: consumablesUpdateState.summary.unmatchedItems },
-                { label: 'Floored To Zero', value: consumablesUpdateState.summary.flooredItems },
-            ];
-
-            consumablesUpdateSummary.hidden = false;
-            consumablesUpdateSummary.innerHTML = chips.map((chip) => `
-                <div class="summary-chip">
-                    <span class="summary-chip-label">${escapeHtml(chip.label)}</span>
-                    <span class="summary-chip-value">${escapeHtml(chip.value)}</span>
+            consumablesUpdateMessage.innerHTML = `
+                <div class="update-message is-error">
+                    <h3>Inventory paste issue</h3>
+                    <p>${escapeHtml(consumablesUpdateState.message)}</p>
                 </div>
-            `).join('');
+            `;
         }
 
         function renderConsumablesUpdateResult() {
-            if (!consumablesUpdateState.finalMatrix.length) {
-                consumablesUpdateResult.hidden = true;
-                consumablesUpdateHead.innerHTML = '';
-                consumablesUpdateBody.innerHTML = '';
-                updatedTableOutput.value = '';
-                return;
-            }
-
-            const headers = consumablesUpdateState.finalMatrix[0];
-            const rows = consumablesUpdateState.finalMatrix.slice(1);
-
-            consumablesUpdateHead.innerHTML = `
-                <tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join('')}</tr>
-            `;
-            consumablesUpdateBody.innerHTML = rows.map((row) => {
-                const rowClass = isBlankRow(row) ? ' class="is-blank"' : '';
-                return `
-                    <tr${rowClass}>
-                        ${row.map((cell) => `<td>${cell === '' ? '&nbsp;' : escapeHtml(cell).replace(/\n/g, '<br>')}</td>`).join('')}
-                    </tr>
-                `;
-            }).join('');
-            updatedTableOutput.value = consumablesUpdateState.outputTsv;
-            consumablesUpdateResult.hidden = false;
+            updatedInventoryOutput.value = consumablesUpdateState.outputTsv;
         }
 
         function renderConsumablesUpdateUI() {
-            renderConsumablesUpdateSelectors();
-            renderConsumablesUpdateMessages();
-            renderConsumablesUpdateSummary();
+            renderConsumablesUpdateMessage();
             renderConsumablesUpdateResult();
             updateConsumablesActionState();
         }
@@ -3820,43 +2857,57 @@
             return cells.every((cell) => String(cell ?? '').trim() === '');
         }
 
-        function padCells(cells, width) {
-            const padded = cells.slice();
-            while (padded.length < width) {
-                padded.push('');
+        function trimTrailingEmptyCells(cells) {
+            const trimmed = cells.slice();
+            while (trimmed.length > 0 && String(trimmed[trimmed.length - 1] ?? '').trim() === '') {
+                trimmed.pop();
             }
-            return padded;
+            return trimmed;
         }
 
-        function buildParsedTable(text, label) {
-            const parsedRows = parseTabularText(text);
-            const headerIndex = parsedRows.findIndex((row) => !isBlankRow(row.cells));
-
-            if (headerIndex === -1) {
-                return { error: `${label} paste is empty.` };
+        function looksLikeInventoryHeader(cells) {
+            if (cells.length !== 2) {
+                return false;
             }
 
-            const tableRows = parsedRows.slice(headerIndex);
-            const width = tableRows.reduce((max, row) => Math.max(max, row.cells.length), 0);
-            const normalizedRows = tableRows.map((row) => ({
-                line: row.line,
-                cells: padCells(row.cells, width),
-                isBlank: isBlankRow(row.cells)
-            }));
+            const itemKey = normalizeHeaderKey(cells[0]);
+            const countKey = normalizeHeaderKey(cells[1]);
+            return itemHeaderAliases.has(itemKey) || countHeaderAliases.has(countKey);
+        }
+
+        function buildInventoryTable(text) {
+            const parsedRows = parseTabularText(text);
+            const nonBlankIndex = parsedRows.findIndex((row) => !isBlankRow(row.cells));
+
+            if (nonBlankIndex === -1) {
+                return { error: 'Paste a 2-column inventory table first.' };
+            }
+
+            const inventoryRows = parsedRows.slice(nonBlankIndex).map((row) => {
+                const cells = trimTrailingEmptyCells(row.cells);
+                return {
+                    line: row.line,
+                    cells,
+                    isBlank: isBlankRow(cells),
+                };
+            });
+
+            const invalidRow = inventoryRows.find((row) => !row.isBlank && row.cells.length !== 2);
+            if (invalidRow) {
+                return { error: `Row ${invalidRow.line} must contain exactly 2 columns: item and count.` };
+            }
+
+            const firstNonBlankRow = inventoryRows.find((row) => !row.isBlank);
+            const hasHeader = firstNonBlankRow ? looksLikeInventoryHeader(firstNonBlankRow.cells) : false;
 
             return {
-                label,
-                headers: normalizedRows[0].cells.slice(),
-                rows: normalizedRows.slice(1).map((row) => ({
-                    line: row.line,
-                    cells: row.cells.slice(),
-                    isBlank: row.isBlank
-                }))
+                rows: inventoryRows,
+                hasHeader,
             };
         }
 
-        function normalizeHeaderKey(header) {
-            return String(header ?? '').toLowerCase().replace(/\s+/g, '');
+        function normalizeHeaderKey(value) {
+            return String(value ?? '').toLowerCase().replace(/\s+/g, '');
         }
 
         function normalizeMatchKey(value) {
@@ -3881,222 +2932,57 @@
             return { ok: true, value: numeric };
         }
 
-        function resolveColumnIndex(headers, selectedValue, aliases, tableLabel, columnLabel) {
-            if (selectedValue !== '') {
-                const explicitIndex = Number(selectedValue);
-                if (Number.isInteger(explicitIndex) && explicitIndex >= 0 && explicitIndex < headers.length) {
-                    return { ok: true, index: explicitIndex };
-                }
-            }
-
-            const matches = headers
-                .map((header, index) => ({ header, index, key: normalizeHeaderKey(header) }))
-                .filter((item) => aliases.has(item.key));
-
-            if (matches.length === 1) {
-                return { ok: true, index: matches[0].index };
-            }
-
-            if (matches.length === 0) {
-                return { ok: false, message: `${tableLabel}: couldn't auto-detect the ${columnLabel} column.` };
-            }
-
-            return { ok: false, message: `${tableLabel}: multiple columns look like the ${columnLabel} column.` };
-        }
-
-        function resolveRequiredColumns(tableKey, table, tableLabel) {
-            const itemKey = `${tableKey}ItemColumn`;
-            const countKey = `${tableKey}CountColumn`;
-            const itemResolution = resolveColumnIndex(
-                table.headers,
-                consumablesUpdateState.selectors[itemKey],
-                itemHeaderAliases,
-                tableLabel,
-                'item'
-            );
-            const countResolution = resolveColumnIndex(
-                table.headers,
-                consumablesUpdateState.selectors[countKey],
-                countHeaderAliases,
-                tableLabel,
-                'count'
-            );
-
-            if (!itemResolution.ok || !countResolution.ok) {
-                consumablesUpdateState.selectorOptions[tableKey] = table.headers.slice();
-                consumablesUpdateState.selectorVisibility[tableKey] = true;
-                consumablesUpdateState.selectorMessages[tableKey] = [itemResolution.message, countResolution.message]
-                    .filter(Boolean)
-                    .join(' ');
-                return { ok: false };
-            }
-
-            consumablesUpdateState.selectorVisibility[tableKey] = false;
-            consumablesUpdateState.selectorMessages[tableKey] = '';
-            consumablesUpdateState.selectorOptions[tableKey] = [];
-
-            return {
-                ok: true,
-                itemIndex: itemResolution.index,
-                countIndex: countResolution.index
-            };
-        }
-
         function updateConsumableCounts() {
             resetConsumablesUpdateFeedback();
 
-            const inventoryTable = buildParsedTable(consumablesUpdateState.inventoryText, 'Current inventory');
-            const usageTable = buildParsedTable(consumablesUpdateState.usageText, 'Usage to remove');
-
-            if (inventoryTable.error || usageTable.error) {
-                consumablesUpdateState.errors = [inventoryTable.error, usageTable.error].filter(Boolean);
+            const inventoryTable = buildInventoryTable(consumablesUpdateState.inventoryText);
+            if (inventoryTable.error) {
+                consumablesUpdateState.message = inventoryTable.error;
                 renderConsumablesUpdateUI();
                 return;
             }
 
-            const inventoryColumns = resolveRequiredColumns('inventory', inventoryTable, 'Current inventory');
-            const usageColumns = resolveRequiredColumns('usage', usageTable, 'Usage to remove');
+            const generatedUsage = new Map(
+                getGeneratedUsageRows().map((row) => [normalizeMatchKey(row.name), row.count])
+            );
+            const updatedRows = [];
+            let headerConsumed = false;
 
-            if (!inventoryColumns.ok || !usageColumns.ok) {
-                consumablesUpdateState.warnings = ['Select the highlighted item and count columns, then click Update counts again.'];
-                renderConsumablesUpdateUI();
-                return;
-            }
-
-            const validationErrors = [];
-            const warnings = [];
-            const inventoryGroups = new Map();
-            const inventoryRows = inventoryTable.rows.map((row) => ({
-                line: row.line,
-                cells: row.cells.slice(),
-                isBlank: row.isBlank,
-                originalCount: null,
-                updatedCount: null,
-                itemDisplay: '',
-                matchKey: ''
-            }));
-            const usageTotals = new Map();
-            const usageLabels = new Map();
-
-            inventoryRows.forEach((row) => {
+            inventoryTable.rows.forEach((row) => {
                 if (row.isBlank) {
+                    updatedRows.push(['', '']);
                     return;
                 }
 
-                const countResult = parseCountCell(row.cells[inventoryColumns.countIndex]);
-                if (!countResult.ok) {
-                    validationErrors.push(`Current inventory row ${row.line}: ${countResult.message}.`);
+                if (inventoryTable.hasHeader && !headerConsumed) {
+                    updatedRows.push(row.cells.slice());
+                    headerConsumed = true;
                     return;
                 }
 
-                row.originalCount = countResult.value;
-                row.updatedCount = countResult.value;
-                row.itemDisplay = String(row.cells[inventoryColumns.itemIndex] ?? '').trim();
-                row.matchKey = normalizeMatchKey(row.itemDisplay);
-
-                if (!row.itemDisplay) {
-                    warnings.push(`Current inventory row ${row.line}: blank item was left unchanged.`);
+                const [item, count] = row.cells;
+                const parsedCount = parseCountCell(count);
+                if (!parsedCount.ok) {
+                    consumablesUpdateState.message = `Row ${row.line} has an invalid count value.`;
                     return;
                 }
 
-                if (!inventoryGroups.has(row.matchKey)) {
-                    inventoryGroups.set(row.matchKey, []);
-                }
-                inventoryGroups.get(row.matchKey).push(row);
+                const matchKey = normalizeMatchKey(item);
+                const removal = generatedUsage.get(matchKey) || 0;
+                const updatedCount = Math.max(parsedCount.value - removal, 0);
+                updatedRows.push([item, formatCountValue(updatedCount)]);
             });
 
-            usageTable.rows.forEach((row) => {
-                if (row.isBlank) {
-                    return;
-                }
-
-                const countResult = parseCountCell(row.cells[usageColumns.countIndex]);
-                if (!countResult.ok) {
-                    validationErrors.push(`Usage row ${row.line}: ${countResult.message}.`);
-                    return;
-                }
-
-                const itemDisplay = String(row.cells[usageColumns.itemIndex] ?? '').trim();
-                if (!itemDisplay) {
-                    warnings.push(`Usage row ${row.line}: blank item was skipped.`);
-                    return;
-                }
-
-                const matchKey = normalizeMatchKey(itemDisplay);
-                usageTotals.set(matchKey, (usageTotals.get(matchKey) || 0) + countResult.value);
-                if (!usageLabels.has(matchKey)) {
-                    usageLabels.set(matchKey, itemDisplay);
-                }
-            });
-
-            if (validationErrors.length) {
-                consumablesUpdateState.errors = validationErrors;
-                consumablesUpdateState.warnings = warnings;
+            if (consumablesUpdateState.message) {
+                consumablesUpdateState.updatedRows = [];
+                consumablesUpdateState.outputTsv = '';
                 renderConsumablesUpdateUI();
                 return;
             }
 
-            const unmatchedItems = [];
-            const flooredKeys = new Set();
-            let updatedRows = 0;
-            let matchedItems = 0;
-
-            usageTotals.forEach((usageCount, matchKey) => {
-                const matchingRows = inventoryGroups.get(matchKey);
-                if (!matchingRows || !matchingRows.length) {
-                    unmatchedItems.push({
-                        name: usageLabels.get(matchKey) || matchKey,
-                        count: usageCount
-                    });
-                    return;
-                }
-
-                matchedItems += 1;
-                let remaining = usageCount;
-
-                matchingRows.forEach((row) => {
-                    if (remaining <= 0) {
-                        return;
-                    }
-
-                    const before = row.updatedCount;
-                    const deduction = Math.min(before, remaining);
-                    const after = before - deduction;
-
-                    if (after !== before) {
-                        updatedRows += 1;
-                        row.updatedCount = after;
-                    }
-
-                    if (after === 0 && remaining > before) {
-                        flooredKeys.add(usageLabels.get(matchKey) || row.itemDisplay || matchKey);
-                    }
-
-                    remaining -= deduction;
-                });
-            });
-
-            const finalRows = inventoryRows.map((row) => {
-                const nextCells = row.cells.slice();
-                if (!row.isBlank && row.originalCount !== null && row.updatedCount !== row.originalCount) {
-                    nextCells[inventoryColumns.countIndex] = formatCountValue(row.updatedCount);
-                }
-                return nextCells;
-            });
-            const finalMatrix = [inventoryTable.headers.slice(), ...finalRows];
-
-            consumablesUpdateState.warnings = warnings;
-            consumablesUpdateState.unmatchedItems = unmatchedItems;
-            consumablesUpdateState.flooredItems = Array.from(flooredKeys);
-            consumablesUpdateState.summary = {
-                inventoryRows: inventoryRows.filter((row) => !row.isBlank).length,
-                updatedRows,
-                matchedItems,
-                unmatchedItems: unmatchedItems.length,
-                flooredItems: flooredKeys.size
-            };
-            consumablesUpdateState.finalMatrix = finalMatrix;
-            consumablesUpdateState.outputTsv = matrixToTsv(finalMatrix);
+            consumablesUpdateState.parsedRows = inventoryTable.rows.map((row) => row.cells.slice());
+            consumablesUpdateState.updatedRows = updatedRows;
+            consumablesUpdateState.outputTsv = matrixToTsv(updatedRows);
             renderConsumablesUpdateUI();
         }
 
@@ -4119,28 +3005,11 @@
         function updateOutputUI() {
             if (mappedData.length === 0) {
                 showStatus('error', 'No iPhone or iPad records found in the source file');
+                outputCount.textContent = '0 records';
+                previewSection.style.display = 'none';
+                emptyPreview.style.display = 'block';
                 return;
             }
-
-            // Reset expanded state when new data loads
-            isExpanded = false;
-            expandBtn.classList.remove('expanded');
-            expandBtnText.textContent = 'Expand All Rows & Columns';
-            previewScroll.classList.remove('expanded');
-            previewTable.classList.remove('expanded');
-            columnIndicator.style.display = 'none';
-
-            // Reset header to preview columns
-            previewHead.innerHTML = `
-                <tr>
-                    <th>Status</th>
-                    <th>Task Number</th>
-                    <th>Full Name</th>
-                    <th>Device</th>
-                    <th>Bundle</th>
-                    <th>Asset Tag</th>
-                </tr>
-            `;
 
             // Build status message with optional warnings
             let statusHtml = `Successfully mapped ${mappedData.length} iPhone/iPad records`;
@@ -4170,69 +3039,6 @@
             // Show preview section, hide empty state
             previewSection.style.display = 'block';
             emptyPreview.style.display = 'none';
-
-            // Generate preview rows using the new render function
-            renderPreviewTable();
-
-            // Always show expand button if there's data
-            if (mappedData.length > 0) {
-                expandBtn.style.display = 'flex';
-                previewFade.classList.remove('hidden');
-            } else {
-                expandBtn.style.display = 'none';
-            }
-        }
-
-        function toggleExpand() {
-            isExpanded = !isExpanded;
-
-            if (isExpanded) {
-                // Expand: show all rows and all columns
-                expandBtn.classList.add('expanded');
-                expandBtnText.textContent = 'Collapse';
-                previewScroll.classList.add('expanded');
-                previewTable.classList.add('expanded');
-                previewFade.classList.add('hidden');
-                columnIndicator.style.display = 'inline-flex';
-                columnCount.textContent = `${destHeaders.length} cols`;
-
-                // Update header to show all columns
-                previewHead.innerHTML = `
-                    <tr>
-                        ${destHeaders.map(h => `<th>${h}</th>`).join('')}
-                    </tr>
-                `;
-
-                // Use renderPreviewTable which handles editable cells and search filtering
-                renderPreviewTable();
-
-            } else {
-                // Collapse: show preview (10 rows, 6 columns)
-                expandBtn.classList.remove('expanded');
-                expandBtnText.textContent = 'Expand All Rows & Columns';
-                previewScroll.classList.remove('expanded');
-                previewTable.classList.remove('expanded');
-                previewFade.classList.remove('hidden');
-                columnIndicator.style.display = 'none';
-
-                // Reset header to preview columns
-                previewHead.innerHTML = `
-                    <tr>
-                        <th>Status</th>
-                        <th>Task Number</th>
-                        <th>Full Name</th>
-                        <th>Device</th>
-                        <th>Bundle</th>
-                        <th>Asset Tag</th>
-                    </tr>
-                `;
-
-                // Use renderPreviewTable which handles search filtering
-                renderPreviewTable();
-
-                // Scroll back to top
-                previewScroll.scrollTop = 0;
-            }
         }
 
         function showStatus(type, message) {
@@ -4288,13 +3094,8 @@
         function clearFile() {
             sourceData = [];
             mappedData = [];
-            originalMappedData = [];
             filterStats = { total: 0, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
             duplicateWarnings = { imei: [], serial: [], asset: [] };
-            searchTerm = '';
-            hasEdits = false;
-            sourceRowMapping = [];
-            isSourceVisible = false;
             clearConsumables();
 
             sourceContent.innerHTML = `
@@ -4318,27 +3119,9 @@
 
             previewSection.style.display = 'none';
             emptyPreview.style.display = 'block';
+            outputCount.textContent = '0 records';
             statusArea.innerHTML = '';
             fileInput.value = '';
-
-            // Reset expanded state
-            isExpanded = false;
-            expandBtn.style.display = 'none';
-            expandBtn.classList.remove('expanded');
-            expandBtnText.textContent = 'Expand All Rows & Columns';
-            previewScroll.classList.remove('expanded');
-            previewTable.classList.remove('expanded');
-            previewFade.classList.remove('hidden');
-            columnIndicator.style.display = 'none';
-
-            // Reset new UI elements
-            searchInput.value = '';
-            sourceToggleBtn.classList.remove('active');
-            sourcePreviewSection.style.display = 'none';
-            editModeIndicator.classList.remove('show');
-            resetEditsBtn.classList.remove('show');
-            sourceHead.innerHTML = '';
-            sourceBody.innerHTML = '';
         }
 
         function showToast(message) {
