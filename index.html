@@ -36,8 +36,6 @@
             --diff-success-text: #116329;
             --diff-header-bg: #f6f8fa;
             --diff-header-text: #24292f;
-            --inventory-header-height: 46px;
-            --inventory-row-height: 54px;
             --border-width: 1.5px;
         }
 
@@ -812,29 +810,15 @@
         }
 
         .inventory-grid-shell .tabulator-header .tabulator-col .tabulator-col-content {
-            padding: 0 12px;
-            min-height: var(--inventory-header-height);
-            display: flex;
-            align-items: center;
+            padding: 10px 12px;
         }
 
         .inventory-grid-shell .tabulator-cell,
         .inventory-grid-shell .tabulator-row-header .tabulator-cell {
             border-right: 1px solid #d8dee4;
             border-bottom: 1px solid #d8dee4;
-            padding: 0 12px;
-            min-height: var(--inventory-row-height);
-            height: var(--inventory-row-height);
-            display: flex;
-            align-items: center;
-        }
-
-        .inventory-grid-shell .tabulator-row {
-            min-height: var(--inventory-row-height);
-        }
-
-        .inventory-grid-shell .tabulator-row-header .tabulator-cell {
-            justify-content: center;
+            padding: 10px 12px;
+            min-height: 40px;
         }
 
         .inventory-grid-shell .tabulator-row .tabulator-cell:last-child {
@@ -1789,9 +1773,8 @@
         }
 
         .diff-row {
-            min-height: var(--inventory-row-height);
-            height: var(--inventory-row-height);
-            padding: 0 10px;
+            min-height: 40px;
+            padding: 6px 10px;
             border-bottom: 1px solid var(--diff-border);
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
@@ -1803,8 +1786,7 @@
         }
 
         .diff-row.is-grid-head {
-            min-height: var(--inventory-header-height);
-            height: var(--inventory-header-height);
+            min-height: 37px;
             background: var(--diff-header-bg);
             border-bottom: 1px solid var(--diff-border);
         }
