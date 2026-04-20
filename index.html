@@ -27,6 +27,15 @@
             --gray-200: #e5e5e5;
             --gray-400: #a3a3a3;
             --gray-600: #525252;
+            --diff-border: #d0d7de;
+            --diff-muted: #f6f8fa;
+            --diff-hover: #f6f8fa;
+            --diff-text-muted: #57606a;
+            --diff-success-bg: #dafbe1;
+            --diff-success-border: #1a7f37;
+            --diff-success-text: #116329;
+            --diff-header-bg: #f6f8fa;
+            --diff-header-text: #24292f;
             --border-width: 1.5px;
         }
 
@@ -777,9 +786,9 @@
 
         .inventory-grid-shell .tabulator-row-header,
         .inventory-grid-shell .tabulator-col.tabulator-row-handle {
-            background: var(--gray-100);
-            color: var(--gray-600);
-            border-right: 1px solid var(--gray-200);
+            background: var(--diff-muted);
+            color: var(--diff-text-muted);
+            border-right: 1px solid var(--diff-border);
         }
 
         .inventory-grid-shell .tabulator-row-header .tabulator-cell,
@@ -789,15 +798,15 @@
         }
 
         .inventory-grid-shell .tabulator-header {
-            border-bottom: var(--border-width) solid var(--black);
-            background: var(--black);
+            border-bottom: 1px solid var(--diff-border);
+            background: var(--diff-header-bg);
         }
 
         .inventory-grid-shell .tabulator-header .tabulator-col,
         .inventory-grid-shell .tabulator-header .tabulator-col.tabulator-sortable:hover {
-            background: var(--black);
-            color: var(--white);
-            border-right: 1px solid rgba(255, 255, 255, 0.16);
+            background: var(--diff-header-bg);
+            color: var(--diff-header-text);
+            border-right: 1px solid var(--diff-border);
         }
 
         .inventory-grid-shell .tabulator-header .tabulator-col .tabulator-col-content {
@@ -806,8 +815,8 @@
 
         .inventory-grid-shell .tabulator-cell,
         .inventory-grid-shell .tabulator-row-header .tabulator-cell {
-            border-right: 1px solid var(--gray-200);
-            border-bottom: 1px solid var(--gray-200);
+            border-right: 1px solid #d8dee4;
+            border-bottom: 1px solid #d8dee4;
             padding: 10px 12px;
             min-height: 40px;
         }
@@ -817,17 +826,17 @@
         }
 
         .inventory-grid-shell .tabulator-row:hover {
-            background: var(--gray-100);
+            background: var(--diff-hover);
         }
 
         .inventory-grid-shell .tabulator-range {
-            border-color: var(--black);
-            background: rgba(0, 0, 0, 0.04);
+            border-color: #0969da;
+            background: rgba(9, 105, 218, 0.08);
         }
 
         .inventory-grid-shell .tabulator-selected,
         .inventory-grid-shell .tabulator-row.tabulator-selected {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(9, 105, 218, 0.08);
         }
 
         .inventory-grid-shell .tabulator-editing {
@@ -1704,6 +1713,9 @@
         .paste-panel {
             padding: 14px;
             gap: 12px;
+            border-color: var(--diff-border);
+            border-radius: 8px;
+            background: var(--white);
         }
 
         .paste-panel-header {
@@ -1711,29 +1723,41 @@
         }
 
         .diff-panel {
-            border: var(--border-width) solid var(--black);
-            background: var(--white);
+            border: 1px solid var(--diff-border);
+            border-radius: 8px;
+            background: var(--diff-muted);
             display: grid;
             grid-template-rows: auto 1fr;
             min-width: 0;
+            overflow: hidden;
         }
 
         .diff-panel-header {
-            padding: 12px 10px;
-            border-bottom: var(--border-width) solid var(--black);
-            background: var(--black);
-            color: var(--white);
-            text-align: center;
+            padding: 12px 12px 10px;
+            border-bottom: 1px solid var(--diff-border);
+            background: var(--diff-header-bg);
+            color: var(--diff-header-text);
+            text-align: left;
+            display: grid;
+            gap: 2px;
+        }
+
+        .diff-panel-title {
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.7px;
         }
 
+        .diff-panel-subtitle {
+            font-size: 11px;
+            color: var(--diff-text-muted);
+        }
+
         .diff-grid-shell {
             height: 320px;
             overflow: auto;
-            background: var(--white);
+            background: var(--diff-muted);
         }
 
         .diff-grid-shell::-webkit-scrollbar {
@@ -1741,7 +1765,7 @@
         }
 
         .diff-grid-shell::-webkit-scrollbar-thumb {
-            background: var(--black);
+            background: #8c959f;
         }
 
         .diff-grid {
@@ -1750,40 +1774,107 @@
 
         .diff-row {
             min-height: 40px;
-            padding: 10px 8px;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--diff-border);
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
-            text-align: center;
-            color: var(--gray-600);
-            background: var(--white);
+            color: var(--diff-text-muted);
+            background: var(--diff-muted);
+            display: grid;
+            align-items: center;
+            justify-items: stretch;
         }
 
         .diff-row.is-grid-head {
             min-height: 37px;
-            background: var(--black);
-            border-bottom: var(--border-width) solid var(--black);
+            background: var(--diff-header-bg);
+            border-bottom: 1px solid var(--diff-border);
         }
 
         .diff-row.is-header {
-            background: var(--gray-100);
-            color: var(--gray-600);
+            background: #f6f8fa;
+            color: var(--diff-text-muted);
         }
 
         .diff-row.is-changed {
-            background: #e9f6ea;
-            color: #0f5d1f;
+            background: #f0fff4;
+            color: var(--diff-success-text);
+        }
+
+        .diff-row.is-unchanged {
+            background: var(--diff-muted);
+            color: var(--diff-text-muted);
+        }
+
+        .diff-row.is-hovered {
+            background: #eef2f7;
+        }
+
+        .diff-row.is-changed.is-hovered {
+            background: #dcffe4;
+        }
+
+        .diff-row-content {
+            display: grid;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .diff-row-content.is-empty {
+            min-height: 100%;
+        }
+
+        .diff-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 18px;
+            width: fit-content;
+            padding: 0 6px;
+            border-radius: 999px;
+            font-size: 9px;
             font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            background: #eaeef2;
+            color: var(--diff-text-muted);
+        }
+
+        .diff-status.is-grid-head,
+        .diff-status.is-header {
+            background: #ddf4ff;
+            color: #0969da;
+        }
+
+        .diff-status.is-changed {
+            background: var(--diff-success-bg);
+            color: var(--diff-success-text);
+        }
+
+        .diff-value {
+            text-align: right;
+            font-size: 15px;
+            line-height: 1;
+            font-weight: 700;
+            color: inherit;
+        }
+
+        .diff-meta {
+            text-align: right;
+            font-size: 10px;
+            color: var(--diff-text-muted);
+            white-space: nowrap;
         }
 
         .inventory-summary-strip {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
-            padding: 12px 14px;
-            border: var(--border-width) solid var(--black);
-            background: var(--gray-100);
-            font-family: 'JetBrains Mono', monospace;
+            padding: 0;
+            border: none;
+            background: transparent;
+            font-family: 'Instrument Sans', sans-serif;
             font-size: 12px;
         }
 
@@ -1791,13 +1882,61 @@
             display: none;
         }
 
+        .inventory-summary-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--diff-header-text);
+            margin-right: 4px;
+        }
+
+        .inventory-summary-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 32px;
+            padding: 0 10px;
+            border: 1px solid var(--diff-border);
+            border-radius: 999px;
+            background: var(--white);
+        }
+
+        .inventory-summary-badge-label {
+            font-size: 11px;
+            color: var(--diff-text-muted);
+        }
+
+        .inventory-summary-badge-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--diff-header-text);
+        }
+
+        .inventory-grid-shell {
+            border-color: var(--diff-border);
+            border-radius: 8px;
+        }
+
         .inventory-grid-shell.is-readonly .tabulator-row.is-changed {
-            background: #eef9f0;
-            box-shadow: inset 4px 0 0 #236c36;
+            background: #f0fff4;
+            box-shadow: inset 3px 0 0 var(--diff-success-border);
         }
 
         .inventory-grid-shell.is-readonly .tabulator-row.is-changed:hover {
-            background: #e5f4e7;
+            background: #e0f8e7;
+        }
+
+        .inventory-grid-shell .tabulator-row.is-hovered {
+            background: var(--diff-hover);
+        }
+
+        .inventory-grid-shell.is-readonly .tabulator-row.is-changed.is-hovered {
+            background: #dcffe4;
+        }
+
+        .inventory-grid-shell .tabulator-row.is-unchanged .tabulator-cell,
+        .inventory-grid-shell .tabulator-row.is-unchanged .tabulator-row-header .tabulator-cell {
+            color: #24292f;
         }
 
         .help-modal-overlay {
@@ -2144,7 +2283,10 @@
                     </section>
 
                     <section class="diff-panel" aria-label="Inventory changes">
-                        <div class="diff-panel-header">Delta</div>
+                        <div class="diff-panel-header">
+                            <span class="diff-panel-title">Change lane</span>
+                            <span class="diff-panel-subtitle">Review changes</span>
+                        </div>
                         <div class="diff-grid-shell" id="inventoryDiffScroll">
                             <div class="diff-grid" id="inventoryDiffGrid"></div>
                         </div>
@@ -2248,6 +2390,7 @@
         let currentSourceFile = null;
         let isUsageCollapsed = false;
         let isSyncingInventoryScroll = false;
+        let hoveredInventoryRowIndex = null;
         let consumablesUpdateState = {
             inventoryMatrix: [],
             message: '',
@@ -2430,22 +2573,47 @@
                 headerVisible: true,
                 height: 320,
                 rowFormatter: (row) => {
-                    if (editable) {
-                        return;
-                    }
-
                     const rowEl = row.getElement();
-                    rowEl.classList.remove('is-changed');
+                    rowEl.classList.remove('is-changed', 'is-unchanged', 'is-header', 'is-grid-head', 'is-hovered');
 
                     const rawPosition = typeof row.getPosition === 'function'
                         ? row.getPosition(true)
                         : row.getIndex();
                     const rowIndex = Math.max(0, Number(rawPosition || 1) - 1);
                     const meta = consumablesUpdateState.renderedDiffRows[rowIndex];
+                    rowEl.dataset.diffRow = String(rowIndex);
 
-                    if (meta?.changed) {
-                        rowEl.classList.add('is-changed');
+                    if (!meta) {
+                        return;
                     }
+
+                    if (meta.changed) {
+                        rowEl.classList.add('is-changed');
+                    } else if (meta.status === 'unchanged') {
+                        rowEl.classList.add('is-unchanged');
+                    }
+
+                    if (meta.isHeader) {
+                        rowEl.classList.add('is-header');
+                    }
+
+                    if (meta.isGridHead) {
+                        rowEl.classList.add('is-grid-head');
+                    }
+
+                    if (hoveredInventoryRowIndex === rowIndex) {
+                        rowEl.classList.add('is-hovered');
+                    }
+                },
+                rowMouseEnter: (_event, row) => {
+                    const rawPosition = typeof row.getPosition === 'function'
+                        ? row.getPosition(true)
+                        : row.getIndex();
+                    const rowIndex = Math.max(0, Number(rawPosition || 1) - 1);
+                    setHoveredInventoryRow(rowIndex);
+                },
+                rowMouseLeave: () => {
+                    setHoveredInventoryRow(null);
                 },
             };
 
@@ -2559,23 +2727,82 @@
             const baseMatrix = consumablesUpdateState.outputTsv
                 ? buildGridMatrix(consumablesUpdateState.updatedRows)
                 : buildGridMatrix(consumablesUpdateState.inventoryMatrix);
-            const renderedRows = [{ label: '', changed: false, isHeader: false, isGridHead: true }, ...consumablesUpdateState.diffRows];
+            const renderedRows = [{
+                label: '',
+                changed: false,
+                isHeader: false,
+                isGridHead: true,
+                status: 'grid-head',
+                meta: '',
+                title: 'Column headers',
+            }, ...consumablesUpdateState.diffRows];
 
             while (renderedRows.length < baseMatrix.length + 1) {
-                renderedRows.push({ label: '', changed: false, isHeader: false });
+                renderedRows.push({
+                    label: '',
+                    changed: false,
+                    isHeader: false,
+                    status: 'empty',
+                    meta: '',
+                    title: '',
+                });
             }
 
             return renderedRows;
         }
 
+        function renderDiffRowContent(row) {
+            if (row.status === 'empty') {
+                return '<div class="diff-row-content is-empty">&nbsp;</div>';
+            }
+
+            const statusLabel = row.status === 'changed'
+                ? 'Changed'
+                : row.status === 'unchanged'
+                    ? 'Unchanged'
+                    : 'Header';
+            const valueMarkup = row.label
+                ? `<div class="diff-value">${escapeHtml(row.label)}</div>`
+                : '';
+            const metaMarkup = row.meta
+                ? `<div class="diff-meta">${escapeHtml(row.meta)}</div>`
+                : '';
+
+            return `
+                <div class="diff-row-content">
+                    <span class="diff-status is-${row.status}">${statusLabel}</span>
+                    ${valueMarkup}
+                    ${metaMarkup}
+                </div>
+            `;
+        }
+
         function renderInventoryDiffColumn() {
             consumablesUpdateState.renderedDiffRows = buildRenderedDiffRows();
-            inventoryDiffGrid.innerHTML = consumablesUpdateState.renderedDiffRows.map((row) => `
-                <div class="diff-row${row.changed ? ' is-changed' : ''}${row.isHeader ? ' is-header' : ''}${row.isGridHead ? ' is-grid-head' : ''}">
-                    ${row.label ? escapeHtml(row.label) : '&nbsp;'}
+            inventoryDiffGrid.innerHTML = consumablesUpdateState.renderedDiffRows.map((row, index) => `
+                <div
+                    class="diff-row${row.changed ? ' is-changed' : ''}${row.status === 'unchanged' ? ' is-unchanged' : ''}${row.isHeader ? ' is-header' : ''}${row.isGridHead ? ' is-grid-head' : ''}${hoveredInventoryRowIndex === index ? ' is-hovered' : ''}"
+                    data-diff-row="${index}"
+                    ${row.title ? `title="${escapeHtml(row.title)}"` : ''}
+                >
+                    ${renderDiffRowContent(row)}
                 </div>
             `).join('');
-            requestAnimationFrame(() => updatedInventoryGrid.redraw(true));
+            inventoryDiffGrid.querySelectorAll('.diff-row').forEach((row) => {
+                row.addEventListener('mouseenter', () => {
+                    const rowIndex = Number(row.dataset.diffRow);
+                    if (!Number.isNaN(rowIndex)) {
+                        setHoveredInventoryRow(rowIndex);
+                    }
+                });
+                row.addEventListener('mouseleave', () => {
+                    setHoveredInventoryRow(null);
+                });
+            });
+            requestAnimationFrame(() => {
+                inventoryGrid.redraw(true);
+                updatedInventoryGrid.redraw(true);
+            });
         }
 
         function renderInventorySummary() {
@@ -2588,10 +2815,29 @@
 
             inventorySummaryStrip.hidden = false;
             inventorySummaryStrip.innerHTML = `
-                <span>${summary.changedRows} rows changed</span>
-                <span>${summary.unchangedRows} unchanged</span>
-                <span>${formatCountValue(summary.totalDeducted)} units deducted</span>
+                <span class="inventory-summary-title">Inventory changes</span>
+                <span class="inventory-summary-badge">
+                    <span class="inventory-summary-badge-label">Changed</span>
+                    <span class="inventory-summary-badge-value">${summary.changedRows}</span>
+                </span>
+                <span class="inventory-summary-badge">
+                    <span class="inventory-summary-badge-label">Unchanged</span>
+                    <span class="inventory-summary-badge-value">${summary.unchangedRows}</span>
+                </span>
+                <span class="inventory-summary-badge">
+                    <span class="inventory-summary-badge-label">Deducted</span>
+                    <span class="inventory-summary-badge-value">${formatCountValue(summary.totalDeducted)}</span>
+                </span>
             `;
+        }
+
+        function setHoveredInventoryRow(rowIndex) {
+            hoveredInventoryRowIndex = typeof rowIndex === 'number' ? rowIndex : null;
+
+            document.querySelectorAll('[data-diff-row]').forEach((element) => {
+                const isActive = hoveredInventoryRowIndex !== null && Number(element.dataset.diffRow) === hoveredInventoryRowIndex;
+                element.classList.toggle('is-hovered', isActive);
+            });
         }
 
         function syncInventoryScroll(event) {
@@ -3898,13 +4144,27 @@
             inventoryTable.rows.forEach((row) => {
                 if (row.isBlank) {
                     updatedRows.push(['', '']);
-                    diffRows.push({ label: '', changed: false, isHeader: false });
+                    diffRows.push({
+                        label: '',
+                        changed: false,
+                        isHeader: false,
+                        status: 'empty',
+                        meta: '',
+                        title: '',
+                    });
                     return;
                 }
 
                 if (inventoryTable.hasHeader && !headerConsumed) {
                     updatedRows.push(row.cells.slice());
-                    diffRows.push({ label: '', changed: false, isHeader: true });
+                    diffRows.push({
+                        label: '',
+                        changed: false,
+                        isHeader: true,
+                        status: 'header',
+                        meta: 'Column labels',
+                        title: 'Header row',
+                    });
                     headerConsumed = true;
                     return;
                 }
@@ -3926,6 +4186,11 @@
                     label: changed ? `-${formatCountValue(deduction)}` : '',
                     changed,
                     isHeader: false,
+                    status: changed ? 'changed' : 'unchanged',
+                    meta: changed ? `${formatCountValue(parsedCount.value)} → ${formatCountValue(updatedCount)}` : 'No change',
+                    title: changed
+                        ? `${formatCountValue(parsedCount.value)} to ${formatCountValue(updatedCount)}`
+                        : 'No change',
                 });
 
                 if (changed) {
