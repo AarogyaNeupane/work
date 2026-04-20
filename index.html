@@ -1818,8 +1818,8 @@
             width: 100%;
             display: flex;
             flex-direction: row;
-            align-items: flex-end;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
             gap: 8px;
             min-height: 40px;
         }
@@ -1842,11 +1842,25 @@
         }
 
         .diff-value {
-            text-align: right;
+            text-align: left;
             font-size: 14px;
             line-height: 1;
             font-weight: 700;
             color: inherit;
+            flex-shrink: 0;
+        }
+
+        .diff-inline-meta {
+            font-size: 11px;
+            line-height: 1;
+            color: var(--diff-text-muted);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .diff-inline-separator {
+            color: #8c959f;
+            margin: 0 2px;
         }
 
         .inventory-summary-strip {
@@ -2754,11 +2768,20 @@
             const valueMarkup = row.label
                 ? `<div class="diff-value">${escapeHtml(row.label)}</div>`
                 : '';
+            const metaMarkup = row.meta
+                ? `
+                    <div class="diff-inline-meta">
+                        <span class="diff-inline-separator">|</span>
+                        ${escapeHtml(row.meta)}
+                    </div>
+                `
+                : '';
 
             return `
                 <div class="diff-row-content">
                     <span class="diff-marker is-changed" aria-hidden="true"></span>
                     ${valueMarkup}
+                    ${metaMarkup}
                 </div>
             `;
         }
