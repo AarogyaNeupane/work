@@ -10,7 +10,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Söhne+Mono,monospace&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@6.3.1/dist/css/tabulator_simple.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@6.3.1/dist/js/tabulator.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -736,8 +738,6 @@
             line-height: 1.5;
         }
 
-        .paste-textarea,
-        .output-textarea,
         .selector-field select {
             width: 100%;
             border: var(--border-width) solid var(--black);
@@ -747,19 +747,105 @@
             font-size: 12px;
         }
 
-        .paste-textarea,
-        .output-textarea {
+        .inventory-grid-shell {
             min-height: 220px;
-            padding: 14px;
-            resize: vertical;
-            line-height: 1.5;
+            border: var(--border-width) solid var(--black);
+            background: var(--white);
+            overflow: hidden;
         }
 
-        .paste-textarea:focus,
-        .output-textarea:focus,
+        .inventory-grid {
+            min-height: 220px;
+        }
+
+        .inventory-grid-shell:focus-within,
         .selector-field select:focus {
             outline: none;
             background: var(--gray-100);
+        }
+
+        .inventory-grid-shell .tabulator {
+            border: none;
+            background: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .inventory-grid-shell .tabulator-tableholder {
+            background: var(--white);
+        }
+
+        .inventory-grid-shell .tabulator-row-header,
+        .inventory-grid-shell .tabulator-col.tabulator-row-handle {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .inventory-grid-shell .tabulator-row-header .tabulator-cell,
+        .inventory-grid-shell .tabulator-col.tabulator-row-handle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .inventory-grid-shell .tabulator-header {
+            border-bottom: var(--border-width) solid var(--black);
+            background: var(--black);
+        }
+
+        .inventory-grid-shell .tabulator-header .tabulator-col,
+        .inventory-grid-shell .tabulator-header .tabulator-col.tabulator-sortable:hover {
+            background: var(--black);
+            color: var(--white);
+            border-right: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .inventory-grid-shell .tabulator-header .tabulator-col .tabulator-col-content {
+            padding: 10px 12px;
+        }
+
+        .inventory-grid-shell .tabulator-cell,
+        .inventory-grid-shell .tabulator-row-header .tabulator-cell {
+            border-right: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 10px 12px;
+            min-height: 40px;
+        }
+
+        .inventory-grid-shell .tabulator-row .tabulator-cell:last-child {
+            border-right: none;
+        }
+
+        .inventory-grid-shell .tabulator-row:hover {
+            background: var(--gray-100);
+        }
+
+        .inventory-grid-shell .tabulator-range {
+            border-color: var(--black);
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .inventory-grid-shell .tabulator-selected,
+        .inventory-grid-shell .tabulator-row.tabulator-selected {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .inventory-grid-shell .tabulator-editing {
+            background: #fffef5;
+        }
+
+        .inventory-grid-shell .tabulator-editing input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font: inherit;
+            color: inherit;
+        }
+
+        .inventory-grid-shell.is-readonly .tabulator-row:hover {
+            background: transparent;
         }
 
         .selector-panel {
@@ -962,7 +1048,6 @@
             font-size: 12px;
             color: var(--gray-600);
             line-height: 1.5;
-        }
         }
 
         /* Duplicate/Filter Warning Panel */
@@ -1601,9 +1686,11 @@
                                 <h3 class="paste-panel-title">Current Inventory</h3>
                                 <p class="paste-helper">Paste a plain 2-column Excel table: item name in the first column and count in the second.</p>
                             </div>
-                            <span class="paste-panel-meta">TAB-DELIMITED</span>
+                            <span class="paste-panel-meta">EDITABLE GRID</span>
                         </div>
-                        <textarea id="inventoryPasteInput" class="paste-textarea" spellcheck="false" placeholder="Paste the current consumables inventory table here"></textarea>
+                        <div class="inventory-grid-shell">
+                            <div id="inventoryGrid" class="inventory-grid" aria-label="Current inventory table"></div>
+                        </div>
                     </section>
 
                     <section class="paste-panel">
@@ -1612,9 +1699,11 @@
                                 <h3 class="paste-panel-title">Updated Inventory</h3>
                                 <p class="paste-helper">This is the same 2-column table shape with shipment-generated consumables removed.</p>
                             </div>
-                            <span class="paste-panel-meta">READ-ONLY</span>
+                            <span class="paste-panel-meta">READ-ONLY GRID</span>
                         </div>
-                        <textarea id="updatedInventoryOutput" class="output-textarea" spellcheck="false" readonly placeholder="Updated inventory will appear here after you paste your table and click Update counts"></textarea>
+                        <div class="inventory-grid-shell is-readonly">
+                            <div id="updatedInventoryGrid" class="inventory-grid" aria-label="Updated inventory table"></div>
+                        </div>
                     </section>
                 </div>
 
@@ -1680,13 +1769,18 @@
         const copyGeneratedUsageBtn = document.getElementById('copyGeneratedUsageBtn');
 
         // Consumables update workspace DOM elements
-        const inventoryPasteInput = document.getElementById('inventoryPasteInput');
+        const inventoryGridElement = document.getElementById('inventoryGrid');
         const updateCountsBtn = document.getElementById('updateCountsBtn');
         const copyUpdatedTableBtn = document.getElementById('copyUpdatedTableBtn');
-        const updatedInventoryOutput = document.getElementById('updatedInventoryOutput');
+        const updatedInventoryGridElement = document.getElementById('updatedInventoryGrid');
         const consumablesUpdateMessage = document.getElementById('consumablesUpdateMessage');
+        const INVENTORY_GRID_COLUMNS = 2;
+        const INVENTORY_GRID_MIN_ROWS = 18;
+        const INVENTORY_GRID_BUFFER_ROWS = 12;
+        let inventoryGrid;
+        let updatedInventoryGrid;
         let consumablesUpdateState = {
-            inventoryText: '',
+            inventoryMatrix: [],
             message: '',
             parsedRows: [],
             updatedRows: [],
@@ -1763,6 +1857,197 @@
         const itemHeaderAliases = new Set(['item', 'consumable', 'product', 'description']);
         const countHeaderAliases = new Set(['count', 'qty', 'quantity', 'stock', 'remaining', 'balance']);
 
+        function normalizeGridCellValue(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            return String(value);
+        }
+
+        function createBlankMatrix(rowCount = INVENTORY_GRID_MIN_ROWS) {
+            return Array.from({ length: rowCount }, () => Array(INVENTORY_GRID_COLUMNS).fill(''));
+        }
+
+        function normalizeMatrix(matrix) {
+            if (!Array.isArray(matrix)) {
+                return [];
+            }
+
+            return matrix.map((row) => {
+                const cells = Array.isArray(row) ? row : [];
+                const normalizedRow = [];
+
+                for (let i = 0; i < INVENTORY_GRID_COLUMNS; i++) {
+                    normalizedRow.push(normalizeGridCellValue(cells[i]));
+                }
+
+                return normalizedRow;
+            });
+        }
+
+        function trimTrailingBlankRows(matrix) {
+            const trimmed = normalizeMatrix(matrix);
+
+            while (trimmed.length > 0 && isBlankRow(trimmed[trimmed.length - 1])) {
+                trimmed.pop();
+            }
+
+            return trimmed;
+        }
+
+        function buildGridMatrix(matrix, bufferRows = INVENTORY_GRID_BUFFER_ROWS) {
+            const trimmed = trimTrailingBlankRows(matrix);
+            const rowCount = Math.max(INVENTORY_GRID_MIN_ROWS, trimmed.length + bufferRows);
+            const nextMatrix = createBlankMatrix(rowCount);
+
+            trimmed.forEach((row, rowIndex) => {
+                for (let columnIndex = 0; columnIndex < INVENTORY_GRID_COLUMNS; columnIndex++) {
+                    nextMatrix[rowIndex][columnIndex] = normalizeGridCellValue(row[columnIndex]);
+                }
+            });
+
+            return nextMatrix;
+        }
+
+        function applySpreadsheetHeaders(element) {
+            const headerCells = element.querySelectorAll('.tabulator-header .tabulator-col:not(.tabulator-row-handle)');
+            headerCells.forEach((headerCell, index) => {
+                const titleElement = headerCell.querySelector('.tabulator-col-title');
+                if (titleElement) {
+                    titleElement.textContent = String.fromCharCode(65 + index);
+                }
+            });
+        }
+
+        function createSpreadsheetGrid(element, editable) {
+            const gridOptions = {
+                spreadsheet: true,
+                spreadsheetRows: INVENTORY_GRID_MIN_ROWS,
+                spreadsheetColumns: INVENTORY_GRID_COLUMNS,
+                spreadsheetOutputFull: true,
+                spreadsheetData: createBlankMatrix(),
+                spreadsheetColumnDefinition: {
+                    editor: editable ? 'input' : false,
+                    headerSort: false,
+                    resizable: false,
+                    width: editable ? 280 : 260,
+                },
+                rowHeader: {
+                    formatter: 'rownum',
+                    hozAlign: 'center',
+                    headerSort: false,
+                    resizable: false,
+                    frozen: true,
+                    width: 46,
+                    cssClass: 'tabulator-row-handle',
+                },
+                selectableRange: 1,
+                selectableRangeColumns: true,
+                selectableRangeRows: true,
+                selectableRangeClearCells: editable,
+                editTriggerEvent: 'dblclick',
+                editorEmptyValue: '',
+                clipboard: true,
+                clipboardCopyStyled: false,
+                clipboardCopyConfig: {
+                    rowHeaders: false,
+                    columnHeaders: false,
+                },
+                clipboardCopyRowRange: 'range',
+                headerVisible: true,
+                height: 320,
+            };
+
+            if (editable) {
+                gridOptions.clipboardPasteParser = 'range';
+                gridOptions.clipboardPasteAction = 'range';
+            }
+
+            const grid = new Tabulator(element, gridOptions);
+            applySpreadsheetHeaders(element);
+            requestAnimationFrame(() => applySpreadsheetHeaders(element));
+
+            return grid;
+        }
+
+        function getGridMatrix(grid) {
+            return trimTrailingBlankRows(grid.getSheetData());
+        }
+
+        function setGridMatrix(grid, matrix) {
+            grid.setSheetData(buildGridMatrix(matrix));
+        }
+
+        function getInventoryMatrixFromGrid() {
+            return getGridMatrix(inventoryGrid);
+        }
+
+        function setInventoryGridMatrix(matrix) {
+            setGridMatrix(inventoryGrid, matrix);
+            consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
+        }
+
+        function setUpdatedGridMatrix(matrix) {
+            setGridMatrix(updatedInventoryGrid, matrix);
+        }
+
+        function handleInventoryGridInput() {
+            consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
+            resetConsumablesUpdateFeedback();
+            renderConsumablesUpdateUI();
+        }
+
+        function validateInventoryPasteText(text) {
+            const parsedRows = parseTabularText(text);
+            const nonBlankIndex = parsedRows.findIndex((row) => !isBlankRow(row.cells));
+
+            if (nonBlankIndex === -1) {
+                return { matrix: [] };
+            }
+
+            const candidateRows = parsedRows.slice(nonBlankIndex).map((row) => trimTrailingEmptyCells(row.cells));
+            const invalidRow = candidateRows.find((cells) => !isBlankRow(cells) && cells.length > INVENTORY_GRID_COLUMNS);
+
+            if (invalidRow) {
+                return { error: 'Only 2 columns can be pasted into the inventory grid.' };
+            }
+
+            return {
+                matrix: candidateRows.map((cells) => [
+                    normalizeGridCellValue(cells[0]),
+                    normalizeGridCellValue(cells[1]),
+                ]),
+            };
+        }
+
+        function handleInventoryGridPaste(event) {
+            const pastedText = event.clipboardData?.getData('text/plain');
+            if (!pastedText) {
+                return;
+            }
+
+            const validatedPaste = validateInventoryPasteText(pastedText);
+            if (validatedPaste.error) {
+                event.preventDefault();
+                consumablesUpdateState.message = validatedPaste.error;
+                renderConsumablesUpdateUI();
+                return;
+            }
+
+            event.preventDefault();
+            setInventoryGridMatrix(validatedPaste.matrix);
+            resetConsumablesUpdateFeedback();
+            renderConsumablesUpdateUI();
+        }
+
+        inventoryGrid = createSpreadsheetGrid(inventoryGridElement, true);
+        updatedInventoryGrid = createSpreadsheetGrid(updatedInventoryGridElement, false);
+        inventoryGrid.on('dataChanged', handleInventoryGridInput);
+        inventoryGridElement.addEventListener('paste', handleInventoryGridPaste);
+        setInventoryGridMatrix([]);
+        setUpdatedGridMatrix([]);
+
         // Initialize event listeners
         function initDropZone(zone) {
             zone.addEventListener('click', () => fileInput.click());
@@ -1801,11 +2086,9 @@
         downloadBtn.addEventListener('click', downloadCSV);
         resetBtn.addEventListener('click', clearFile);
         copyGeneratedUsageBtn.addEventListener('click', copyGeneratedUsage);
-        inventoryPasteInput.addEventListener('input', () => handleConsumablesPasteInput(inventoryPasteInput.value));
         updateCountsBtn.addEventListener('click', updateConsumableCounts);
         copyUpdatedTableBtn.addEventListener('click', copyUpdatedConsumablesTable);
 
-        updatedInventoryOutput.value = '';
         updateConsumablesUI();
         renderConsumablesUpdateUI();
 
@@ -2741,6 +3024,8 @@
             consumablesBadge.textContent = '0 ITEMS';
             consumablesTotalCount.textContent = '0';
             consumablesBody.innerHTML = '';
+            setInventoryGridMatrix([]);
+            setUpdatedGridMatrix([]);
             resetConsumablesUpdateFeedback();
             renderConsumablesUpdateUI();
         }
@@ -2752,14 +3037,8 @@
             consumablesUpdateState.outputTsv = '';
         }
 
-        function handleConsumablesPasteInput(value) {
-            consumablesUpdateState.inventoryText = value;
-            resetConsumablesUpdateFeedback();
-            renderConsumablesUpdateUI();
-        }
-
         function updateConsumablesActionState() {
-            const hasInventoryText = consumablesUpdateState.inventoryText.trim().length > 0;
+            const hasInventoryText = getInventoryMatrixFromGrid().some((row) => !isBlankRow(row));
             const hasGeneratedUsage = getGeneratedUsageRows().length > 0;
             updateCountsBtn.disabled = !hasInventoryText;
             copyUpdatedTableBtn.disabled = !consumablesUpdateState.outputTsv;
@@ -2781,7 +3060,7 @@
         }
 
         function renderConsumablesUpdateResult() {
-            updatedInventoryOutput.value = consumablesUpdateState.outputTsv;
+            setUpdatedGridMatrix(consumablesUpdateState.updatedRows);
         }
 
         function renderConsumablesUpdateUI() {
@@ -2877,8 +3156,11 @@
             return itemHeaderAliases.has(itemKey) || countHeaderAliases.has(countKey);
         }
 
-        function buildInventoryTable(text) {
-            const parsedRows = parseTabularText(text);
+        function buildInventoryTableFromMatrix(matrix) {
+            const parsedRows = normalizeMatrix(matrix).map((cells, index) => ({
+                cells,
+                line: index + 1,
+            }));
             const nonBlankIndex = parsedRows.findIndex((row) => !isBlankRow(row.cells));
 
             if (nonBlankIndex === -1) {
@@ -2932,8 +3214,9 @@
 
         function updateConsumableCounts() {
             resetConsumablesUpdateFeedback();
+            consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
 
-            const inventoryTable = buildInventoryTable(consumablesUpdateState.inventoryText);
+            const inventoryTable = buildInventoryTableFromMatrix(consumablesUpdateState.inventoryMatrix);
             if (inventoryTable.error) {
                 consumablesUpdateState.message = inventoryTable.error;
                 renderConsumablesUpdateUI();
