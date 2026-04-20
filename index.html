@@ -1703,41 +1703,63 @@
             'ASSET Tag', 'Device Bundle / Device Type', 'iPhone number (to be added by EE)'
         ];
         const generatedUsageCatalog = [
-            { category: 'Laptop Accessories', name: 'Charger (Standard)' },
-            { category: 'Laptop Accessories', name: 'Charger (High Spec)' },
-            { category: 'Laptop Accessories', name: 'Laptop Bag' },
-            { category: 'Laptop Accessories', name: 'Headset' },
-            { category: 'Laptop Accessories', name: 'Mouse' },
-            { category: 'iPhone Accessories', name: 'USB-C Plug' },
-            { category: 'iPhone Accessories', name: 'Lightning Cable' },
-            { category: 'iPhone Accessories', name: 'USB-C Cable' },
-            { category: 'iPhone Accessories', name: 'Lightning EarPods' },
-            { category: 'iPhone Accessories', name: 'USB-C EarPods' },
-            { category: 'iPhone Accessories', name: 'iPhone SE Case' },
-            { category: 'iPhone Accessories', name: 'iPhone SE Rugged Case' },
-            { category: 'iPhone Accessories', name: 'iPhone SE Screen Protector' },
-            { category: 'iPhone Accessories', name: 'iPhone 12 Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 12 Rugged Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 12 Screen Protector' },
-            { category: 'iPhone Accessories', name: 'iPhone 14 Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 14 Rugged Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 14 Screen Protector' },
-            { category: 'iPhone Accessories', name: 'iPhone 15 Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 15 Rugged Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 15 Screen Protector' },
-            { category: 'iPhone Accessories', name: 'iPhone 16 Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 16 Rugged Case' },
-            { category: 'iPhone Accessories', name: 'iPhone 16 Screen Protector' },
-            { category: 'iPad Accessories', name: 'iPad 9th Gen Case' },
-            { category: 'iPad Accessories', name: 'iPad 9th Gen Rugged Case' },
-            { category: 'iPad Accessories', name: 'iPad 9th Gen Screen Protector' },
-            { category: 'iPad Accessories', name: 'iPad 10th Gen Case' },
-            { category: 'iPad Accessories', name: 'iPad 10th Gen Rugged Case' },
-            { category: 'iPad Accessories', name: 'iPad 10th Gen Screen Protector' },
-            { category: 'iPad Accessories', name: 'iPad 11th Gen Case' },
-            { category: 'iPad Accessories', name: 'iPad 11th Gen Rugged Case' },
-            { category: 'iPad Accessories', name: 'iPad 11th Gen Screen Protector' }
+            { category: 'Adapters & Chargers', code: 'ZDEF-20W-USBC-ADAPTOR', label: 'USB C Plug', aliases: ['USB-C Plug'] },
+            { category: 'Adapters & Chargers', code: 'Dell 65W USB-C Charger', label: 'Dell USB C Charger', aliases: ['Charger (Standard)'] },
+            { category: 'Adapters & Chargers', code: 'Dell 180W BARREL Charger', label: 'Dell 180W BARREL Charger', aliases: ['Charger (High Spec)'] },
+            { category: 'Audio', code: 'ZDEF-APPLE-EARPODS-LIGHTNING', label: 'Apple Lightning Earpods', aliases: ['Lightning EarPods'] },
+            { category: 'Audio', code: 'ZDEF-APPLE-EARPODS-USBC', label: 'Apple USB C Earpods', aliases: ['USB-C EarPods'] },
+            { category: 'Cables', code: 'USB C -> Lighting Cable', label: 'USB C to Lightning Cable', aliases: ['Lightning Cable'] },
+            { category: 'Cables', code: 'USB-C TO USB-C', label: 'USB C to USB C Cable', aliases: ['USB-C Cable'] },
+            { category: 'Laptop Accessories', code: 'ZEADEF-LAPTOP-RUCKSACK', label: 'Backpack', aliases: ['Laptop Bag'] },
+            { category: 'Laptop Accessories', code: 'ZEADEF-HEADSET', label: 'Headset' },
+            { category: 'Laptop Accessories', code: 'ZEADEF-WIRELESS-MOUSE', label: 'Mouse' },
+            { category: 'Laptop Accessories', code: 'Logitec Ergo K860 Keyboard', label: 'Logitec Ergo K860 Keyboard' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-SE-CASE', label: 'iPhone SE case', aliases: ['iPhone SE Case'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-SE-RUGGED-CASE', label: 'iPhone SE Rugged Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-SE-SCREEN-PROTECTOR', label: 'iPhone SE screen protector', aliases: ['iPhone SE Screen Protector'] },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-CASE', label: 'iPhone 12 Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-RUGGED-CASE', label: 'iPhone 12 Rugged Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-SCREEN-PROTECTOR', label: 'iPhone 12 Screen protector', aliases: ['iPhone 12 Screen Protector'] },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-CASE', label: 'iPhone 14 Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-RUGGED-CASE', label: 'iPhone 14 Rugged Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-SCREEN-PROTECTOR', label: 'iPhone 14 Screen Protector' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-16e-CASE', label: 'iPhone 16e Case' },
+            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-16e-SCREEN-PROTECTOR', label: 'iPhone 16e Screen Protector' },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-STANDARD CASE', label: 'iPad 8th/9th Gen Case', aliases: ['iPad 9th Gen Case'] },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-RUGGED CASE', label: 'iPad 8th/9th Gen Rugged Case', aliases: ['iPad 9th Gen Rugged Case'] },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-SCREEN PROTECTOR', label: 'iPad 8th/9th Gen Screen Protector', aliases: ['iPad 9th Gen Screen Protector'] },
+            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-STANDARD-CASE', label: 'iPad 10th Gen Standard Case', aliases: ['iPad 10th Gen Case'] },
+            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-RUGGED-CASE', label: 'iPad 10th Gen Rugged Case' },
+            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-SCREEN-PROTECTOR', label: 'iPad 10th Gen Screen Protector' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-3M-CABLE', label: 'Toughbook Charging Cable' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-4-BAY-CHARGER', label: 'Toughbook 4 Bay Charger' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-DELUXE-STRAP', label: 'Toughbook Deluxe Strap' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-DIGITIZER-PEN', label: 'Toughbook Pen' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-G2-KEYBOARD', label: 'Toughbook G2 Keyboard' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-LCD-FILM', label: 'Toughbook LCD Protector' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-POWER-SUPPLY', label: 'Toughbook PSU' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-STANDARD-BATTERY', label: 'Toughbook 50Whr Battery (Standard)' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-LONGLIFE-BATTERY', label: 'Toughbook 68Whr Battery (Longlife)' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-STYLUS-HOLDER', label: 'Toughbook Stylus Holder' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-TETHER-TILL', label: 'Toughbook Stylus Tether' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-X-STRAP', label: 'Toughbook X-Strap' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-ALWAYS-ON-CASE', label: 'Toughbook Always On Case' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-CARRY-CASE', label: 'Toughbook Carry Case' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-SHOULDER-STRAP', label: 'Toughbook Shoulder Strap' },
+            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-CAR-CHARGER', label: 'Toughbook Car Charger' },
+            { category: 'Bodycam', code: 'REVEAL BODYCAM', label: 'REVEAL BODYCAM' },
+            { category: 'Bodycam', code: 'REVEAL Bodycam Stud', label: 'REVEAL Bodycam Stud' },
+            { category: 'Bodycam', code: 'REVEAL Bodycam Lanyard', label: 'REVEAL Bodycam Lanyard' },
+            { category: 'Bodycam', code: 'REVEAL Bodycam Charging Cable', label: 'REVEAL Bodycam Charging Cable' },
+            { category: 'Bodycam', code: 'REVEAL Bodycam Crocodile Clips', label: 'REVEAL Bodycam Crocodile Clips' },
+            { category: 'Bodycam', code: 'REVEAL BODYCAM CHEST HARNESS', label: 'REVEAL BODYCAM CHEST HARNESS' },
+            { category: 'Bodycam', code: 'REVEAL BODYCAM SHOULDER HARNESS', label: 'REVEAL BODYCAM SHOULDER HARNESS' },
+            { category: 'Bodycam', code: 'REVEAL BODYCAM MULTI DOCKING STATION', label: 'REVEAL BODYCAM MULTI DOCKING STATION' },
+            { category: 'Bodycam', code: 'REVEAL Klickfast Mount - Magnetic', label: 'REVEAL Klickfast Mount - Magnetic' },
+            { category: 'Bodycam', code: 'REVEAL Klick Fast Mount - Popper', label: 'REVEAL Klick Fast Mount - Popper' },
+            { category: 'Bodycam', code: 'REVEAL Docking Station PSU', label: 'Reveal Bodycam Docking Station PSU' }
         ];
+        const generatedUsageByCode = new Map(generatedUsageCatalog.map((item) => [item.code, item]));
         const itemHeaderAliases = new Set(['item', 'consumable', 'product', 'description']);
         const countHeaderAliases = new Set(['count', 'qty', 'quantity', 'stock', 'remaining', 'balance']);
 
@@ -2048,11 +2070,12 @@
 
         function getGeneratedUsageRows() {
             return generatedUsageCatalog.reduce((rows, item) => {
-                const count = consumableCounts[item.name] || 0;
+                const count = consumableCounts[item.code] || 0;
                 if (count > 0) {
                     rows.push({
                         category: item.category,
-                        name: item.name,
+                        name: item.code,
+                        label: item.label,
                         count
                     });
                 }
@@ -2349,355 +2372,334 @@
         // ===== CONSUMABLES CALCULATION =====
 
         function isLaptopDevice(deviceType, modelRequired) {
-            const dt = (deviceType || '').toLowerCase();
-            const model = (modelRequired || '').toLowerCase();
-
-            // Check DEVICE TYPE column first
-            if (dt.includes('laptop')) return true;
-
-            // Check MODEL REQUIRED for laptop indicators
-            if (model.includes('dell') ||
-                model.includes('latitude') ||
-                model.includes('laptop') ||
-                model.includes('touchscreen')) {
-                // Exclude if it says "upgrade from" (might be a trade-in reference)
-                // but still count it as a laptop
-                return true;
-            }
-
-            return false;
+            const text = `${deviceType || ''} ${modelRequired || ''}`.toLowerCase();
+            if (text.includes('toughbook') || text.includes('panasonic g2')) return false;
+            return text.includes('laptop') ||
+                text.includes('dell') ||
+                text.includes('latitude') ||
+                text.includes('precision') ||
+                text.includes('touchscreen');
         }
 
         function isMobileDevice(deviceType, modelRequired) {
             const dt = (deviceType || '').toLowerCase();
             const model = (modelRequired || '').toLowerCase();
 
-            // EXCLUDE iPads - they don't use iPhone consumables
             if (model.includes('ipad')) return false;
 
-            // Check DEVICE TYPE column first
-            if (dt.includes('mobile') || dt.includes('phone') || dt.includes('iphone')) return true;
-
-            // Check MODEL REQUIRED for iPhone indicators
-            if (model.includes('iphone') ||
+            return dt.includes('mobile') ||
+                dt.includes('phone') ||
+                dt.includes('iphone') ||
+                model.includes('iphone') ||
                 model.includes('apple iphone') ||
                 model.includes('4.7"') ||
-                model.includes('6.1"')) {
-                return true;
-            }
-
-            return false;
-        }
-
-        function isHighSpecLaptop(modelRequired) {
-            if (!modelRequired) return false;
-            const model = modelRequired.toString().toLowerCase();
-
-            // Explicit high spec indicators
-            if (model.includes('high performance') ||
-                model.includes('high-performance') ||
-                model.includes('high spec') ||
-                model.includes('high-spec') ||
-                model.includes('i7') ||
-                model.includes('enhanced')) {
-                return true;
-            }
-
-            return false;
-        }
-
-        function getPhoneModel(modelRequired, shippingModel) {
-            // Priority: check shipping model first (actual shipped device)
-            // Use regex with stricter patterns to avoid false matches (e.g., "12" in "12345")
-            const shipping = (shippingModel || '').toString().toLowerCase();
-            const model = (modelRequired || '').toString().toLowerCase();
-
-            // Check shipping model first (newest models first)
-            if (/iphone\s*16/i.test(shipping)) return 'iPhone 16';
-            if (/iphone\s*15/i.test(shipping)) return 'iPhone 15';
-            if (/iphone\s*14/i.test(shipping)) return 'iPhone 14';
-            if (/iphone\s*12/i.test(shipping)) return 'iPhone 12';
-            if (/iphone\s*se/i.test(shipping)) return 'iPhone SE';
-
-            // Fall back to MODEL REQUIRED (newest models first)
-            if (/iphone\s*16/i.test(model)) return 'iPhone 16';
-            if (/iphone\s*15/i.test(model)) return 'iPhone 15';
-            if (/iphone\s*14/i.test(model)) return 'iPhone 14';
-            if (/iphone\s*12/i.test(model)) return 'iPhone 12';
-
-            // iPhone SE variants (4.7" screens)
-            if (/iphone\s*se/i.test(model) ||
-                model.includes('se2') || model.includes('se 2nd') || model.includes('se 3rd') ||
-                model.includes('se (2nd') || model.includes('se (3rd') || model.includes('4.7')) {
-                return 'iPhone SE';
-            }
-
-            // 6.1" phones (iPhone 11, XR - use iPhone 14 case as they're similar size)
-            if (model.includes('6.1') || /iphone\s*11/i.test(model) || /iphone\s*xr/i.test(model)) {
-                return 'iPhone 14';
-            }
-
-            // Default to iPhone 14 for standard/unspecified
-            return 'iPhone 14';
-        }
-
-        function isBundle(modelRequired) {
-            if (!modelRequired) return false;
-            const model = modelRequired.toString().toLowerCase();
-            // Check for bundle indicators
-            return model.includes('bundle') ||
-                model.includes('standard bundle') ||
-                model.includes('rugged bundle');
+                model.includes('6.1"');
         }
 
         function isIPadDevice(deviceType, modelRequired) {
-            const dt = (deviceType || '').toLowerCase();
-            const model = (modelRequired || '').toLowerCase();
-
-            // Check MODEL REQUIRED for iPad indicators
-            if (model.includes('ipad')) return true;
-
-            // Check DEVICE TYPE column
-            if (dt.includes('ipad')) return true;
-
-            return false;
+            const text = `${deviceType || ''} ${modelRequired || ''}`.toLowerCase();
+            return text.includes('ipad');
         }
 
-        function getIPadModel(modelRequired, shippedModel) {
-            // Priority: check shipped model first (actual shipped device)
-            const shipped = (shippedModel || '').toString().toLowerCase();
-            const model = (modelRequired || '').toString().toLowerCase();
-
-            // Check shipped model for explicit generation
-            if (shipped.includes('11th') || shipped.includes('11 gen') || shipped.includes('a14') || shipped.includes('2024')) {
-                return 'iPad 11th Gen';
-            }
-            if (shipped.includes('9th') || shipped.includes('9 gen') || shipped.includes('a13') || shipped.includes('2021')) {
-                return 'iPad 9th Gen';
-            }
-            if (shipped.includes('10th') || shipped.includes('10 gen') || shipped.includes('2022')) {
-                return 'iPad 10th Gen';
-            }
-
-            // Check MODEL REQUIRED for generation hints
-            if (model.includes('11th') || model.includes('11 gen')) {
-                return 'iPad 11th Gen';
-            }
-            if (model.includes('9th') || model.includes('9 gen')) {
-                return 'iPad 9th Gen';
-            }
-            if (model.includes('10th') || model.includes('10 gen')) {
-                return 'iPad 10th Gen';
-            }
-
-            // Default to 11th Gen for unspecified (most current model)
-            return 'iPad 11th Gen';
+        function normalizeMatchKey(value) {
+            return String(value ?? '')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
         }
 
-        function isIPadBundle(modelRequired) {
-            if (!modelRequired) return false;
-            const model = modelRequired.toString().toLowerCase();
-            return model.includes('bundle');
+        function createEmptyConsumableCounts() {
+            return generatedUsageCatalog.reduce((counts, item) => {
+                counts[item.code] = 0;
+                return counts;
+            }, {});
         }
 
-        function isRuggedBundle(modelRequired) {
-            if (!modelRequired) return false;
-            const model = modelRequired.toString().toLowerCase();
-            return model.includes('rugged');
+        function incrementConsumableCount(code, amount = 1) {
+            if (!generatedUsageByCode.has(code)) {
+                return;
+            }
+            consumableCounts[code] = (consumableCounts[code] || 0) + amount;
+        }
+
+        function hasKeyword(text, keywords) {
+            return keywords.some((keyword) => text.includes(keyword));
+        }
+
+        function getRequestText(row, values) {
+            const parts = [
+                values.deviceType,
+                values.modelRequired,
+                values.shippingModel,
+                values.shippedModel,
+                values.taskRef,
+                values.incRef,
+                getVal(row, 'REQUEST DETAILS', 'Request Details', 'REQUEST DETAIL', 'Request Detail'),
+                getVal(row, 'DESCRIPTION', 'Description'),
+                getVal(row, 'NOTES', 'Notes')
+            ];
+
+            return parts
+                .filter((part) => String(part ?? '').trim())
+                .join(' ')
+                .toLowerCase();
+        }
+
+        function detectPhoneModel(modelRequired, shippingModel, requestText) {
+            const shipping = `${shippingModel || ''} ${requestText || ''}`.toLowerCase();
+            const model = `${modelRequired || ''} ${requestText || ''}`.toLowerCase();
+
+            if (shipping.includes('16e') || model.includes('16e')) return '16e';
+            if (/iphone\s*16/i.test(shipping) || /iphone\s*16/i.test(model)) return '16';
+            if (/iphone\s*15/i.test(shipping) || /iphone\s*15/i.test(model)) return '15';
+            if (/iphone\s*12/i.test(shipping) || /iphone\s*12/i.test(model)) return '12';
+            if (/iphone\s*se/i.test(shipping) || /iphone\s*se/i.test(model) ||
+                model.includes('se2') || model.includes('se 2nd') || model.includes('se 3rd') ||
+                model.includes('se (2nd') || model.includes('se (3rd') || model.includes('4.7')) {
+                return 'se';
+            }
+
+            if (/iphone\s*14/i.test(shipping) || /iphone\s*14/i.test(model) ||
+                model.includes('6.1') || /iphone\s*11/i.test(model) || /iphone\s*xr/i.test(model)) {
+                return '14-class';
+            }
+
+            return '';
+        }
+
+        function detectIPadModel(modelRequired, shippedModel, requestText) {
+            const combined = `${modelRequired || ''} ${shippedModel || ''} ${requestText || ''}`.toLowerCase();
+
+            if (combined.includes('8th') || combined.includes('8 gen') || combined.includes('9th') || combined.includes('9 gen') || combined.includes('2021')) {
+                return '8th-9th';
+            }
+
+            if (combined.includes('10th') || combined.includes('10 gen') || combined.includes('2022')) {
+                return '10th';
+            }
+
+            if (combined.includes('11th') || combined.includes('11 gen') || combined.includes('2024') || combined.includes('a14')) {
+                return '11th';
+            }
+
+            return '';
+        }
+
+        function detectLaptopSpec(requestText) {
+            if (hasKeyword(requestText, ['precision'])) return 'precision';
+            if (hasKeyword(requestText, ['enhanced', 'high performance', 'high-performance', 'high spec', 'high-spec', 'i7'])) {
+                return 'enhanced';
+            }
+            return 'standard';
+        }
+
+        function buildConsumableContext(row) {
+            const values = {
+                deviceType: getVal(row, 'DEVICE TYPE', 'Device Type', 'Device type'),
+                modelRequired: getVal(row, 'MODEL REQUIRED', 'Model Required', 'Model required'),
+                shippingModel: getVal(row, 'SHIPPING MODEL', 'Shipping Model', 'Shipping model'),
+                shippedModel: getVal(row, 'SHIPPED MODEL', 'Shipped Model', 'shipped model', 'SHIPPING MODEL', 'Shipping Model'),
+                taskRef: getVal(row, 'TASK REF', 'Task Ref'),
+                incRef: getVal(row, 'INC REF', 'Inc Ref'),
+                nsRep: getVal(row, 'NS/REP', 'NS/Rep', 'Ns/Rep', 'NS REP', 'NSREP').toUpperCase().trim()
+            };
+            const requestText = getRequestText(row, values);
+            const modelLower = (values.modelRequired || '').toLowerCase();
+            const isReplacement = values.nsRep.includes('REP') || values.nsRep === 'REPLACEMENT';
+            const isNewStarter = !isReplacement;
+            const isBundle = requestText.includes('bundle');
+            const isRugged = requestText.includes('rugged');
+
+            let deviceFamily = 'other';
+            if (hasKeyword(requestText, ['bodycam', 'body camera', 'reveal'])) {
+                deviceFamily = 'bodycam';
+            } else if (hasKeyword(requestText, ['toughbook', 'panasonic g2'])) {
+                deviceFamily = 'toughbook';
+            } else if (isIPadDevice(values.deviceType, values.modelRequired)) {
+                deviceFamily = 'ipad';
+            } else if (isMobileDevice(values.deviceType, values.modelRequired)) {
+                deviceFamily = 'iphone';
+            } else if (isLaptopDevice(values.deviceType, values.modelRequired)) {
+                deviceFamily = 'laptop';
+            }
+
+            return {
+                row,
+                requestText,
+                modelRequired: values.modelRequired,
+                shippingModel: values.shippingModel,
+                shippedModel: values.shippedModel,
+                usesUSBC: isUSBCDevice(values.modelRequired, values.shippingModel || values.shippedModel),
+                isReplacement,
+                isNewStarter,
+                isBundle,
+                isRugged,
+                deviceFamily,
+                phoneModel: deviceFamily === 'iphone' ? detectPhoneModel(values.modelRequired, values.shippingModel, requestText) : '',
+                ipadModel: deviceFamily === 'ipad' ? detectIPadModel(values.modelRequired, values.shippedModel, requestText) : '',
+                laptopSpec: (deviceFamily === 'laptop' || deviceFamily === 'toughbook') ? detectLaptopSpec(requestText) : '',
+                isDesktop: modelLower.includes('shared desktop') || modelLower.includes('desktop'),
+                hasRequest: (keywords) => hasKeyword(requestText, keywords)
+            };
+        }
+
+        function getPhoneCaseCode(phoneModel, isRugged) {
+            if (phoneModel === '16e') {
+                return isRugged ? '' : 'ZDEF-IPHONE-16e-CASE';
+            }
+            if (phoneModel === 'se') {
+                return isRugged ? 'IPHONE-SE-RUGGED-CASE' : 'ZDEF-IPHONE-SE-CASE';
+            }
+            if (phoneModel === '12') {
+                return isRugged ? 'ZDEF-IPHONE-12-RUGGED-CASE' : 'ZDEF-IPHONE-12-CASE';
+            }
+            if (phoneModel === '14-class') {
+                return isRugged ? 'ZDEF-IPHONE-14-RUGGED-CASE' : 'ZDEF-IPHONE-14-CASE';
+            }
+            return '';
+        }
+
+        function getPhoneScreenProtectorCode(phoneModel) {
+            if (phoneModel === '16e') return 'ZDEF-IPHONE-16e-SCREEN-PROTECTOR';
+            if (phoneModel === 'se') return 'ZDEF-IPHONE-SE-SCREEN-PROTECTOR';
+            if (phoneModel === '12') return 'ZDEF-IPHONE-12-SCREEN-PROTECTOR';
+            if (phoneModel === '14-class') return 'ZDEF-IPHONE-14-SCREEN-PROTECTOR';
+            return '';
+        }
+
+        function getIPadCaseCode(ipadModel, isRugged) {
+            if (ipadModel === '8th-9th') {
+                return isRugged ? 'IPAD-9TH-8TH-RUGGED CASE' : 'IPAD-9TH-8TH-STANDARD CASE';
+            }
+            if (ipadModel === '10th') {
+                return isRugged ? 'ZDEF-IPAD-10TH-RUGGED-CASE' : 'ZDEF-IPAD-10TH-STANDARD-CASE';
+            }
+            return '';
+        }
+
+        function getIPadScreenProtectorCode(ipadModel) {
+            if (ipadModel === '8th-9th') return 'IPAD-9TH-8TH-SCREEN PROTECTOR';
+            if (ipadModel === '10th') return 'ZDEF-IPAD-10TH-SCREEN-PROTECTOR';
+            return '';
+        }
+
+        function applyConsumableRules(context) {
+            if (context.isDesktop) {
+                return;
+            }
+
+            if (context.deviceFamily === 'laptop') {
+                if (context.laptopSpec === 'precision' || context.laptopSpec === 'enhanced') {
+                    incrementConsumableCount('Dell 180W BARREL Charger');
+                } else if (context.isReplacement || context.isNewStarter) {
+                    incrementConsumableCount('Dell 65W USB-C Charger');
+                }
+
+                if (context.isNewStarter) {
+                    incrementConsumableCount('ZEADEF-LAPTOP-RUCKSACK');
+                    incrementConsumableCount('ZEADEF-HEADSET');
+                    incrementConsumableCount('ZEADEF-WIRELESS-MOUSE');
+                }
+            }
+
+            if (context.deviceFamily === 'iphone') {
+                if (context.isBundle) {
+                    incrementConsumableCount('ZDEF-20W-USBC-ADAPTOR');
+                }
+
+                const isLegacyIPhone = ['se', '12', '14-class'].includes(context.phoneModel);
+                if (isLegacyIPhone && (context.isBundle || context.isReplacement)) {
+                    incrementConsumableCount('USB C -> Lighting Cable');
+                }
+
+                if (context.isBundle) {
+                    if (context.phoneModel === '15' || context.phoneModel === '16' || context.phoneModel === '16e') {
+                        incrementConsumableCount('ZDEF-APPLE-EARPODS-USBC');
+                    } else {
+                        incrementConsumableCount('ZDEF-APPLE-EARPODS-LIGHTNING');
+                    }
+
+                    const phoneCaseCode = getPhoneCaseCode(context.phoneModel, context.isRugged);
+                    const phoneScreenProtectorCode = getPhoneScreenProtectorCode(context.phoneModel);
+                    if (phoneCaseCode) incrementConsumableCount(phoneCaseCode);
+                    if (phoneScreenProtectorCode) incrementConsumableCount(phoneScreenProtectorCode);
+                }
+            }
+
+            if (context.deviceFamily === 'ipad') {
+                if (context.isBundle) {
+                    incrementConsumableCount('ZDEF-20W-USBC-ADAPTOR');
+                }
+
+                if (context.ipadModel === '10th' || context.ipadModel === '11th' || context.hasRequest(['usb-c to usb-c', 'usb c to usb c'])) {
+                    incrementConsumableCount('USB-C TO USB-C');
+                }
+
+                if (context.isBundle) {
+                    const ipadCaseCode = getIPadCaseCode(context.ipadModel, context.isRugged);
+                    const ipadScreenProtectorCode = getIPadScreenProtectorCode(context.ipadModel);
+                    if (ipadCaseCode) incrementConsumableCount(ipadCaseCode);
+                    if (ipadScreenProtectorCode) incrementConsumableCount(ipadScreenProtectorCode);
+                }
+            }
+
+            if (context.deviceFamily === 'toughbook') {
+                if (context.isBundle) {
+                    [
+                        'ZDEF-TOUGHBOOK-3M-CABLE',
+                        'ZDEF-TOUGHBOOK-DELUXE-STRAP',
+                        'ZDEF-TOUGHBOOK-DIGITIZER-PEN',
+                        'ZDEF-TOUGHBOOK-STYLUS-HOLDER',
+                        'ZDEF-TOUGHBOOK-TETHER-TILL',
+                        'ZDEF-TOUGHBOOK-X-STRAP',
+                        'ZDEF-TOUGHBOOK-ALWAYS-ON-CASE',
+                        'ZDEF-TOUGHBOOK-CARRY-CASE',
+                        'ZDEF-TOUGHBOOK-SHOULDER-STRAP'
+                    ].forEach((code) => incrementConsumableCount(code));
+                }
+
+                if (context.isNewStarter && context.isBundle) {
+                    [
+                        'ZDEF-TOUGHBOOK-LCD-FILM',
+                        'ZDEF-TOUGHBOOK-POWER-SUPPLY',
+                        'ZDEF-TOUGHBOOK-STANDARD-BATTERY'
+                    ].forEach((code) => incrementConsumableCount(code));
+                }
+
+                if (context.hasRequest(['4 bay charger', '4-bay charger'])) incrementConsumableCount('ZDEF-TOUGHBOOK-4-BAY-CHARGER');
+                if (context.hasRequest(['g2 keyboard', 'toughbook keyboard'])) incrementConsumableCount('ZDEF-TOUGHBOOK-G2-KEYBOARD');
+                if (context.hasRequest(['longlife battery', '68whr battery', '68 whr battery'])) incrementConsumableCount('ZDEF-TOUGHBOOK-LONGLIFE-BATTERY');
+                if (context.hasRequest(['car charger'])) incrementConsumableCount('ZDEF-TOUGHBOOK-CAR-CHARGER');
+            }
+
+            if (context.deviceFamily === 'bodycam') {
+                [
+                    'REVEAL BODYCAM',
+                    'REVEAL Bodycam Stud',
+                    'REVEAL Bodycam Lanyard',
+                    'REVEAL Bodycam Charging Cable',
+                    'REVEAL Bodycam Crocodile Clips'
+                ].forEach((code) => incrementConsumableCount(code));
+
+                if (context.hasRequest(['chest harness'])) incrementConsumableCount('REVEAL BODYCAM CHEST HARNESS');
+                if (context.hasRequest(['shoulder harness'])) incrementConsumableCount('REVEAL BODYCAM SHOULDER HARNESS');
+                if (context.hasRequest(['multi docking station', 'multi dock', 'docking station'])) incrementConsumableCount('REVEAL BODYCAM MULTI DOCKING STATION');
+                if (context.hasRequest(['klickfast magnetic', 'klickfast mount - magnetic', 'magnetic mount'])) incrementConsumableCount('REVEAL Klickfast Mount - Magnetic');
+                if (context.hasRequest(['klick fast mount - popper', 'klickfast popper', 'popper mount'])) incrementConsumableCount('REVEAL Klick Fast Mount - Popper');
+                if (context.hasRequest(['docking station psu', 'dock psu'])) incrementConsumableCount('REVEAL Docking Station PSU');
+            }
+
+            if (context.hasRequest(['ergo k860', 'k860 keyboard', 'logitec ergo k860 keyboard'])) {
+                incrementConsumableCount('Logitec Ergo K860 Keyboard');
+            }
         }
 
         function calculateConsumables() {
-            // Reset counts - now includes USB-C variants
-            consumableCounts = {
-                // Laptop consumables
-                'Charger (Standard)': 0,
-                'Charger (High Spec)': 0,
-                'Laptop Bag': 0,
-                'Headset': 0,
-                'Mouse': 0,
-                // Mobile cables (Lightning vs USB-C)
-                'USB-C Plug': 0,
-                'Lightning Cable': 0,
-                'USB-C Cable': 0,
-                // iPhone accessories
-                'Lightning EarPods': 0,
-                'USB-C EarPods': 0,
-                'iPhone SE Case': 0,
-                'iPhone SE Rugged Case': 0,
-                'iPhone SE Screen Protector': 0,
-                'iPhone 12 Case': 0,
-                'iPhone 12 Rugged Case': 0,
-                'iPhone 12 Screen Protector': 0,
-                'iPhone 14 Case': 0,
-                'iPhone 14 Rugged Case': 0,
-                'iPhone 14 Screen Protector': 0,
-                'iPhone 15 Case': 0,
-                'iPhone 15 Rugged Case': 0,
-                'iPhone 15 Screen Protector': 0,
-                'iPhone 16 Case': 0,
-                'iPhone 16 Rugged Case': 0,
-                'iPhone 16 Screen Protector': 0,
-                // iPad specific
-                'iPad 9th Gen Case': 0,
-                'iPad 9th Gen Rugged Case': 0,
-                'iPad 9th Gen Screen Protector': 0,
-                'iPad 10th Gen Case': 0,
-                'iPad 10th Gen Rugged Case': 0,
-                'iPad 10th Gen Screen Protector': 0,
-                'iPad 11th Gen Case': 0,
-                'iPad 11th Gen Rugged Case': 0,
-                'iPad 11th Gen Screen Protector': 0
-            };
+            consumableCounts = createEmptyConsumableCounts();
 
-            sourceData.forEach(row => {
-                const deviceType = getVal(row, 'DEVICE TYPE', 'Device Type', 'Device type');
-                const nsRep = getVal(row, 'NS/REP', 'NS/Rep', 'Ns/Rep', 'NS REP', 'NSREP').toUpperCase().trim();
-                const modelRequired = getVal(row, 'MODEL REQUIRED', 'Model Required', 'Model required');
-                const shippingModel = getVal(row, 'SHIPPING MODEL', 'Shipping Model', 'Shipping model');
-
-                // Determine NS vs REP - anything not explicitly REP is treated as NS
-                const isREP = nsRep.includes('REP') || nsRep === 'REPLACEMENT';
-                const isNS = !isREP;
-
-                // Skip desktops
-                const modelLower = (modelRequired || '').toLowerCase();
-                if (modelLower.includes('shared desktop') || modelLower.includes('desktop')) {
-                    return;
-                }
-
-                // Check if device uses USB-C
-                const usesUSBC = isUSBCDevice(modelRequired, shippingModel);
-
-                // ===== LAPTOP RULES =====
-                if (isLaptopDevice(deviceType, modelRequired)) {
-                    const isHighSpec = isHighSpecLaptop(modelRequired);
-
-                    if (isNS) {
-                        if (isHighSpec) {
-                            consumableCounts['Charger (High Spec)']++;
-                        } else {
-                            consumableCounts['Charger (Standard)']++;
-                        }
-                        consumableCounts['Laptop Bag']++;
-                        consumableCounts['Headset']++;
-                        consumableCounts['Mouse']++;
-                    } else if (isREP) {
-                        if (isHighSpec) {
-                            consumableCounts['Charger (High Spec)']++;
-                        } else {
-                            consumableCounts['Charger (Standard)']++;
-                        }
-                    }
-                }
-
-                // ===== MOBILE/iPhone RULES =====
-                if (isMobileDevice(deviceType, modelRequired)) {
-                    const phoneModel = getPhoneModel(modelRequired, shippingModel);
-                    const isBundleRequest = isBundle(modelRequired);
-
-                    // All mobile devices get USB-C plug + cable (Lightning or USB-C)
-                    consumableCounts['USB-C Plug']++;
-                    if (usesUSBC) {
-                        consumableCounts['USB-C Cable']++;
-                    } else {
-                        consumableCounts['Lightning Cable']++;
-                    }
-
-                    // Bundle orders get EarPods + case + SP
-                    if (isBundleRequest) {
-                        if (usesUSBC) {
-                            consumableCounts['USB-C EarPods']++;
-                        } else {
-                            consumableCounts['Lightning EarPods']++;
-                        }
-
-                        const isRugged = modelRequired.toLowerCase().includes('rugged');
-
-                        // Use phoneModel directly (now includes iPhone 15/16)
-                        if (phoneModel === 'iPhone 16') {
-                            if (isRugged) {
-                                consumableCounts['iPhone 16 Rugged Case']++;
-                            } else {
-                                consumableCounts['iPhone 16 Case']++;
-                            }
-                            consumableCounts['iPhone 16 Screen Protector']++;
-                        } else if (phoneModel === 'iPhone 15') {
-                            if (isRugged) {
-                                consumableCounts['iPhone 15 Rugged Case']++;
-                            } else {
-                                consumableCounts['iPhone 15 Case']++;
-                            }
-                            consumableCounts['iPhone 15 Screen Protector']++;
-                        } else if (phoneModel === 'iPhone SE') {
-                            if (isRugged) {
-                                consumableCounts['iPhone SE Rugged Case']++;
-                            } else {
-                                consumableCounts['iPhone SE Case']++;
-                            }
-                            consumableCounts['iPhone SE Screen Protector']++;
-                        } else if (phoneModel === 'iPhone 12') {
-                            if (isRugged) {
-                                consumableCounts['iPhone 12 Rugged Case']++;
-                            } else {
-                                consumableCounts['iPhone 12 Case']++;
-                            }
-                            consumableCounts['iPhone 12 Screen Protector']++;
-                        } else {
-                            // Default: iPhone 14 (includes 11, XR, etc.)
-                            if (isRugged) {
-                                consumableCounts['iPhone 14 Rugged Case']++;
-                            } else {
-                                consumableCounts['iPhone 14 Case']++;
-                            }
-                            consumableCounts['iPhone 14 Screen Protector']++;
-                        }
-                    }
-                }
-
-                // ===== iPad RULES =====
-                if (isIPadDevice(deviceType, modelRequired)) {
-                    const isBundleRequest = isIPadBundle(modelRequired);
-
-                    // ALL iPads get USB-C plug + cable (not just bundles)
-                    consumableCounts['USB-C Plug']++;
-                    if (usesUSBC) {
-                        consumableCounts['USB-C Cable']++;
-                    } else {
-                        consumableCounts['Lightning Cable']++;
-                    }
-
-                    // Bundle orders additionally get case + screen protector
-                    if (isBundleRequest) {
-                        const shippedModel = getVal(row, 'SHIPPED MODEL', 'Shipped Model', 'shipped model', 'SHIPPING MODEL', 'Shipping Model');
-                        const iPadModel = getIPadModel(modelRequired, shippedModel);
-                        const isRugged = isRuggedBundle(modelRequired);
-
-                        // Case & Screen Protector based on iPad model
-                        if (iPadModel === 'iPad 9th Gen') {
-                            if (isRugged) {
-                                consumableCounts['iPad 9th Gen Rugged Case']++;
-                            } else {
-                                consumableCounts['iPad 9th Gen Case']++;
-                            }
-                            consumableCounts['iPad 9th Gen Screen Protector']++;
-                        } else if (iPadModel === 'iPad 10th Gen') {
-                            if (isRugged) {
-                                consumableCounts['iPad 10th Gen Rugged Case']++;
-                            } else {
-                                consumableCounts['iPad 10th Gen Case']++;
-                            }
-                            consumableCounts['iPad 10th Gen Screen Protector']++;
-                        } else {
-                            // Default to 11th Gen
-                            if (isRugged) {
-                                consumableCounts['iPad 11th Gen Rugged Case']++;
-                            } else {
-                                consumableCounts['iPad 11th Gen Case']++;
-                            }
-                            consumableCounts['iPad 11th Gen Screen Protector']++;
-                        }
-                    }
-                }
+            sourceData.forEach((row) => {
+                const context = buildConsumableContext(row);
+                applyConsumableRules(context);
             });
 
             resetConsumablesUpdateFeedback();
@@ -2733,7 +2735,7 @@
         }
 
         function clearConsumables() {
-            consumableCounts = {};
+            consumableCounts = createEmptyConsumableCounts();
             consumablesEmpty.style.display = 'block';
             consumablesContent.style.display = 'none';
             consumablesBadge.textContent = '0 ITEMS';
@@ -2910,10 +2912,6 @@
             return String(value ?? '').toLowerCase().replace(/\s+/g, '');
         }
 
-        function normalizeMatchKey(value) {
-            return String(value ?? '').trim().toLowerCase();
-        }
-
         function parseCountCell(value) {
             const trimmed = String(value ?? '').trim();
             if (!trimmed) {
@@ -2942,9 +2940,16 @@
                 return;
             }
 
-            const generatedUsage = new Map(
-                getGeneratedUsageRows().map((row) => [normalizeMatchKey(row.name), row.count])
-            );
+            const generatedUsage = new Map();
+            getGeneratedUsageRows().forEach((row) => {
+                const item = generatedUsageByCode.get(row.name);
+                const aliases = new Set([row.name, item?.label, ...(item?.aliases || [])]);
+                aliases.forEach((alias) => {
+                    const key = normalizeMatchKey(alias);
+                    if (!key) return;
+                    generatedUsage.set(key, (generatedUsage.get(key) || 0) + row.count);
+                });
+            });
             const updatedRows = [];
             let headerConsumed = false;
 
