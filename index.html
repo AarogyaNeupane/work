@@ -1505,7 +1505,7 @@
         .process-strip-main {
             display: flex;
             gap: 18px;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             padding: 18px;
             flex-wrap: wrap;
@@ -1620,6 +1620,7 @@
         .process-download-btn {
             flex: 0 0 auto;
             min-width: 220px;
+            align-self: flex-start;
         }
 
         .usage-panel {
@@ -1756,6 +1757,12 @@
             text-align: center;
             color: var(--gray-600);
             background: var(--white);
+        }
+
+        .diff-row.is-grid-head {
+            min-height: 37px;
+            background: var(--black);
+            border-bottom: var(--border-width) solid var(--black);
         }
 
         .diff-row.is-header {
@@ -2552,9 +2559,9 @@
             const baseMatrix = consumablesUpdateState.outputTsv
                 ? buildGridMatrix(consumablesUpdateState.updatedRows)
                 : buildGridMatrix(consumablesUpdateState.inventoryMatrix);
-            const renderedRows = consumablesUpdateState.diffRows.slice();
+            const renderedRows = [{ label: '', changed: false, isHeader: false, isGridHead: true }, ...consumablesUpdateState.diffRows];
 
-            while (renderedRows.length < baseMatrix.length) {
+            while (renderedRows.length < baseMatrix.length + 1) {
                 renderedRows.push({ label: '', changed: false, isHeader: false });
             }
 
@@ -2564,7 +2571,7 @@
         function renderInventoryDiffColumn() {
             consumablesUpdateState.renderedDiffRows = buildRenderedDiffRows();
             inventoryDiffGrid.innerHTML = consumablesUpdateState.renderedDiffRows.map((row) => `
-                <div class="diff-row${row.changed ? ' is-changed' : ''}${row.isHeader ? ' is-header' : ''}">
+                <div class="diff-row${row.changed ? ' is-changed' : ''}${row.isHeader ? ' is-header' : ''}${row.isGridHead ? ' is-grid-head' : ''}">
                     ${row.label ? escapeHtml(row.label) : '&nbsp;'}
                 </div>
             `).join('');
