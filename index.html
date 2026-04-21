@@ -1683,6 +1683,8 @@
 
         .consumables-update-workspace {
             margin-top: 0;
+            --inventory-grid-header-height: 49px;
+            --inventory-grid-row-height: 41px;
         }
 
         .consumables-update-header {
@@ -1740,6 +1742,8 @@
             text-align: left;
             display: grid;
             gap: 2px;
+            min-height: var(--inventory-grid-header-height);
+            align-content: center;
         }
 
         .diff-panel-title {
@@ -1773,7 +1777,7 @@
         }
 
         .diff-row {
-            min-height: 40px;
+            min-height: var(--inventory-grid-row-height);
             padding: 0 10px;
             border-bottom: 1px solid var(--diff-border);
             font-family: 'JetBrains Mono', monospace;
@@ -1783,12 +1787,6 @@
             display: grid;
             align-items: center;
             justify-items: stretch;
-        }
-
-        .diff-row.is-grid-head {
-            min-height: 37px;
-            background: var(--diff-header-bg);
-            border-bottom: 1px solid var(--diff-border);
         }
 
         .diff-row.is-header {
@@ -1821,11 +1819,11 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            min-height: 40px;
+            min-height: var(--inventory-grid-row-height);
         }
 
         .diff-row-content.is-empty {
-            min-height: 40px;
+            min-height: var(--inventory-grid-row-height);
         }
 
         .diff-marker {
@@ -2387,15 +2385,14 @@
         let currentSourceFile = null;
         let isUsageCollapsed = false;
         let isSyncingInventoryScroll = false;
-        let hoveredInventoryRowIndex = null;
+        let hoveredInventoryRowId = null;
         let consumablesUpdateState = {
             inventoryMatrix: [],
             message: '',
             parsedRows: [],
             updatedRows: [],
             outputTsv: '',
-            diffRows: [],
-            renderedDiffRows: [],
+            reviewRows: [],
             summary: null,
         };
 
@@ -2571,43 +2568,32 @@
                 height: 320,
                 rowFormatter: (row) => {
                     const rowEl = row.getElement();
-                    rowEl.classList.remove('is-changed', 'is-unchanged', 'is-header', 'is-grid-head', 'is-hovered');
+                    rowEl.classList.remove('is-changed', 'is-unchanged', 'is-header', 'is-hovered');
 
-                    const rawPosition = typeof row.getPosition === 'function'
-                        ? row.getPosition(true)
-                        : row.getIndex();
-                    const rowIndex = Math.max(0, Number(rawPosition || 1) - 1);
-                    const meta = consumablesUpdateState.renderedDiffRows[rowIndex];
-                    rowEl.dataset.diffRow = String(rowIndex);
+                    const rowId = getGridRowId(row);
+                    const reviewRow = consumablesUpdateState.reviewRows[rowId];
+                    rowEl.dataset.rowId = String(rowId);
 
-                    if (!meta) {
+                    if (!reviewRow) {
                         return;
                     }
 
-                    if (meta.changed) {
+                    if (reviewRow.changed) {
                         rowEl.classList.add('is-changed');
-                    } else if (meta.status === 'unchanged') {
+                    } else if (reviewRow.kind === 'data') {
                         rowEl.classList.add('is-unchanged');
                     }
 
-                    if (meta.isHeader) {
+                    if (reviewRow.kind === 'header') {
                         rowEl.classList.add('is-header');
                     }
 
-                    if (meta.isGridHead) {
-                        rowEl.classList.add('is-grid-head');
-                    }
-
-                    if (hoveredInventoryRowIndex === rowIndex) {
+                    if (hoveredInventoryRowId === rowId) {
                         rowEl.classList.add('is-hovered');
                     }
                 },
                 rowMouseEnter: (_event, row) => {
-                    const rawPosition = typeof row.getPosition === 'function'
-                        ? row.getPosition(true)
-                        : row.getIndex();
-                    const rowIndex = Math.max(0, Number(rawPosition || 1) - 1);
-                    setHoveredInventoryRow(rowIndex);
+                    setHoveredInventoryRow(getGridRowId(row));
                 },
                 rowMouseLeave: () => {
                     setHoveredInventoryRow(null);
@@ -2622,6 +2608,9 @@
             const grid = new Tabulator(element, gridOptions);
             applySpreadsheetHeaders(element);
             requestAnimationFrame(() => applySpreadsheetHeaders(element));
+            grid.on('renderComplete', () => {
+                requestAnimationFrame(updateInventoryDiffMeasurements);
+            });
 
             return grid;
         }
@@ -2630,8 +2619,75 @@
             return trimTrailingBlankRows(grid.getSheetData());
         }
 
-        function setGridMatrix(grid, matrix) {
-            grid.setSheetData(buildGridMatrix(matrix));
+        function setGridMatrix(grid, matrix, options = {}) {
+            const nextMatrix = options.preserveShape
+                ? normalizeMatrix(matrix)
+                : buildGridMatrix(matrix);
+            grid.setSheetData(nextMatrix);
+        }
+
+        function getGridRowId(row) {
+            const rawPosition = typeof row.getPosition === 'function'
+                ? row.getPosition(true)
+                : row.getIndex();
+            return Math.max(0, Number(rawPosition || 1) - 1);
+        }
+
+        function updateInventoryDiffMeasurements() {
+            const headerElement = inventoryGridElement.querySelector('.tabulator-header');
+            const rowElement = inventoryGridElement.querySelector('.tabulator-tableholder .tabulator-row');
+            const headerHeight = headerElement?.getBoundingClientRect().height;
+            const rowHeight = rowElement?.getBoundingClientRect().height;
+
+            if (headerHeight) {
+                inventoryWorkspace.style.setProperty('--inventory-grid-header-height', `${Math.round(headerHeight)}px`);
+            }
+
+            if (rowHeight) {
+                inventoryWorkspace.style.setProperty('--inventory-grid-row-height', `${Math.round(rowHeight)}px`);
+            }
+        }
+
+        function buildReviewRows(baseRows = []) {
+            const originalMatrix = buildGridMatrix(consumablesUpdateState.inventoryMatrix);
+            const updatedSource = consumablesUpdateState.outputTsv
+                ? consumablesUpdateState.updatedRows
+                : originalMatrix.map(() => Array(INVENTORY_GRID_COLUMNS).fill(''));
+            const updatedMatrix = buildGridMatrix(updatedSource, 0);
+            const rowCount = Math.max(originalMatrix.length, updatedMatrix.length);
+            const reviewRows = [];
+
+            for (let rowId = 0; rowId < rowCount; rowId++) {
+                const originalCells = (originalMatrix[rowId] || Array(INVENTORY_GRID_COLUMNS).fill('')).slice(0, INVENTORY_GRID_COLUMNS);
+                const updatedCells = (updatedMatrix[rowId] || Array(INVENTORY_GRID_COLUMNS).fill('')).slice(0, INVENTORY_GRID_COLUMNS);
+                const baseRow = baseRows[rowId];
+
+                if (baseRow) {
+                    reviewRows.push({
+                        ...baseRow,
+                        rowId,
+                        originalCells,
+                        updatedCells,
+                    });
+                    continue;
+                }
+
+                reviewRows.push({
+                    rowId,
+                    kind: 'padding',
+                    originalCells,
+                    updatedCells,
+                    changed: false,
+                    deduction: '',
+                    beforeCount: '',
+                    afterCount: '',
+                    displayLabel: '',
+                    displayMeta: '',
+                    title: '',
+                });
+            }
+
+            return reviewRows;
         }
 
         function getInventoryMatrixFromGrid() {
@@ -2643,8 +2699,8 @@
             consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
         }
 
-        function setUpdatedGridMatrix(matrix) {
-            setGridMatrix(updatedInventoryGrid, matrix);
+        function setUpdatedGridMatrix(matrix, options = {}) {
+            setGridMatrix(updatedInventoryGrid, matrix, options);
             requestAnimationFrame(() => updatedInventoryGrid.redraw(true));
         }
 
@@ -2720,44 +2776,16 @@
             toggleUsageBtn.setAttribute('aria-expanded', String(!isUsageCollapsed));
         }
 
-        function buildRenderedDiffRows() {
-            const baseMatrix = consumablesUpdateState.outputTsv
-                ? buildGridMatrix(consumablesUpdateState.updatedRows)
-                : buildGridMatrix(consumablesUpdateState.inventoryMatrix);
-            const renderedRows = [{
-                label: '',
-                changed: false,
-                isHeader: false,
-                isGridHead: true,
-                status: 'grid-head',
-                meta: '',
-                title: 'Column headers',
-            }, ...consumablesUpdateState.diffRows];
-
-            while (renderedRows.length < baseMatrix.length + 1) {
-                renderedRows.push({
-                    label: '',
-                    changed: false,
-                    isHeader: false,
-                    status: 'empty',
-                    meta: '',
-                    title: '',
-                });
-            }
-
-            return renderedRows;
-        }
-
         function renderDiffRowContent(row) {
-            if (row.status === 'empty') {
+            if (row.kind === 'padding' || row.kind === 'blank') {
                 return '<div class="diff-row-content is-empty">&nbsp;</div>';
             }
 
-            if (row.status === 'grid-head' || row.status === 'header') {
+            if (row.kind === 'header') {
                 return '<div class="diff-row-content is-empty">&nbsp;</div>';
             }
 
-            if (row.status === 'unchanged') {
+            if (!row.changed) {
                 return `
                     <div class="diff-row-content">
                         <span class="diff-marker" aria-hidden="true"></span>
@@ -2765,14 +2793,14 @@
                 `;
             }
 
-            const valueMarkup = row.label
-                ? `<div class="diff-value">${escapeHtml(row.label)}</div>`
+            const valueMarkup = row.displayLabel
+                ? `<div class="diff-value">${escapeHtml(row.displayLabel)}</div>`
                 : '';
-            const metaMarkup = row.meta
+            const metaMarkup = row.displayMeta
                 ? `
                     <div class="diff-inline-meta">
                         <span class="diff-inline-separator">|</span>
-                        ${escapeHtml(row.meta)}
+                        ${escapeHtml(row.displayMeta)}
                     </div>
                 `
                 : '';
@@ -2787,11 +2815,14 @@
         }
 
         function renderInventoryDiffColumn() {
-            consumablesUpdateState.renderedDiffRows = buildRenderedDiffRows();
-            inventoryDiffGrid.innerHTML = consumablesUpdateState.renderedDiffRows.map((row, index) => `
+            consumablesUpdateState.reviewRows = consumablesUpdateState.reviewRows.length
+                ? consumablesUpdateState.reviewRows
+                : buildReviewRows();
+
+            inventoryDiffGrid.innerHTML = consumablesUpdateState.reviewRows.map((row) => `
                 <div
-                    class="diff-row${row.changed ? ' is-changed' : ''}${row.status === 'unchanged' ? ' is-unchanged' : ''}${row.isHeader ? ' is-header' : ''}${row.isGridHead ? ' is-grid-head' : ''}${hoveredInventoryRowIndex === index ? ' is-hovered' : ''}"
-                    data-diff-row="${index}"
+                    class="diff-row${row.changed ? ' is-changed' : ''}${row.kind === 'data' && !row.changed ? ' is-unchanged' : ''}${row.kind === 'header' ? ' is-header' : ''}${hoveredInventoryRowId === row.rowId ? ' is-hovered' : ''}"
+                    data-row-id="${row.rowId}"
                     ${row.title ? `title="${escapeHtml(row.title)}"` : ''}
                 >
                     ${renderDiffRowContent(row)}
@@ -2799,9 +2830,9 @@
             `).join('');
             inventoryDiffGrid.querySelectorAll('.diff-row').forEach((row) => {
                 row.addEventListener('mouseenter', () => {
-                    const rowIndex = Number(row.dataset.diffRow);
-                    if (!Number.isNaN(rowIndex)) {
-                        setHoveredInventoryRow(rowIndex);
+                    const rowId = Number(row.dataset.rowId);
+                    if (!Number.isNaN(rowId)) {
+                        setHoveredInventoryRow(rowId);
                     }
                 });
                 row.addEventListener('mouseleave', () => {
@@ -2811,6 +2842,7 @@
             requestAnimationFrame(() => {
                 inventoryGrid.redraw(true);
                 updatedInventoryGrid.redraw(true);
+                updateInventoryDiffMeasurements();
             });
         }
 
@@ -2840,11 +2872,11 @@
             `;
         }
 
-        function setHoveredInventoryRow(rowIndex) {
-            hoveredInventoryRowIndex = typeof rowIndex === 'number' ? rowIndex : null;
+        function setHoveredInventoryRow(rowId) {
+            hoveredInventoryRowId = typeof rowId === 'number' ? rowId : null;
 
-            document.querySelectorAll('[data-diff-row]').forEach((element) => {
-                const isActive = hoveredInventoryRowIndex !== null && Number(element.dataset.diffRow) === hoveredInventoryRowIndex;
+            document.querySelectorAll('[data-row-id]').forEach((element) => {
+                const isActive = hoveredInventoryRowId !== null && Number(element.dataset.rowId) === hoveredInventoryRowId;
                 element.classList.toggle('is-hovered', isActive);
             });
         }
@@ -2941,7 +2973,11 @@
         setInventoryGridMatrix([]);
         setUpdatedGridMatrix([]);
         renderInventoryDiffColumn();
-        requestAnimationFrame(bindInventoryScrollSync);
+        requestAnimationFrame(() => {
+            bindInventoryScrollSync();
+            updateInventoryDiffMeasurements();
+        });
+        window.addEventListener('resize', () => requestAnimationFrame(updateInventoryDiffMeasurements));
 
         // Initialize event listeners
         function initDropZone(zone) {
@@ -3938,8 +3974,7 @@
             consumablesUpdateState.parsedRows = [];
             consumablesUpdateState.updatedRows = [];
             consumablesUpdateState.outputTsv = '';
-            consumablesUpdateState.diffRows = [];
-            consumablesUpdateState.renderedDiffRows = [];
+            consumablesUpdateState.reviewRows = [];
             consumablesUpdateState.summary = null;
         }
 
@@ -3967,7 +4002,13 @@
         }
 
         function renderConsumablesUpdateResult() {
-            setUpdatedGridMatrix(consumablesUpdateState.updatedRows);
+            const updatedMatrix = consumablesUpdateState.outputTsv
+                ? consumablesUpdateState.updatedRows
+                : buildGridMatrix(consumablesUpdateState.inventoryMatrix).map(() => Array(INVENTORY_GRID_COLUMNS).fill(''));
+            consumablesUpdateState.reviewRows = consumablesUpdateState.reviewRows.length
+                ? consumablesUpdateState.reviewRows
+                : buildReviewRows();
+            setUpdatedGridMatrix(updatedMatrix, { preserveShape: !consumablesUpdateState.outputTsv });
             renderInventoryDiffColumn();
             renderInventorySummary();
         }
@@ -4144,7 +4185,7 @@
                 });
             });
             const updatedRows = [];
-            const diffRows = [];
+            const baseReviewRows = [];
             let headerConsumed = false;
             let changedRows = 0;
             let unchangedRows = 0;
@@ -4153,12 +4194,14 @@
             inventoryTable.rows.forEach((row) => {
                 if (row.isBlank) {
                     updatedRows.push(['', '']);
-                    diffRows.push({
-                        label: '',
+                    baseReviewRows.push({
+                        kind: 'blank',
                         changed: false,
-                        isHeader: false,
-                        status: 'empty',
-                        meta: '',
+                        deduction: '',
+                        beforeCount: '',
+                        afterCount: '',
+                        displayLabel: '',
+                        displayMeta: '',
                         title: '',
                     });
                     return;
@@ -4166,12 +4209,14 @@
 
                 if (inventoryTable.hasHeader && !headerConsumed) {
                     updatedRows.push(row.cells.slice());
-                    diffRows.push({
-                        label: '',
+                    baseReviewRows.push({
+                        kind: 'header',
                         changed: false,
-                        isHeader: true,
-                        status: 'header',
-                        meta: 'Column labels',
+                        deduction: '',
+                        beforeCount: '',
+                        afterCount: '',
+                        displayLabel: '',
+                        displayMeta: '',
                         title: 'Header row',
                     });
                     headerConsumed = true;
@@ -4191,12 +4236,14 @@
                 const deduction = Math.min(parsedCount.value, removal);
                 const changed = deduction > 0;
                 updatedRows.push([item, formatCountValue(updatedCount)]);
-                diffRows.push({
-                    label: changed ? `-${formatCountValue(deduction)}` : '',
+                baseReviewRows.push({
+                    kind: 'data',
                     changed,
-                    isHeader: false,
-                    status: changed ? 'changed' : 'unchanged',
-                    meta: changed ? `${formatCountValue(parsedCount.value)} → ${formatCountValue(updatedCount)}` : 'No change',
+                    deduction: changed ? formatCountValue(deduction) : '',
+                    beforeCount: formatCountValue(parsedCount.value),
+                    afterCount: formatCountValue(updatedCount),
+                    displayLabel: changed ? `-${formatCountValue(deduction)}` : '',
+                    displayMeta: changed ? `${formatCountValue(parsedCount.value)} → ${formatCountValue(updatedCount)}` : '',
                     title: changed
                         ? `${formatCountValue(parsedCount.value)} to ${formatCountValue(updatedCount)}`
                         : 'No change',
@@ -4220,7 +4267,7 @@
             consumablesUpdateState.parsedRows = inventoryTable.rows.map((row) => row.cells.slice());
             consumablesUpdateState.updatedRows = updatedRows;
             consumablesUpdateState.outputTsv = matrixToTsv(updatedRows);
-            consumablesUpdateState.diffRows = diffRows;
+            consumablesUpdateState.reviewRows = buildReviewRows(baseReviewRows);
             consumablesUpdateState.summary = { changedRows, unchangedRows, totalDeducted };
             renderConsumablesUpdateUI();
         }
