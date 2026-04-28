@@ -853,10 +853,6 @@
             color: inherit;
         }
 
-        .inventory-grid-shell.is-readonly .tabulator-row:hover {
-            background: transparent;
-        }
-
         .selector-panel {
             display: grid;
             gap: 12px;
@@ -1707,9 +1703,37 @@
 
         .inventory-diff-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr);
             gap: 16px;
             align-items: start;
+        }
+
+        .inventory-review-panel {
+            display: grid;
+            gap: 12px;
+        }
+
+        .inventory-review-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .inventory-review-meta {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--diff-text-muted);
+            white-space: nowrap;
+        }
+
+        .inventory-review-helper {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--gray-600);
         }
 
         .paste-panel {
@@ -1912,12 +1936,12 @@
             border-radius: 8px;
         }
 
-        .inventory-grid-shell.is-readonly .tabulator-row.is-changed {
+        .inventory-grid-shell .tabulator-row.is-changed {
             background: #f0fff4;
             box-shadow: inset 3px 0 0 var(--diff-success-border);
         }
 
-        .inventory-grid-shell.is-readonly .tabulator-row.is-changed:hover {
+        .inventory-grid-shell .tabulator-row.is-changed:hover {
             background: #e0f8e7;
         }
 
@@ -1925,13 +1949,38 @@
             background: var(--diff-hover);
         }
 
-        .inventory-grid-shell.is-readonly .tabulator-row.is-changed.is-hovered {
+        .inventory-grid-shell .tabulator-row.is-changed.is-hovered {
             background: #dcffe4;
         }
 
         .inventory-grid-shell .tabulator-row.is-unchanged .tabulator-cell,
         .inventory-grid-shell .tabulator-row.is-unchanged .tabulator-row-header .tabulator-cell {
             color: #24292f;
+        }
+
+        .inventory-grid-shell .tabulator-cell.is-readonly-cell {
+            background: #f8fafc;
+            color: #57606a;
+        }
+
+        .inventory-grid-shell .tabulator-cell.is-change-cell {
+            font-weight: 700;
+            font-style: italic;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: right;
+            background: #fff7e6;
+            color: #8a4b00;
+            box-shadow: inset 3px 0 0 #d97706;
+        }
+
+        .inventory-grid-shell .tabulator-row.is-changed .tabulator-cell.is-readonly-cell {
+            background: #eefaf1;
+            color: var(--diff-success-text);
+        }
+
+        .inventory-grid-shell .tabulator-row.is-changed .tabulator-cell.is-change-cell {
+            background: #fff1cc;
+            color: #7c3f00;
         }
 
         .help-modal-overlay {
@@ -2265,37 +2314,16 @@
                 <div class="consumables-update-summary inventory-summary-strip" id="inventorySummaryStrip" hidden></div>
                 <div class="consumables-update-messages" id="consumablesUpdateMessage"></div>
                 <div class="inventory-diff-layout">
-                    <section class="paste-panel">
-                        <div class="paste-panel-header">
+                    <section class="paste-panel inventory-review-panel">
+                        <div class="inventory-review-header">
                             <div>
-                                <h3 class="paste-panel-title">Current Inventory</h3>
+                                <h3 class="paste-panel-title">Inventory Review Grid</h3>
+                                <p class="inventory-review-helper">Paste the Meru inventory table into columns A and B. Columns C to E stay aligned in the same row and show the calculated change plus the updated copy-ready output.</p>
                             </div>
-                            <span class="paste-panel-meta">EDITABLE GRID</span>
+                            <span class="inventory-review-meta">A:B editable · C:E calculated</span>
                         </div>
                         <div class="inventory-grid-shell">
-                            <div id="inventoryGrid" class="inventory-grid" aria-label="Current inventory table"></div>
-                        </div>
-                    </section>
-
-                    <section class="diff-panel" aria-label="Inventory changes">
-                        <div class="diff-panel-header">
-                            <span class="diff-panel-title">Change lane</span>
-                            <span class="diff-panel-subtitle">Review changes</span>
-                        </div>
-                        <div class="diff-grid-shell" id="inventoryDiffScroll">
-                            <div class="diff-grid" id="inventoryDiffGrid"></div>
-                        </div>
-                    </section>
-
-                    <section class="paste-panel">
-                        <div class="paste-panel-header">
-                            <div>
-                                <h3 class="paste-panel-title">Updated Inventory</h3>
-                            </div>
-                            <span class="paste-panel-meta">READ-ONLY GRID</span>
-                        </div>
-                        <div class="inventory-grid-shell is-readonly">
-                            <div id="updatedInventoryGrid" class="inventory-grid" aria-label="Updated inventory table"></div>
+                            <div id="inventoryGrid" class="inventory-grid" aria-label="Inventory review table"></div>
                         </div>
                     </section>
                 </div>
@@ -2372,19 +2400,17 @@
         const inventoryGridElement = document.getElementById('inventoryGrid');
         const updateCountsBtn = document.getElementById('updateCountsBtn');
         const copyUpdatedTableBtn = document.getElementById('copyUpdatedTableBtn');
-        const updatedInventoryGridElement = document.getElementById('updatedInventoryGrid');
-        const inventoryDiffGrid = document.getElementById('inventoryDiffGrid');
-        const inventoryDiffScroll = document.getElementById('inventoryDiffScroll');
         const inventorySummaryStrip = document.getElementById('inventorySummaryStrip');
         const consumablesUpdateMessage = document.getElementById('consumablesUpdateMessage');
-        const INVENTORY_GRID_COLUMNS = 2;
+        const INVENTORY_INPUT_COLUMNS = 2;
+        const INVENTORY_DISPLAY_COLUMNS = 5;
         const INVENTORY_GRID_MIN_ROWS = 18;
         const INVENTORY_GRID_BUFFER_ROWS = 12;
+        const INVENTORY_DISPLAY_COLUMN_WIDTHS = [320, 118, 118, 320, 118];
         let inventoryGrid;
-        let updatedInventoryGrid;
         let currentSourceFile = null;
         let isUsageCollapsed = false;
-        let isSyncingInventoryScroll = false;
+        let isProgrammaticInventoryGridUpdate = false;
         let hoveredInventoryRowId = null;
         let consumablesUpdateState = {
             inventoryMatrix: [],
@@ -2406,61 +2432,61 @@
             'ASSET Tag', 'Device Bundle / Device Type', 'iPhone number (to be added by EE)'
         ];
         const generatedUsageCatalog = [
-            { category: 'Adapters & Chargers', code: 'ZDEF-20W-USBC-ADAPTOR', label: 'USB C Plug', aliases: ['USB-C Plug'] },
+            { category: 'Adapters & Chargers', code: '20W-USBC-ADAPTOR', label: 'USB C Plug', aliases: ['USB-C Plug', 'ZDEF-20W-USBC-ADAPTOR'] },
             { category: 'Adapters & Chargers', code: 'Dell 65W USB-C Charger', label: 'Dell USB C Charger', aliases: ['Charger (Standard)'] },
-            { category: 'Adapters & Chargers', code: 'Dell 180W BARREL Charger', label: 'Dell 180W BARREL Charger', aliases: ['Charger (High Spec)'] },
-            { category: 'Audio', code: 'ZDEF-APPLE-EARPODS-LIGHTNING', label: 'Apple Lightning Earpods', aliases: ['Lightning EarPods'] },
-            { category: 'Audio', code: 'ZDEF-APPLE-EARPODS-USBC', label: 'Apple USB C Earpods', aliases: ['USB-C EarPods'] },
+            { category: 'Audio', code: 'APPLE-EARPODS-LIGHTNING', label: 'Apple Lightning Earpods', aliases: ['Lightning EarPods', 'ZDEF-APPLE-EARPODS-LIGHTNING'] },
+            { category: 'Audio', code: 'APPLE-EARPODS-USBC', label: 'Apple USB C Earpods', aliases: ['USB-C EarPods', 'ZDEF-APPLE-EARPODS-USBC'] },
+            { category: 'iPad Accessories', code: 'IPAD-10TH-SCREEN-PROTECTOR', label: 'iPad 10th Gen Screen Protector', aliases: ['ZDEF-IPAD-10TH-SCREEN-PROTECTOR'] },
+            { category: 'iPad Accessories', code: 'IPAD-10TH-STANDARD-CASE', label: 'iPad 10th Gen Standard Case', aliases: ['iPad 10th Gen Case', 'ZDEF-IPAD-10TH-STANDARD-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-SE-CASE', label: 'iPhone SE case', aliases: ['iPhone SE Case', 'ZDEF-IPHONE-SE-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-SE-SCREEN-PROTECTOR', label: 'iPhone SE screen protector', aliases: ['iPhone SE Screen Protector', 'ZDEF-IPHONE-SE-SCREEN-PROTECTOR'] },
             { category: 'Cables', code: 'USB C -> Lighting Cable', label: 'USB C to Lightning Cable', aliases: ['Lightning Cable'] },
-            { category: 'Cables', code: 'USB-C TO USB-C', label: 'USB C to USB C Cable', aliases: ['USB-C Cable'] },
-            { category: 'Laptop Accessories', code: 'ZEADEF-LAPTOP-RUCKSACK', label: 'Backpack', aliases: ['Laptop Bag'] },
-            { category: 'Laptop Accessories', code: 'ZEADEF-HEADSET', label: 'Headset' },
-            { category: 'Laptop Accessories', code: 'ZEADEF-WIRELESS-MOUSE', label: 'Mouse' },
-            { category: 'Laptop Accessories', code: 'Logitec Ergo K860 Keyboard', label: 'Logitec Ergo K860 Keyboard' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-SE-CASE', label: 'iPhone SE case', aliases: ['iPhone SE Case'] },
+            { category: 'Laptop Accessories', code: 'LAPTOP-RUCKSACK', label: 'Backpack', aliases: ['Laptop Bag', 'ZEADEF-LAPTOP-RUCKSACK'] },
+            { category: 'Laptop Accessories', code: 'HEADSET', label: 'Headset', aliases: ['ZEADEF-HEADSET'] },
+            { category: 'Laptop Accessories', code: 'WIRELESS-MOUSE', label: 'Mouse', aliases: ['ZEADEF-WIRELESS-MOUSE'] },
+            { category: 'iPad Accessories', code: 'IPAD-10TH-RUGGED-CASE', label: 'iPad 10th Gen Rugged Case', aliases: ['ZDEF-IPAD-10TH-RUGGED-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-12-CASE', label: 'iPhone 12 Case', aliases: ['ZDEF-IPHONE-12-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-12-RUGGED-CASE', label: 'iPhone 12 Rugged Case', aliases: ['ZDEF-IPHONE-12-RUGGED-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-12-SCREEN-PROTECTOR', label: 'iPhone 12 Screen protector', aliases: ['iPhone 12 Screen Protector', 'ZDEF-IPHONE-12-SCREEN-PROTECTOR'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-14-CASE', label: 'iPhone 14 Case', aliases: ['ZDEF-IPHONE-14-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-14-RUGGED-CASE', label: 'iPhone 14 Rugged Case', aliases: ['ZDEF-IPHONE-14-RUGGED-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-14-SCREEN-PROTECTOR', label: 'iPhone 14 Screen Protector', aliases: ['ZDEF-IPHONE-14-SCREEN-PROTECTOR'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-3M-CABLE', label: 'Toughbook Charging Cable', aliases: ['ZDEF-TOUGHBOOK-3M-CABLE'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-4-BAY-CHARGER', label: 'Toughbook 4 Bay Charger', aliases: ['ZDEF-TOUGHBOOK-4-BAY-CHARGER'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-DELUXE-STRAP', label: 'Toughbook Deluxe Strap', aliases: ['ZDEF-TOUGHBOOK-DELUXE-STRAP'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-DIGITIZER-PEN', label: 'Toughbook Pen', aliases: ['ZDEF-TOUGHBOOK-DIGITIZER-PEN'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-G2-KEYBOARD', label: 'Toughbook G2 Keyboard', aliases: ['ZDEF-TOUGHBOOK-G2-KEYBOARD'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-LCD-FILM', label: 'Toughbook LCD Protector', aliases: ['ZDEF-TOUGHBOOK-LCD-FILM'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-POWER-SUPPLY', label: 'Toughbook PSU', aliases: ['ZDEF-TOUGHBOOK-POWER-SUPPLY'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-STANDARD-BATTERY', label: 'Toughbook 50Whr Battery (Standard)', aliases: ['ZDEF-TOUGHBOOK-STANDARD-BATTERY'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-LONGLIFE-BATTERY', label: 'Toughbook 68Whr Battery (Longlife)', aliases: ['ZDEF-TOUGHBOOK-LONGLIFE-BATTERY'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-STYLUS-HOLDER', label: 'Toughbook Stylus Holder', aliases: ['ZDEF-TOUGHBOOK-STYLUS-HOLDER'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-TETHER-TILL', label: 'Toughbook Stylus Tether', aliases: ['ZDEF-TOUGHBOOK-TETHER-TILL'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-X-STRAP', label: 'Toughbook X-Strap', aliases: ['ZDEF-TOUGHBOOK-X-STRAP'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-ALWAYS-ON-CASE', label: 'Toughbook Always On Case', aliases: ['ZDEF-TOUGHBOOK-ALWAYS-ON-CASE'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-16e-SCREEN-PROTECTOR', label: 'iPhone 16e Screen Protector', aliases: ['ZDEF-IPHONE-16e-SCREEN-PROTECTOR'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-CARRY-CASE', label: 'Toughbook Carry Case', aliases: ['ZDEF-TOUGHBOOK-CARRY-CASE'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-SHOULDER-STRAP', label: 'Toughbook Shoulder Strap', aliases: ['ZDEF-TOUGHBOOK-SHOULDER-STRAP'] },
+            { category: 'Toughbook Accessories', code: 'TOUGHBOOK-CAR-CHARGER', label: 'Toughbook Car Charger', aliases: ['ZDEF-TOUGHBOOK-CAR-CHARGER'] },
+            { category: 'iPhone Accessories', code: 'IPHONE-16e-CASE', label: 'iPhone 16e Case', aliases: ['ZDEF-IPHONE-16e-CASE'] },
             { category: 'iPhone Accessories', code: 'IPHONE-SE-RUGGED-CASE', label: 'iPhone SE Rugged Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-SE-SCREEN-PROTECTOR', label: 'iPhone SE screen protector', aliases: ['iPhone SE Screen Protector'] },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-CASE', label: 'iPhone 12 Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-RUGGED-CASE', label: 'iPhone 12 Rugged Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-12-SCREEN-PROTECTOR', label: 'iPhone 12 Screen protector', aliases: ['iPhone 12 Screen Protector'] },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-CASE', label: 'iPhone 14 Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-RUGGED-CASE', label: 'iPhone 14 Rugged Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-14-SCREEN-PROTECTOR', label: 'iPhone 14 Screen Protector' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-16e-CASE', label: 'iPhone 16e Case' },
-            { category: 'iPhone Accessories', code: 'ZDEF-IPHONE-16e-SCREEN-PROTECTOR', label: 'iPhone 16e Screen Protector' },
-            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-STANDARD CASE', label: 'iPad 8th/9th Gen Case', aliases: ['iPad 9th Gen Case'] },
-            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-RUGGED CASE', label: 'iPad 8th/9th Gen Rugged Case', aliases: ['iPad 9th Gen Rugged Case'] },
-            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-SCREEN PROTECTOR', label: 'iPad 8th/9th Gen Screen Protector', aliases: ['iPad 9th Gen Screen Protector'] },
-            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-STANDARD-CASE', label: 'iPad 10th Gen Standard Case', aliases: ['iPad 10th Gen Case'] },
-            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-RUGGED-CASE', label: 'iPad 10th Gen Rugged Case' },
-            { category: 'iPad Accessories', code: 'ZDEF-IPAD-10TH-SCREEN-PROTECTOR', label: 'iPad 10th Gen Screen Protector' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-3M-CABLE', label: 'Toughbook Charging Cable' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-4-BAY-CHARGER', label: 'Toughbook 4 Bay Charger' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-DELUXE-STRAP', label: 'Toughbook Deluxe Strap' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-DIGITIZER-PEN', label: 'Toughbook Pen' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-G2-KEYBOARD', label: 'Toughbook G2 Keyboard' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-LCD-FILM', label: 'Toughbook LCD Protector' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-POWER-SUPPLY', label: 'Toughbook PSU' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-STANDARD-BATTERY', label: 'Toughbook 50Whr Battery (Standard)' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-LONGLIFE-BATTERY', label: 'Toughbook 68Whr Battery (Longlife)' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-STYLUS-HOLDER', label: 'Toughbook Stylus Holder' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-TETHER-TILL', label: 'Toughbook Stylus Tether' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-X-STRAP', label: 'Toughbook X-Strap' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-ALWAYS-ON-CASE', label: 'Toughbook Always On Case' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-CARRY-CASE', label: 'Toughbook Carry Case' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-SHOULDER-STRAP', label: 'Toughbook Shoulder Strap' },
-            { category: 'Toughbook Accessories', code: 'ZDEF-TOUGHBOOK-CAR-CHARGER', label: 'Toughbook Car Charger' },
             { category: 'Bodycam', code: 'REVEAL BODYCAM', label: 'REVEAL BODYCAM' },
+            { category: 'Bodycam', code: 'REVEAL BODYCAM CHEST HARNESS', label: 'REVEAL BODYCAM CHEST HARNESS' },
             { category: 'Bodycam', code: 'REVEAL Bodycam Stud', label: 'REVEAL Bodycam Stud' },
             { category: 'Bodycam', code: 'REVEAL Bodycam Lanyard', label: 'REVEAL Bodycam Lanyard' },
             { category: 'Bodycam', code: 'REVEAL Bodycam Charging Cable', label: 'REVEAL Bodycam Charging Cable' },
             { category: 'Bodycam', code: 'REVEAL Bodycam Crocodile Clips', label: 'REVEAL Bodycam Crocodile Clips' },
-            { category: 'Bodycam', code: 'REVEAL BODYCAM CHEST HARNESS', label: 'REVEAL BODYCAM CHEST HARNESS' },
             { category: 'Bodycam', code: 'REVEAL BODYCAM SHOULDER HARNESS', label: 'REVEAL BODYCAM SHOULDER HARNESS' },
             { category: 'Bodycam', code: 'REVEAL BODYCAM MULTI DOCKING STATION', label: 'REVEAL BODYCAM MULTI DOCKING STATION' },
             { category: 'Bodycam', code: 'REVEAL Klickfast Mount - Magnetic', label: 'REVEAL Klickfast Mount - Magnetic' },
             { category: 'Bodycam', code: 'REVEAL Klick Fast Mount - Popper', label: 'REVEAL Klick Fast Mount - Popper' },
-            { category: 'Bodycam', code: 'REVEAL Docking Station PSU', label: 'Reveal Bodycam Docking Station PSU' }
+            { category: 'Bodycam', code: 'REVEAL Docking Station PSU ', label: 'Reveal Bodycam Docking Station PSU', aliases: ['REVEAL Docking Station PSU'] },
+            { category: 'Adapters & Chargers', code: 'Dell 180W BARREL Charger', label: 'Dell 180W BARREL Charger', aliases: ['Charger (High Spec)'] },
+            { category: 'Laptop Accessories', code: 'Logitec Ergo K860 Keyboard', label: 'Logitec Ergo K860 Keyboard' },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-RUGGED CASE', label: 'iPad 8th/9th Gen Rugged Case', aliases: ['iPad 9th Gen Rugged Case'] },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-SCREEN PROTECTOR', label: 'iPad 8th/9th Gen Screen Protector', aliases: ['iPad 9th Gen Screen Protector'] },
+            { category: 'iPad Accessories', code: 'IPAD-9TH-8TH-STANDARD CASE', label: 'iPad 8th/9th Gen Case', aliases: ['iPad 9th Gen Case'] },
+            { category: 'Cables', code: 'USB-C TO USB-C', label: 'USB C to USB C Cable', aliases: ['USB-C Cable'] }
         ];
         const generatedUsageByCode = new Map(generatedUsageCatalog.map((item) => [item.code, item]));
         const itemHeaderAliases = new Set(['item', 'consumable', 'product', 'description']);
@@ -2474,11 +2500,11 @@
             return String(value);
         }
 
-        function createBlankMatrix(rowCount = INVENTORY_GRID_MIN_ROWS) {
-            return Array.from({ length: rowCount }, () => Array(INVENTORY_GRID_COLUMNS).fill(''));
+        function createBlankMatrix(rowCount = INVENTORY_GRID_MIN_ROWS, columnCount = INVENTORY_DISPLAY_COLUMNS) {
+            return Array.from({ length: rowCount }, () => Array(columnCount).fill(''));
         }
 
-        function normalizeMatrix(matrix) {
+        function normalizeMatrix(matrix, columnCount = INVENTORY_DISPLAY_COLUMNS) {
             if (!Array.isArray(matrix)) {
                 return [];
             }
@@ -2487,7 +2513,7 @@
                 const cells = Array.isArray(row) ? row : [];
                 const normalizedRow = [];
 
-                for (let i = 0; i < INVENTORY_GRID_COLUMNS; i++) {
+                for (let i = 0; i < columnCount; i++) {
                     normalizedRow.push(normalizeGridCellValue(cells[i]));
                 }
 
@@ -2495,8 +2521,8 @@
             });
         }
 
-        function trimTrailingBlankRows(matrix) {
-            const trimmed = normalizeMatrix(matrix);
+        function trimTrailingBlankRows(matrix, columnCount = INVENTORY_DISPLAY_COLUMNS) {
+            const trimmed = normalizeMatrix(matrix, columnCount);
 
             while (trimmed.length > 0 && isBlankRow(trimmed[trimmed.length - 1])) {
                 trimmed.pop();
@@ -2505,18 +2531,43 @@
             return trimmed;
         }
 
-        function buildGridMatrix(matrix, bufferRows = INVENTORY_GRID_BUFFER_ROWS) {
-            const trimmed = trimTrailingBlankRows(matrix);
+        function buildGridMatrix(matrix, bufferRows = INVENTORY_GRID_BUFFER_ROWS, columnCount = INVENTORY_DISPLAY_COLUMNS) {
+            const trimmed = trimTrailingBlankRows(matrix, columnCount);
             const rowCount = Math.max(INVENTORY_GRID_MIN_ROWS, trimmed.length + bufferRows);
-            const nextMatrix = createBlankMatrix(rowCount);
+            const nextMatrix = createBlankMatrix(rowCount, columnCount);
 
             trimmed.forEach((row, rowIndex) => {
-                for (let columnIndex = 0; columnIndex < INVENTORY_GRID_COLUMNS; columnIndex++) {
+                for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
                     nextMatrix[rowIndex][columnIndex] = normalizeGridCellValue(row[columnIndex]);
                 }
             });
 
             return nextMatrix;
+        }
+
+        function getColumnIndex(component) {
+            const table = typeof component?.getTable === 'function' ? component.getTable() : null;
+            const columns = table && typeof table.getColumns === 'function' ? table.getColumns() : [];
+            const columnIndex = columns.indexOf(component);
+            return columnIndex >= 0 ? columnIndex : 0;
+        }
+
+        function isRowHeaderColumn(component) {
+            const element = typeof component?.getElement === 'function' ? component.getElement() : null;
+            const definition = typeof component?.getDefinition === 'function' ? component.getDefinition() : {};
+            return element?.classList.contains('tabulator-row-handle') || definition.cssClass === 'tabulator-row-handle';
+        }
+
+        function getDataColumnIndex(component) {
+            const table = typeof component?.getTable === 'function' ? component.getTable() : null;
+            const columns = table && typeof table.getColumns === 'function' ? table.getColumns() : [];
+            const dataColumns = columns.filter((column) => !isRowHeaderColumn(column));
+            const columnIndex = dataColumns.indexOf(component);
+            return columnIndex >= 0 ? columnIndex : getColumnIndex(component);
+        }
+
+        function getCellColumnIndex(cell) {
+            return getDataColumnIndex(cell.getColumn());
         }
 
         function applySpreadsheetHeaders(element) {
@@ -2529,18 +2580,52 @@
             });
         }
 
-        function createSpreadsheetGrid(element, editable) {
+        function applyInventoryGridColumnWidths(grid) {
+            grid.getColumns().filter((column) => !isRowHeaderColumn(column)).forEach((column, index) => {
+                const width = INVENTORY_DISPLAY_COLUMN_WIDTHS[index];
+                if (width) {
+                    column.setWidth(width);
+                }
+            });
+        }
+
+        function applyInventoryCellClasses(row) {
+            row.getCells().forEach((cell) => {
+                const columnIndex = getCellColumnIndex(cell);
+                const cellElement = cell.getElement();
+                cellElement.classList.remove('is-input-cell', 'is-readonly-cell', 'is-change-cell', 'is-output-cell');
+
+                if (isRowHeaderColumn(cell.getColumn())) {
+                    return;
+                }
+
+                if (columnIndex < INVENTORY_INPUT_COLUMNS) {
+                    cellElement.classList.add('is-input-cell');
+                    return;
+                }
+
+                cellElement.classList.add('is-readonly-cell');
+                if (columnIndex === INVENTORY_INPUT_COLUMNS) {
+                    cellElement.classList.add('is-change-cell');
+                } else {
+                    cellElement.classList.add('is-output-cell');
+                }
+            });
+        }
+
+        function createSpreadsheetGrid(element) {
             const gridOptions = {
                 spreadsheet: true,
                 spreadsheetRows: INVENTORY_GRID_MIN_ROWS,
-                spreadsheetColumns: INVENTORY_GRID_COLUMNS,
+                spreadsheetColumns: INVENTORY_DISPLAY_COLUMNS,
                 spreadsheetOutputFull: true,
                 spreadsheetData: createBlankMatrix(),
                 spreadsheetColumnDefinition: {
-                    editor: editable ? 'input' : false,
+                    editor: 'input',
+                    editable: (cell) => getCellColumnIndex(cell) < INVENTORY_INPUT_COLUMNS,
                     headerSort: false,
                     resizable: false,
-                    width: editable ? 280 : 260,
+                    width: 180,
                 },
                 rowHeader: {
                     formatter: 'rownum',
@@ -2554,7 +2639,7 @@
                 selectableRange: 1,
                 selectableRangeColumns: true,
                 selectableRangeRows: true,
-                selectableRangeClearCells: editable,
+                selectableRangeClearCells: true,
                 editTriggerEvent: 'dblclick',
                 editorEmptyValue: '',
                 clipboard: true,
@@ -2569,10 +2654,12 @@
                 rowFormatter: (row) => {
                     const rowEl = row.getElement();
                     rowEl.classList.remove('is-changed', 'is-unchanged', 'is-header', 'is-hovered');
+                    applyInventoryCellClasses(row);
 
                     const rowId = getGridRowId(row);
                     const reviewRow = consumablesUpdateState.reviewRows[rowId];
                     rowEl.dataset.rowId = String(rowId);
+                    rowEl.title = reviewRow?.title || '';
 
                     if (!reviewRow) {
                         return;
@@ -2580,7 +2667,7 @@
 
                     if (reviewRow.changed) {
                         rowEl.classList.add('is-changed');
-                    } else if (reviewRow.kind === 'data') {
+                    } else if (reviewRow.kind === 'data' && reviewRow.computed) {
                         rowEl.classList.add('is-unchanged');
                     }
 
@@ -2600,14 +2687,15 @@
                 },
             };
 
-            if (editable) {
-                gridOptions.clipboardPasteParser = 'range';
-                gridOptions.clipboardPasteAction = 'range';
-            }
+            gridOptions.clipboardPasteParser = 'range';
+            gridOptions.clipboardPasteAction = 'range';
 
             const grid = new Tabulator(element, gridOptions);
             applySpreadsheetHeaders(element);
-            requestAnimationFrame(() => applySpreadsheetHeaders(element));
+            requestAnimationFrame(() => {
+                applySpreadsheetHeaders(element);
+                applyInventoryGridColumnWidths(grid);
+            });
             grid.on('renderComplete', () => {
                 requestAnimationFrame(updateInventoryDiffMeasurements);
             });
@@ -2615,14 +2703,14 @@
             return grid;
         }
 
-        function getGridMatrix(grid) {
-            return trimTrailingBlankRows(grid.getSheetData());
+        function getGridMatrix(grid, columnCount = INVENTORY_DISPLAY_COLUMNS) {
+            return trimTrailingBlankRows(grid.getSheetData(), columnCount);
         }
 
-        function setGridMatrix(grid, matrix, options = {}) {
+        function setGridMatrix(grid, matrix, options = {}, columnCount = INVENTORY_DISPLAY_COLUMNS) {
             const nextMatrix = options.preserveShape
-                ? normalizeMatrix(matrix)
-                : buildGridMatrix(matrix);
+                ? normalizeMatrix(matrix, columnCount)
+                : buildGridMatrix(matrix, INVENTORY_GRID_BUFFER_ROWS, columnCount);
             grid.setSheetData(nextMatrix);
         }
 
@@ -2631,6 +2719,36 @@
                 ? row.getPosition(true)
                 : row.getIndex();
             return Math.max(0, Number(rawPosition || 1) - 1);
+        }
+
+        function getInventoryInputMatrixFromDisplayMatrix(matrix) {
+            const displayMatrix = normalizeMatrix(matrix, INVENTORY_DISPLAY_COLUMNS);
+            const inputMatrix = displayMatrix.map((row) => row.slice(0, INVENTORY_INPUT_COLUMNS));
+            return trimTrailingBlankRows(inputMatrix, INVENTORY_INPUT_COLUMNS);
+        }
+
+        function buildInventoryDisplayCells(originalCells, updatedCells, row) {
+            if (row.kind === 'blank' || row.kind === 'padding') {
+                return Array(INVENTORY_DISPLAY_COLUMNS).fill('');
+            }
+
+            if (!row.computed) {
+                return [
+                    originalCells[0],
+                    originalCells[1],
+                    '',
+                    '',
+                    '',
+                ];
+            }
+
+            return [
+                originalCells[0],
+                originalCells[1],
+                row.displayLabel || '',
+                updatedCells[0] || '',
+                updatedCells[1] || '',
+            ];
         }
 
         function updateInventoryDiffMeasurements() {
@@ -2649,34 +2767,25 @@
         }
 
         function buildReviewRows(baseRows = []) {
-            const originalMatrix = buildGridMatrix(consumablesUpdateState.inventoryMatrix);
+            const originalMatrix = buildGridMatrix(consumablesUpdateState.inventoryMatrix, INVENTORY_GRID_BUFFER_ROWS, INVENTORY_INPUT_COLUMNS);
             const updatedSource = consumablesUpdateState.outputTsv
                 ? consumablesUpdateState.updatedRows
-                : originalMatrix.map(() => Array(INVENTORY_GRID_COLUMNS).fill(''));
-            const updatedMatrix = buildGridMatrix(updatedSource, 0);
+                : originalMatrix.map(() => Array(INVENTORY_INPUT_COLUMNS).fill(''));
+            const updatedMatrix = buildGridMatrix(updatedSource, 0, INVENTORY_INPUT_COLUMNS);
             const rowCount = Math.max(originalMatrix.length, updatedMatrix.length);
             const reviewRows = [];
 
             for (let rowId = 0; rowId < rowCount; rowId++) {
-                const originalCells = (originalMatrix[rowId] || Array(INVENTORY_GRID_COLUMNS).fill('')).slice(0, INVENTORY_GRID_COLUMNS);
-                const updatedCells = (updatedMatrix[rowId] || Array(INVENTORY_GRID_COLUMNS).fill('')).slice(0, INVENTORY_GRID_COLUMNS);
+                const originalCells = (originalMatrix[rowId] || Array(INVENTORY_INPUT_COLUMNS).fill('')).slice(0, INVENTORY_INPUT_COLUMNS);
+                const updatedCells = (updatedMatrix[rowId] || Array(INVENTORY_INPUT_COLUMNS).fill('')).slice(0, INVENTORY_INPUT_COLUMNS);
                 const baseRow = baseRows[rowId];
 
-                if (baseRow) {
-                    reviewRows.push({
-                        ...baseRow,
-                        rowId,
-                        originalCells,
-                        updatedCells,
-                    });
-                    continue;
-                }
-
-                reviewRows.push({
+                const reviewRow = {
                     rowId,
-                    kind: 'padding',
+                    kind: isBlankRow(originalCells) ? 'padding' : 'data',
                     originalCells,
                     updatedCells,
+                    computed: false,
                     changed: false,
                     deduction: '',
                     beforeCount: '',
@@ -2684,27 +2793,41 @@
                     displayLabel: '',
                     displayMeta: '',
                     title: '',
-                });
+                    ...(baseRow || {}),
+                };
+                reviewRow.displayCells = buildInventoryDisplayCells(originalCells, updatedCells, reviewRow);
+                reviewRows.push(reviewRow);
             }
 
             return reviewRows;
         }
 
+        function buildInventoryDisplayMatrix(reviewRows) {
+            return reviewRows.map((row) => row.displayCells.slice(0, INVENTORY_DISPLAY_COLUMNS));
+        }
+
         function getInventoryMatrixFromGrid() {
-            return getGridMatrix(inventoryGrid);
+            return getInventoryInputMatrixFromDisplayMatrix(getGridMatrix(inventoryGrid, INVENTORY_DISPLAY_COLUMNS));
         }
 
         function setInventoryGridMatrix(matrix) {
-            setGridMatrix(inventoryGrid, matrix);
-            consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
+            consumablesUpdateState.inventoryMatrix = trimTrailingBlankRows(matrix, INVENTORY_INPUT_COLUMNS);
         }
 
-        function setUpdatedGridMatrix(matrix, options = {}) {
-            setGridMatrix(updatedInventoryGrid, matrix, options);
-            requestAnimationFrame(() => updatedInventoryGrid.redraw(true));
+        function setInventoryGridDisplayMatrix(matrix, options = {}) {
+            isProgrammaticInventoryGridUpdate = true;
+            try {
+                setGridMatrix(inventoryGrid, matrix, options, INVENTORY_DISPLAY_COLUMNS);
+            } finally {
+                isProgrammaticInventoryGridUpdate = false;
+            }
+            requestAnimationFrame(() => inventoryGrid.redraw(true));
         }
 
         function handleInventoryGridInput() {
+            if (isProgrammaticInventoryGridUpdate) {
+                return;
+            }
             consumablesUpdateState.inventoryMatrix = getInventoryMatrixFromGrid();
             resetConsumablesUpdateFeedback();
             renderConsumablesUpdateUI();
@@ -2776,76 +2899,6 @@
             toggleUsageBtn.setAttribute('aria-expanded', String(!isUsageCollapsed));
         }
 
-        function renderDiffRowContent(row) {
-            if (row.kind === 'padding' || row.kind === 'blank') {
-                return '<div class="diff-row-content is-empty">&nbsp;</div>';
-            }
-
-            if (row.kind === 'header') {
-                return '<div class="diff-row-content is-empty">&nbsp;</div>';
-            }
-
-            if (!row.changed) {
-                return `
-                    <div class="diff-row-content">
-                        <span class="diff-marker" aria-hidden="true"></span>
-                    </div>
-                `;
-            }
-
-            const valueMarkup = row.displayLabel
-                ? `<div class="diff-value">${escapeHtml(row.displayLabel)}</div>`
-                : '';
-            const metaMarkup = row.displayMeta
-                ? `
-                    <div class="diff-inline-meta">
-                        <span class="diff-inline-separator">|</span>
-                        ${escapeHtml(row.displayMeta)}
-                    </div>
-                `
-                : '';
-
-            return `
-                <div class="diff-row-content">
-                    <span class="diff-marker is-changed" aria-hidden="true"></span>
-                    ${valueMarkup}
-                    ${metaMarkup}
-                </div>
-            `;
-        }
-
-        function renderInventoryDiffColumn() {
-            consumablesUpdateState.reviewRows = consumablesUpdateState.reviewRows.length
-                ? consumablesUpdateState.reviewRows
-                : buildReviewRows();
-
-            inventoryDiffGrid.innerHTML = consumablesUpdateState.reviewRows.map((row) => `
-                <div
-                    class="diff-row${row.changed ? ' is-changed' : ''}${row.kind === 'data' && !row.changed ? ' is-unchanged' : ''}${row.kind === 'header' ? ' is-header' : ''}${hoveredInventoryRowId === row.rowId ? ' is-hovered' : ''}"
-                    data-row-id="${row.rowId}"
-                    ${row.title ? `title="${escapeHtml(row.title)}"` : ''}
-                >
-                    ${renderDiffRowContent(row)}
-                </div>
-            `).join('');
-            inventoryDiffGrid.querySelectorAll('.diff-row').forEach((row) => {
-                row.addEventListener('mouseenter', () => {
-                    const rowId = Number(row.dataset.rowId);
-                    if (!Number.isNaN(rowId)) {
-                        setHoveredInventoryRow(rowId);
-                    }
-                });
-                row.addEventListener('mouseleave', () => {
-                    setHoveredInventoryRow(null);
-                });
-            });
-            requestAnimationFrame(() => {
-                inventoryGrid.redraw(true);
-                updatedInventoryGrid.redraw(true);
-                updateInventoryDiffMeasurements();
-            });
-        }
-
         function renderInventorySummary() {
             const summary = consumablesUpdateState.summary;
             if (!summary) {
@@ -2881,38 +2934,6 @@
             });
         }
 
-        function syncInventoryScroll(event) {
-            if (isSyncingInventoryScroll) {
-                return;
-            }
-
-            const currentHolder = inventoryGridElement.querySelector('.tabulator-tableholder');
-            const updatedHolder = updatedInventoryGridElement.querySelector('.tabulator-tableholder');
-            const targets = [currentHolder, updatedHolder, inventoryDiffScroll].filter(Boolean);
-
-            isSyncingInventoryScroll = true;
-            targets.forEach((target) => {
-                if (target !== event.target) {
-                    target.scrollTop = event.target.scrollTop;
-                }
-            });
-            isSyncingInventoryScroll = false;
-        }
-
-        function bindInventoryScrollSync() {
-            const currentHolder = inventoryGridElement.querySelector('.tabulator-tableholder');
-            const updatedHolder = updatedInventoryGridElement.querySelector('.tabulator-tableholder');
-
-            [currentHolder, updatedHolder, inventoryDiffScroll].forEach((element) => {
-                if (!element || element.dataset.syncBound === 'true') {
-                    return;
-                }
-
-                element.addEventListener('scroll', syncInventoryScroll, { passive: true });
-                element.dataset.syncBound = 'true';
-            });
-        }
-
         function renderAppState() {
             const { hasSourceFile, hasUpdatedInventory } = getAppState();
 
@@ -2932,7 +2953,7 @@
             }
 
             const candidateRows = parsedRows.slice(nonBlankIndex).map((row) => trimTrailingEmptyCells(row.cells));
-            const invalidRow = candidateRows.find((cells) => !isBlankRow(cells) && cells.length > INVENTORY_GRID_COLUMNS);
+            const invalidRow = candidateRows.find((cells) => !isBlankRow(cells) && cells.length > INVENTORY_INPUT_COLUMNS);
 
             if (invalidRow) {
                 return { error: 'Only 2 columns can be pasted into the inventory grid.' };
@@ -2966,15 +2987,12 @@
             renderConsumablesUpdateUI();
         }
 
-        inventoryGrid = createSpreadsheetGrid(inventoryGridElement, true);
-        updatedInventoryGrid = createSpreadsheetGrid(updatedInventoryGridElement, false);
+        inventoryGrid = createSpreadsheetGrid(inventoryGridElement);
         inventoryGrid.on('dataChanged', handleInventoryGridInput);
         inventoryGridElement.addEventListener('paste', handleInventoryGridPaste);
         setInventoryGridMatrix([]);
-        setUpdatedGridMatrix([]);
-        renderInventoryDiffColumn();
+        renderConsumablesUpdateUI();
         requestAnimationFrame(() => {
-            bindInventoryScrollSync();
             updateInventoryDiffMeasurements();
         });
         window.addEventListener('resize', () => requestAnimationFrame(updateInventoryDiffMeasurements));
@@ -3765,25 +3783,25 @@
 
         function getPhoneCaseCode(phoneModel, isRugged) {
             if (phoneModel === '16e') {
-                return isRugged ? '' : 'ZDEF-IPHONE-16e-CASE';
+                return isRugged ? '' : 'IPHONE-16e-CASE';
             }
             if (phoneModel === 'se') {
-                return isRugged ? 'IPHONE-SE-RUGGED-CASE' : 'ZDEF-IPHONE-SE-CASE';
+                return isRugged ? 'IPHONE-SE-RUGGED-CASE' : 'IPHONE-SE-CASE';
             }
             if (phoneModel === '12') {
-                return isRugged ? 'ZDEF-IPHONE-12-RUGGED-CASE' : 'ZDEF-IPHONE-12-CASE';
+                return isRugged ? 'IPHONE-12-RUGGED-CASE' : 'IPHONE-12-CASE';
             }
             if (phoneModel === '14-class') {
-                return isRugged ? 'ZDEF-IPHONE-14-RUGGED-CASE' : 'ZDEF-IPHONE-14-CASE';
+                return isRugged ? 'IPHONE-14-RUGGED-CASE' : 'IPHONE-14-CASE';
             }
             return '';
         }
 
         function getPhoneScreenProtectorCode(phoneModel) {
-            if (phoneModel === '16e') return 'ZDEF-IPHONE-16e-SCREEN-PROTECTOR';
-            if (phoneModel === 'se') return 'ZDEF-IPHONE-SE-SCREEN-PROTECTOR';
-            if (phoneModel === '12') return 'ZDEF-IPHONE-12-SCREEN-PROTECTOR';
-            if (phoneModel === '14-class') return 'ZDEF-IPHONE-14-SCREEN-PROTECTOR';
+            if (phoneModel === '16e') return 'IPHONE-16e-SCREEN-PROTECTOR';
+            if (phoneModel === 'se') return 'IPHONE-SE-SCREEN-PROTECTOR';
+            if (phoneModel === '12') return 'IPHONE-12-SCREEN-PROTECTOR';
+            if (phoneModel === '14-class') return 'IPHONE-14-SCREEN-PROTECTOR';
             return '';
         }
 
@@ -3792,14 +3810,14 @@
                 return isRugged ? 'IPAD-9TH-8TH-RUGGED CASE' : 'IPAD-9TH-8TH-STANDARD CASE';
             }
             if (ipadModel === '10th') {
-                return isRugged ? 'ZDEF-IPAD-10TH-RUGGED-CASE' : 'ZDEF-IPAD-10TH-STANDARD-CASE';
+                return isRugged ? 'IPAD-10TH-RUGGED-CASE' : 'IPAD-10TH-STANDARD-CASE';
             }
             return '';
         }
 
         function getIPadScreenProtectorCode(ipadModel) {
             if (ipadModel === '8th-9th') return 'IPAD-9TH-8TH-SCREEN PROTECTOR';
-            if (ipadModel === '10th') return 'ZDEF-IPAD-10TH-SCREEN-PROTECTOR';
+            if (ipadModel === '10th') return 'IPAD-10TH-SCREEN-PROTECTOR';
             return '';
         }
 
@@ -3816,15 +3834,15 @@
                 }
 
                 if (context.isNewStarter) {
-                    incrementConsumableCount('ZEADEF-LAPTOP-RUCKSACK');
-                    incrementConsumableCount('ZEADEF-HEADSET');
-                    incrementConsumableCount('ZEADEF-WIRELESS-MOUSE');
+                    incrementConsumableCount('LAPTOP-RUCKSACK');
+                    incrementConsumableCount('HEADSET');
+                    incrementConsumableCount('WIRELESS-MOUSE');
                 }
             }
 
             if (context.deviceFamily === 'iphone') {
                 if (context.isBundle) {
-                    incrementConsumableCount('ZDEF-20W-USBC-ADAPTOR');
+                    incrementConsumableCount('20W-USBC-ADAPTOR');
                 }
 
                 const isLegacyIPhone = ['se', '12', '14-class'].includes(context.phoneModel);
@@ -3834,9 +3852,9 @@
 
                 if (context.isBundle) {
                     if (context.phoneModel === '15' || context.phoneModel === '16' || context.phoneModel === '16e') {
-                        incrementConsumableCount('ZDEF-APPLE-EARPODS-USBC');
+                        incrementConsumableCount('APPLE-EARPODS-USBC');
                     } else {
-                        incrementConsumableCount('ZDEF-APPLE-EARPODS-LIGHTNING');
+                        incrementConsumableCount('APPLE-EARPODS-LIGHTNING');
                     }
 
                     const phoneCaseCode = getPhoneCaseCode(context.phoneModel, context.isRugged);
@@ -3848,7 +3866,7 @@
 
             if (context.deviceFamily === 'ipad') {
                 if (context.isBundle) {
-                    incrementConsumableCount('ZDEF-20W-USBC-ADAPTOR');
+                    incrementConsumableCount('20W-USBC-ADAPTOR');
                 }
 
                 if (context.ipadModel === '10th' || context.ipadModel === '11th' || context.hasRequest(['usb-c to usb-c', 'usb c to usb c'])) {
@@ -3866,30 +3884,30 @@
             if (context.deviceFamily === 'toughbook') {
                 if (context.isBundle) {
                     [
-                        'ZDEF-TOUGHBOOK-3M-CABLE',
-                        'ZDEF-TOUGHBOOK-DELUXE-STRAP',
-                        'ZDEF-TOUGHBOOK-DIGITIZER-PEN',
-                        'ZDEF-TOUGHBOOK-STYLUS-HOLDER',
-                        'ZDEF-TOUGHBOOK-TETHER-TILL',
-                        'ZDEF-TOUGHBOOK-X-STRAP',
-                        'ZDEF-TOUGHBOOK-ALWAYS-ON-CASE',
-                        'ZDEF-TOUGHBOOK-CARRY-CASE',
-                        'ZDEF-TOUGHBOOK-SHOULDER-STRAP'
+                        'TOUGHBOOK-3M-CABLE',
+                        'TOUGHBOOK-DELUXE-STRAP',
+                        'TOUGHBOOK-DIGITIZER-PEN',
+                        'TOUGHBOOK-STYLUS-HOLDER',
+                        'TOUGHBOOK-TETHER-TILL',
+                        'TOUGHBOOK-X-STRAP',
+                        'TOUGHBOOK-ALWAYS-ON-CASE',
+                        'TOUGHBOOK-CARRY-CASE',
+                        'TOUGHBOOK-SHOULDER-STRAP'
                     ].forEach((code) => incrementConsumableCount(code));
                 }
 
                 if (context.isNewStarter && context.isBundle) {
                     [
-                        'ZDEF-TOUGHBOOK-LCD-FILM',
-                        'ZDEF-TOUGHBOOK-POWER-SUPPLY',
-                        'ZDEF-TOUGHBOOK-STANDARD-BATTERY'
+                        'TOUGHBOOK-LCD-FILM',
+                        'TOUGHBOOK-POWER-SUPPLY',
+                        'TOUGHBOOK-STANDARD-BATTERY'
                     ].forEach((code) => incrementConsumableCount(code));
                 }
 
-                if (context.hasRequest(['4 bay charger', '4-bay charger'])) incrementConsumableCount('ZDEF-TOUGHBOOK-4-BAY-CHARGER');
-                if (context.hasRequest(['g2 keyboard', 'toughbook keyboard'])) incrementConsumableCount('ZDEF-TOUGHBOOK-G2-KEYBOARD');
-                if (context.hasRequest(['longlife battery', '68whr battery', '68 whr battery'])) incrementConsumableCount('ZDEF-TOUGHBOOK-LONGLIFE-BATTERY');
-                if (context.hasRequest(['car charger'])) incrementConsumableCount('ZDEF-TOUGHBOOK-CAR-CHARGER');
+                if (context.hasRequest(['4 bay charger', '4-bay charger'])) incrementConsumableCount('TOUGHBOOK-4-BAY-CHARGER');
+                if (context.hasRequest(['g2 keyboard', 'toughbook keyboard'])) incrementConsumableCount('TOUGHBOOK-G2-KEYBOARD');
+                if (context.hasRequest(['longlife battery', '68whr battery', '68 whr battery'])) incrementConsumableCount('TOUGHBOOK-LONGLIFE-BATTERY');
+                if (context.hasRequest(['car charger'])) incrementConsumableCount('TOUGHBOOK-CAR-CHARGER');
             }
 
             if (context.deviceFamily === 'bodycam') {
@@ -3906,7 +3924,7 @@
                 if (context.hasRequest(['multi docking station', 'multi dock', 'docking station'])) incrementConsumableCount('REVEAL BODYCAM MULTI DOCKING STATION');
                 if (context.hasRequest(['klickfast magnetic', 'klickfast mount - magnetic', 'magnetic mount'])) incrementConsumableCount('REVEAL Klickfast Mount - Magnetic');
                 if (context.hasRequest(['klick fast mount - popper', 'klickfast popper', 'popper mount'])) incrementConsumableCount('REVEAL Klick Fast Mount - Popper');
-                if (context.hasRequest(['docking station psu', 'dock psu'])) incrementConsumableCount('REVEAL Docking Station PSU');
+                if (context.hasRequest(['docking station psu', 'dock psu'])) incrementConsumableCount('REVEAL Docking Station PSU ');
             }
 
             if (context.hasRequest(['ergo k860', 'k860 keyboard', 'logitec ergo k860 keyboard'])) {
@@ -3964,7 +3982,6 @@
             consumablesTotalCount.textContent = '0';
             consumablesBody.innerHTML = '';
             setInventoryGridMatrix([]);
-            setUpdatedGridMatrix([]);
             resetConsumablesUpdateFeedback();
             renderConsumablesUpdateUI();
         }
@@ -4002,14 +4019,10 @@
         }
 
         function renderConsumablesUpdateResult() {
-            const updatedMatrix = consumablesUpdateState.outputTsv
-                ? consumablesUpdateState.updatedRows
-                : buildGridMatrix(consumablesUpdateState.inventoryMatrix).map(() => Array(INVENTORY_GRID_COLUMNS).fill(''));
             consumablesUpdateState.reviewRows = consumablesUpdateState.reviewRows.length
                 ? consumablesUpdateState.reviewRows
                 : buildReviewRows();
-            setUpdatedGridMatrix(updatedMatrix, { preserveShape: !consumablesUpdateState.outputTsv });
-            renderInventoryDiffColumn();
+            setInventoryGridDisplayMatrix(buildInventoryDisplayMatrix(consumablesUpdateState.reviewRows), { preserveShape: true });
             renderInventorySummary();
         }
 
@@ -4108,7 +4121,7 @@
         }
 
         function buildInventoryTableFromMatrix(matrix) {
-            const parsedRows = normalizeMatrix(matrix).map((cells, index) => ({
+            const parsedRows = normalizeMatrix(matrix, INVENTORY_INPUT_COLUMNS).map((cells, index) => ({
                 cells,
                 line: index + 1,
             }));
@@ -4127,7 +4140,7 @@
                 };
             });
 
-            const invalidRow = inventoryRows.find((row) => !row.isBlank && row.cells.length !== 2);
+            const invalidRow = inventoryRows.find((row) => !row.isBlank && row.cells.length !== INVENTORY_INPUT_COLUMNS);
             if (invalidRow) {
                 return { error: `Row ${invalidRow.line} must contain exactly 2 columns: item and count.` };
             }
@@ -4196,6 +4209,7 @@
                     updatedRows.push(['', '']);
                     baseReviewRows.push({
                         kind: 'blank',
+                        computed: true,
                         changed: false,
                         deduction: '',
                         beforeCount: '',
@@ -4211,6 +4225,7 @@
                     updatedRows.push(row.cells.slice());
                     baseReviewRows.push({
                         kind: 'header',
+                        computed: true,
                         changed: false,
                         deduction: '',
                         beforeCount: '',
@@ -4238,6 +4253,7 @@
                 updatedRows.push([item, formatCountValue(updatedCount)]);
                 baseReviewRows.push({
                     kind: 'data',
+                    computed: true,
                     changed,
                     deduction: changed ? formatCountValue(deduction) : '',
                     beforeCount: formatCountValue(parsedCount.value),
