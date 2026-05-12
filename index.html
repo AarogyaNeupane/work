@@ -4377,23 +4377,18 @@
             renderAppMessage(type, message);
         }
 
-        function downloadCSV() {
-            // Columns that contain long numeric values that should be treated as text
-            const numericTextColumns = ['EID Number', 'IMEI Number', 'Serial Number', 'Physical SIM Card Number'];
+        function escapeCSVValue(value) {
+            const text = String(value ?? '');
+            return text.includes(',') || text.includes('"') || text.includes('\n')
+                ? `"${text.replace(/"/g, '""')}"`
+                : text;
+        }
 
+        function downloadCSV() {
             const csvContent = [
                 destHeaders.join(','),
                 ...mappedData.map(row =>
-                    destHeaders.map(header => {
-                        const value = String(row[header] ?? '');
-                        // Force text format for long numeric columns to prevent Excel E+14 notation
-                        if (numericTextColumns.includes(header) && value) {
-                            return `="${value}"`;
-                        }
-                        return value.includes(',') || value.includes('"') || value.includes('\n')
-                            ? `"${value.replace(/"/g, '""')}"`
-                            : value;
-                    }).join(',')
+                    destHeaders.map(header => escapeCSVValue(row[header])).join(',')
                 )
             ].join('\n');
 
