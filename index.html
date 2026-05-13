@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone/iPad Data Mapper</title>
+    <title>EE Data Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -178,7 +178,8 @@
             color: var(--gray-600);
         }
 
-        #fileInput {
+        #fileInput,
+        #checkerFileInput {
             display: none;
         }
 
@@ -1455,6 +1456,47 @@
             margin-bottom: 24px;
         }
 
+        .app-tabs {
+            display: inline-flex;
+            gap: 0;
+            border: var(--border-width) solid var(--black);
+            margin-bottom: 24px;
+            background: var(--white);
+        }
+
+        .app-tab {
+            min-height: 42px;
+            padding: 0 18px;
+            border: none;
+            border-right: var(--border-width) solid var(--black);
+            background: var(--white);
+            color: var(--black);
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .app-tab:last-child {
+            border-right: none;
+        }
+
+        .app-tab:hover {
+            background: var(--gray-100);
+        }
+
+        .app-tab.is-active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .tab-panel[hidden] {
+            display: none !important;
+        }
+
         .header-actions {
             display: flex;
             align-items: center;
@@ -1483,8 +1525,141 @@
         .loaded-dashboard[hidden],
         .process-strip[hidden],
         .usage-panel[hidden],
-        .consumables-update-workspace[hidden] {
+        .consumables-update-workspace[hidden],
+        .checker-upload-hero[hidden],
+        .checker-dashboard[hidden],
+        .checker-results[hidden] {
             display: none !important;
+        }
+
+        .checker-upload-hero {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .checker-dashboard {
+            display: grid;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .checker-strip-main {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 18px;
+            flex-wrap: wrap;
+        }
+
+        .checker-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px;
+            border-top: var(--border-width) solid var(--black);
+        }
+
+        .checker-results-header {
+            padding: 18px 20px;
+            border-bottom: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .checker-results-copy {
+            display: grid;
+            gap: 6px;
+        }
+
+        .checker-results-copy h2 {
+            font-size: 20px;
+        }
+
+        .checker-results-copy p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--gray-600);
+        }
+
+        .checker-results-body {
+            padding: 0;
+        }
+
+        .checker-error-scroll {
+            max-height: 520px;
+            overflow: auto;
+        }
+
+        .checker-error-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .checker-error-scroll::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .checker-error-scroll::-webkit-scrollbar-thumb {
+            background: var(--black);
+        }
+
+        .checker-error-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .checker-error-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: var(--black);
+            color: var(--white);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .checker-error-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 12px;
+            line-height: 1.45;
+            vertical-align: top;
+        }
+
+        .checker-error-table td:first-child {
+            width: 220px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .checker-error-table tbody tr:hover {
+            background: var(--gray-100);
+        }
+
+        .checker-empty-state {
+            padding: 56px 24px;
+            text-align: center;
+            border-top: var(--border-width) solid var(--black);
+        }
+
+        .checker-empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .checker-empty-state p {
+            font-size: 13px;
+            color: var(--gray-600);
         }
 
         .upload-section--hero {
@@ -2097,7 +2272,7 @@
     <div class="container">
         <header class="app-header">
             <div class="header-top">
-                <h1>iPhone/iPad Data Mapper</h1>
+                <h1>EE Data Tools</h1>
                 <div class="header-actions">
                     <span class="version-tag">V2.1</span>
                     <button class="info-btn" id="helpBtn" aria-label="Open help">
@@ -2116,6 +2291,11 @@
         </header>
 
         <div id="appMessage"></div>
+
+        <nav class="app-tabs" aria-label="Tool tabs">
+            <button class="app-tab is-active" id="mapperTabBtn" type="button" data-tab="mapper" aria-selected="true">EE Mapper</button>
+            <button class="app-tab" id="checkerTabBtn" type="button" data-tab="checker" aria-selected="false">EHI Inbound Checker</button>
+        </nav>
 
         <!-- Coffee Modal -->
         <div class="coffee-modal-overlay" id="coffeeModal">
@@ -2202,6 +2382,7 @@
             </div>
         </div>
 
+        <main class="tab-panel" id="mapperTabPanel">
         <section class="card upload-hero" id="uploadHero">
             <div class="upload-section upload-section--hero">
                 <div class="section-label">
@@ -2355,6 +2536,86 @@
                 </div>
             </div>
         </section>
+        </main>
+
+        <main class="tab-panel" id="checkerTabPanel" hidden>
+            <section class="card checker-upload-hero" id="checkerUploadHero">
+                <div class="upload-section upload-section--hero">
+                    <div class="section-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4" />
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                        </svg>
+                        EHI Inbound Checker
+                    </div>
+                    <div class="drop-zone drop-zone--hero" id="checkerDropZone">
+                        <div class="drop-zone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <path d="M9 15l2 2 4-5" />
+                            </svg>
+                        </div>
+                        <p>Drop your inbound CSV or Excel file here</p>
+                        <span class="hint">Supports .csv, .xlsx, .xls</span>
+                    </div>
+                    <input type="file" id="checkerFileInput" accept=".csv,.xlsx,.xls">
+                </div>
+            </section>
+
+            <div class="checker-dashboard" id="checkerDashboard" hidden>
+                <section class="card">
+                    <div class="checker-strip-main">
+                        <div class="process-strip-copy">
+                            <div class="file-loaded process-file-chip">
+                                <div class="file-icon" id="checkerFileTypeBadge">CSV</div>
+                                <div class="file-details">
+                                    <div class="file-name" id="checkerFileNameDisplay">No file loaded</div>
+                                    <div class="file-meta" id="checkerFileMetaDisplay">0 rows loaded</div>
+                                </div>
+                                <div class="process-chip-actions">
+                                    <button class="btn-clear" id="checkerReplaceFileBtn" type="button">Replace</button>
+                                    <button class="btn-clear" id="checkerResetBtn" type="button">Clear</button>
+                                </div>
+                            </div>
+                            <div class="process-summary-row">
+                                <span class="process-status-pill" id="checkerStatusLabel">Ready to check</span>
+                                <div class="process-status-strip" id="checkerStatusArea"></div>
+                            </div>
+                        </div>
+                        <button class="btn-primary process-download-btn" id="checkerDownloadBtn" type="button" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Download Errors CSV
+                        </button>
+                    </div>
+                    <div class="checker-summary" id="checkerSummary"></div>
+                </section>
+            </div>
+
+            <section class="card checker-results" id="checkerResults" hidden>
+                <div class="checker-results-header">
+                    <div class="checker-results-copy">
+                        <div class="section-label section-label--compact">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18" />
+                                <path d="M7 12h8" />
+                                <path d="M7 16h11" />
+                                <path d="M7 8h4" />
+                            </svg>
+                            Integrity Findings
+                        </div>
+                        <h2 id="checkerResultsTitle">No file checked</h2>
+                        <p id="checkerResultsNote">Upload an inbound file to review data quality issues.</p>
+                    </div>
+                </div>
+                <div class="checker-results-body" id="checkerResultsBody"></div>
+            </section>
+        </main>
     </div>
 
     <div class="toast" id="toast">
@@ -2373,6 +2634,10 @@
         let consumableCounts = {};
         let filterStats = { total: 0, iPhones: 0, iPads: 0, laptops: 0, desktops: 0, unknown: 0 };
         let duplicateWarnings = { imei: [], serial: [], asset: [] };
+        let activeToolTab = 'mapper';
+        let checkerSourceData = [];
+        let checkerErrors = [];
+        let currentCheckerFile = null;
 
         /*
          * Expected Source File Column Structure:
@@ -2393,9 +2658,13 @@
          * - ASSET TAG: Maps to ASSET Tag
          * - NS/REP: Used for consumables calculation
          * - SHIPPING MODEL / SHIPPED MODEL: Used for determining phone/iPad model
-         */
+        */
 
         const appMessage = document.getElementById('appMessage');
+        const mapperTabBtn = document.getElementById('mapperTabBtn');
+        const checkerTabBtn = document.getElementById('checkerTabBtn');
+        const mapperTabPanel = document.getElementById('mapperTabPanel');
+        const checkerTabPanel = document.getElementById('checkerTabPanel');
         const uploadHero = document.getElementById('uploadHero');
         const loadedDashboard = document.getElementById('loadedDashboard');
         const processStrip = document.getElementById('processStrip');
@@ -2414,6 +2683,25 @@
         const mapperStatusLabel = document.getElementById('mapperStatusLabel');
         const warningArea = document.getElementById('warningArea');
         const toggleUsageBtn = document.getElementById('toggleUsageBtn');
+
+        // EHI inbound checker DOM elements
+        const checkerUploadHero = document.getElementById('checkerUploadHero');
+        const checkerDashboard = document.getElementById('checkerDashboard');
+        const checkerResults = document.getElementById('checkerResults');
+        const checkerDropZone = document.getElementById('checkerDropZone');
+        const checkerFileInput = document.getElementById('checkerFileInput');
+        const checkerFileTypeBadge = document.getElementById('checkerFileTypeBadge');
+        const checkerFileNameDisplay = document.getElementById('checkerFileNameDisplay');
+        const checkerFileMetaDisplay = document.getElementById('checkerFileMetaDisplay');
+        const checkerReplaceFileBtn = document.getElementById('checkerReplaceFileBtn');
+        const checkerResetBtn = document.getElementById('checkerResetBtn');
+        const checkerDownloadBtn = document.getElementById('checkerDownloadBtn');
+        const checkerStatusLabel = document.getElementById('checkerStatusLabel');
+        const checkerStatusArea = document.getElementById('checkerStatusArea');
+        const checkerSummary = document.getElementById('checkerSummary');
+        const checkerResultsTitle = document.getElementById('checkerResultsTitle');
+        const checkerResultsNote = document.getElementById('checkerResultsNote');
+        const checkerResultsBody = document.getElementById('checkerResultsBody');
 
         // Generated usage summary DOM elements
         const consumablesBody = document.getElementById('consumablesBody');
@@ -2901,6 +3189,8 @@
                 hasMappedRows: mappedData.length > 0,
                 hasConsumables: getGeneratedUsageRows().length > 0,
                 hasUpdatedInventory: Boolean(consumablesUpdateState.outputTsv),
+                hasCheckerFile: Boolean(currentCheckerFile),
+                hasCheckerErrors: checkerErrors.length > 0,
             };
         }
 
@@ -2919,6 +3209,22 @@
                     ${escapeHtml(message)}
                 </div>
             `;
+        }
+
+        function setActiveToolTab(tabName) {
+            activeToolTab = tabName;
+            clearAppMessage();
+            renderAppState();
+        }
+
+        function renderToolTabs() {
+            const isMapperActive = activeToolTab === 'mapper';
+            mapperTabBtn.classList.toggle('is-active', isMapperActive);
+            checkerTabBtn.classList.toggle('is-active', !isMapperActive);
+            mapperTabBtn.setAttribute('aria-selected', String(isMapperActive));
+            checkerTabBtn.setAttribute('aria-selected', String(!isMapperActive));
+            mapperTabPanel.hidden = !isMapperActive;
+            checkerTabPanel.hidden = isMapperActive;
         }
 
         function buildMapperSummaryText() {
@@ -2987,6 +3293,243 @@
             `;
         }
 
+        function getCheckerStats() {
+            const rowsWithErrors = new Set(checkerErrors.map(error => error.sourceRowNumber));
+            const totalRows = checkerSourceData.length;
+            return {
+                totalRows,
+                checkedRows: totalRows,
+                errorCount: checkerErrors.length,
+                cleanRows: Math.max(totalRows - rowsWithErrors.size, 0),
+            };
+        }
+
+        function renderCheckerState() {
+            const { hasCheckerFile, hasCheckerErrors } = getAppState();
+            const stats = getCheckerStats();
+
+            checkerUploadHero.hidden = hasCheckerFile;
+            checkerDashboard.hidden = !hasCheckerFile;
+            checkerResults.hidden = !hasCheckerFile;
+            checkerDownloadBtn.disabled = !hasCheckerErrors;
+
+            checkerStatusLabel.textContent = hasCheckerErrors ? 'Errors found' : 'No errors found';
+            checkerStatusLabel.classList.toggle('is-neutral', !hasCheckerErrors);
+            checkerStatusArea.textContent = hasCheckerFile
+                ? `${stats.totalRows} rows loaded · ${stats.errorCount} errors · ${stats.cleanRows} clean`
+                : '';
+
+            checkerSummary.innerHTML = `
+                <span class="summary-chip">
+                    <span class="summary-chip-label">Total rows</span>
+                    <span class="summary-chip-value">${stats.totalRows}</span>
+                </span>
+                <span class="summary-chip">
+                    <span class="summary-chip-label">Checked</span>
+                    <span class="summary-chip-value">${stats.checkedRows}</span>
+                </span>
+                <span class="summary-chip">
+                    <span class="summary-chip-label">Errors</span>
+                    <span class="summary-chip-value">${stats.errorCount}</span>
+                </span>
+                <span class="summary-chip">
+                    <span class="summary-chip-label">Clean rows</span>
+                    <span class="summary-chip-value">${stats.cleanRows}</span>
+                </span>
+            `;
+
+            if (!hasCheckerFile) {
+                checkerResultsTitle.textContent = 'No file checked';
+                checkerResultsNote.textContent = 'Upload an inbound file to review data quality issues.';
+                checkerResultsBody.innerHTML = '';
+                return;
+            }
+
+            if (!hasCheckerErrors) {
+                checkerResultsTitle.textContent = 'Inbound file passed';
+                checkerResultsNote.textContent = 'No integrity issues were found in the uploaded file.';
+                checkerResultsBody.innerHTML = `
+                    <div class="checker-empty-state">
+                        <h3>No errors found</h3>
+                        <p>The inbound file passed all configured EHI checks.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            checkerResultsTitle.textContent = `${stats.errorCount} error${stats.errorCount === 1 ? '' : 's'} found`;
+            checkerResultsNote.textContent = 'Output format: RITM Number - Error.';
+            checkerResultsBody.innerHTML = `
+                <div class="checker-error-scroll">
+                    <table class="checker-error-table">
+                        <thead>
+                            <tr>
+                                <th>RITM Number</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${checkerErrors.map(error => `
+                                <tr>
+                                    <td>${escapeHtml(error.ritmNumber)}</td>
+                                    <td>${escapeHtml(error.error)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function updateCheckerSourceUI(fileName, fileSize, fileType = 'csv') {
+            const sizeStr = fileSize > 1024 ? `${(fileSize / 1024).toFixed(1)} KB` : `${fileSize} B`;
+            const typeLabel = fileType.toUpperCase();
+            currentCheckerFile = { fileName, fileSize, fileType: typeLabel };
+
+            checkerFileTypeBadge.textContent = typeLabel;
+            checkerFileNameDisplay.textContent = fileName;
+            checkerFileMetaDisplay.textContent = `${sizeStr} · ${checkerSourceData.length} rows loaded`;
+            clearAppMessage();
+            renderAppState();
+        }
+
+        function getCheckerValue(row, header) {
+            return String(getVal(row, header) ?? '').trim();
+        }
+
+        function addCheckerError(errors, row, rowIndex, message) {
+            const sourceRowNumber = rowIndex + 2;
+            const ritmNumber = getCheckerValue(row, 'RITM / Incident No.') || `Row ${sourceRowNumber}`;
+            errors.push({
+                ritmNumber,
+                error: message,
+                sourceRowNumber,
+            });
+        }
+
+        function isDaaSValue(value) {
+            return normalizeColumnKey(value) === 'daas';
+        }
+
+        function isNonDaaSValue(value) {
+            return normalizeColumnKey(value) === 'nondaas';
+        }
+
+        function startsWithAssetPrefix(value) {
+            return String(value ?? '').trim().toUpperCase().startsWith('A:');
+        }
+
+        function runInboundChecks() {
+            const errors = [];
+
+            checkerSourceData.forEach((row, rowIndex) => {
+                const daasType = getCheckerValue(row, 'DaaS/Non-DaaS');
+                const assetTag = getCheckerValue(row, 'Asset Tag');
+                const serialNumber = getCheckerValue(row, 'Serial Number');
+                const assetType = getCheckerValue(row, 'Asset Type');
+                const model = getCheckerValue(row, 'Model');
+                const assetMake = getCheckerValue(row, 'Asset Make');
+                const collectionRef = getCheckerValue(row, 'Collection Ref');
+                const keyboard = getCheckerValue(row, 'Keyboard');
+                const mouse = getCheckerValue(row, 'Mouse');
+
+                if (isDaaSValue(daasType)) {
+                    if (!assetTag) {
+                        addCheckerError(errors, row, rowIndex, 'DaaS record is missing an Asset Tag.');
+                    } else if (!startsWithAssetPrefix(assetTag)) {
+                        addCheckerError(errors, row, rowIndex, 'DaaS Asset Tag must start with A:.');
+                    }
+                }
+
+                if (isNonDaaSValue(daasType) && assetTag) {
+                    addCheckerError(errors, row, rowIndex, 'Non-DaaS record should not have an Asset Tag populated.');
+                }
+
+                if (!serialNumber) {
+                    addCheckerError(errors, row, rowIndex, 'Serial Number is missing.');
+                } else if (startsWithAssetPrefix(serialNumber)) {
+                    addCheckerError(errors, row, rowIndex, 'Serial Number appears to contain an asset tag.');
+                }
+
+                if (!startsWithAssetPrefix(assetTag) && startsWithAssetPrefix(serialNumber)) {
+                    addCheckerError(errors, row, rowIndex, 'Asset Tag and Serial Number appear to be mixed up.');
+                }
+
+                if (!model) {
+                    addCheckerError(errors, row, rowIndex, 'Model is missing.');
+                }
+
+                if (!assetMake) {
+                    addCheckerError(errors, row, rowIndex, 'Asset Make is missing.');
+                }
+
+                if (!collectionRef) {
+                    addCheckerError(errors, row, rowIndex, 'DPD reference is missing from Collection Ref.');
+                } else if (!collectionRef.startsWith('80')) {
+                    addCheckerError(errors, row, rowIndex, 'DPD reference in Collection Ref must start with 80.');
+                }
+
+                if (assetType.toLowerCase().includes('laptop')) {
+                    if (keyboard.toLowerCase() === 'yes') {
+                        addCheckerError(errors, row, rowIndex, 'Laptop Keyboard should be No.');
+                    }
+                    if (mouse.toLowerCase() === 'yes') {
+                        addCheckerError(errors, row, rowIndex, 'Laptop Mouse should be No.');
+                    }
+                }
+            });
+
+            checkerErrors = errors;
+            renderCheckerState();
+        }
+
+        function clearCheckerFile() {
+            checkerSourceData = [];
+            checkerErrors = [];
+            currentCheckerFile = null;
+            checkerFileTypeBadge.textContent = 'CSV';
+            checkerFileNameDisplay.textContent = 'No file loaded';
+            checkerFileMetaDisplay.textContent = '0 rows loaded';
+            checkerStatusLabel.textContent = 'Ready to check';
+            checkerStatusLabel.classList.remove('is-neutral');
+            checkerStatusArea.textContent = '';
+            checkerSummary.innerHTML = '';
+            checkerResultsBody.innerHTML = '';
+            checkerFileInput.value = '';
+            clearAppMessage();
+            renderAppState();
+        }
+
+        function downloadCheckerErrorsCSV() {
+            if (!checkerErrors.length) {
+                return;
+            }
+
+            const csvContent = [
+                ['RITM Number', 'Error'].join(','),
+                ...checkerErrors.map(error => [
+                    escapeCSVValue(error.ritmNumber),
+                    escapeCSVValue(error.error),
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `EHI_Inbound_Errors_${dateStr}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('EHI error CSV downloaded');
+        }
+
         function setHoveredInventoryRow(rowId) {
             hoveredInventoryRowId = typeof rowId === 'number' ? rowId : null;
 
@@ -2999,12 +3542,14 @@
         function renderAppState() {
             const { hasSourceFile, hasUpdatedInventory } = getAppState();
 
+            renderToolTabs();
             uploadHero.hidden = hasSourceFile;
             loadedDashboard.hidden = !hasSourceFile;
             processStrip.hidden = !hasSourceFile;
             inventoryWorkspace.hidden = !hasSourceFile;
             renderUsagePanel();
             copyUpdatedTableBtn.hidden = !hasUpdatedInventory;
+            renderCheckerState();
 
             if (hasSourceFile) {
                 requestAnimationFrame(updateInventoryDiffMeasurements);
@@ -3065,8 +3610,8 @@
         window.addEventListener('resize', () => requestAnimationFrame(updateInventoryDiffMeasurements));
 
         // Initialize event listeners
-        function initDropZone(zone) {
-            zone.addEventListener('click', () => fileInput.click());
+        function initDropZone(zone, input, handler) {
+            zone.addEventListener('click', () => input.click());
             zone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 zone.classList.add('dragover');
@@ -3077,12 +3622,13 @@
                 zone.classList.remove('dragover');
                 const file = e.dataTransfer.files[0];
                 if (file && isValidFileType(file.name)) {
-                    processFile(file);
+                    handler(file);
                 }
             });
         }
 
-        initDropZone(dropZone);
+        initDropZone(dropZone, fileInput, processFile);
+        initDropZone(checkerDropZone, checkerFileInput, processCheckerFile);
 
         function isValidFileType(filename) {
             const ext = filename.toLowerCase();
@@ -3099,9 +3645,20 @@
             }
         });
 
+        checkerFileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                processCheckerFile(e.target.files[0]);
+            }
+        });
+
+        mapperTabBtn.addEventListener('click', () => setActiveToolTab('mapper'));
+        checkerTabBtn.addEventListener('click', () => setActiveToolTab('checker'));
         replaceFileBtn.addEventListener('click', () => fileInput.click());
         downloadBtn.addEventListener('click', downloadCSV);
         resetBtn.addEventListener('click', clearFile);
+        checkerReplaceFileBtn.addEventListener('click', () => checkerFileInput.click());
+        checkerResetBtn.addEventListener('click', clearCheckerFile);
+        checkerDownloadBtn.addEventListener('click', downloadCheckerErrorsCSV);
         copyGeneratedUsageBtn.addEventListener('click', copyGeneratedUsage);
         updateCountsBtn.addEventListener('click', updateConsumableCounts);
         copyUpdatedTableBtn.addEventListener('click', copyUpdatedConsumablesTable);
@@ -3428,29 +3985,65 @@
             }
         }
 
+        function processCheckerFile(file) {
+            const ext = getFileExtension(file.name);
+            const reader = new FileReader();
+
+            if (ext === 'csv') {
+                reader.onload = (e) => {
+                    try {
+                        checkerSourceData = parseCSVRows(e.target.result);
+                        updateCheckerSourceUI(file.name, file.size, 'csv');
+                        runInboundChecks();
+                    } catch (error) {
+                        renderAppMessage('error', error.message);
+                    }
+                };
+                reader.readAsText(file);
+            } else if (ext === 'xlsx' || ext === 'xls') {
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        checkerSourceData = parseExcelRows(data);
+                        updateCheckerSourceUI(file.name, file.size, ext);
+                        runInboundChecks();
+                    } catch (error) {
+                        renderAppMessage('error', 'Failed to parse Excel file: ' + error.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
         function parseCSV(text, fileName, fileSize) {
-            const lines = text.split('\n').filter(line => line.trim());
-            if (lines.length < 2) {
+            try {
+                sourceData = parseCSVRows(text);
+            } catch (error) {
                 showStatus('error', 'File appears to be empty or invalid');
                 return;
-            }
-
-            const headers = parseCSVLine(lines[0]);
-            sourceData = [];
-
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
-                const row = {};
-                headers.forEach((header, index) => {
-                    row[header.trim()] = values[index] ? values[index].trim() : '';
-                });
-                sourceData.push(row);
             }
 
             updateSourceUI(fileName, fileSize);
             mapData();
             calculateConsumables();
             updateOutputUI();
+        }
+
+        function parseCSVRows(text) {
+            const lines = String(text ?? '').split(/\r?\n/).filter(line => line.trim());
+            if (lines.length < 2) {
+                throw new Error('File appears to be empty or invalid');
+            }
+
+            const headers = parseCSVLine(lines[0]).map(header => header.trim());
+            return lines.slice(1).map((line) => {
+                const values = parseCSVLine(line);
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] ? values[index].trim() : '';
+                });
+                return row;
+            });
         }
 
         function parseCSVLine(line) {
@@ -3461,7 +4054,12 @@
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 if (char === '"') {
-                    inQuotes = !inQuotes;
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
                 } else if (char === ',' && !inQuotes) {
                     result.push(current);
                     current = '';
@@ -3475,29 +4073,7 @@
 
         function parseExcel(data, fileName, fileSize) {
             try {
-                const workbook = XLSX.read(data, { type: 'array' });
-
-                // Get the first sheet
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert to array of objects (header row becomes keys)
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-
-                if (jsonData.length < 1) {
-                    showStatus('error', 'Excel file appears to be empty or invalid');
-                    return;
-                }
-
-                sourceData = jsonData.map(row => {
-                    // Normalize: trim all string values
-                    const normalizedRow = {};
-                    for (const key in row) {
-                        const value = row[key];
-                        normalizedRow[key.trim()] = typeof value === 'string' ? value.trim() : String(value);
-                    }
-                    return normalizedRow;
-                });
+                sourceData = parseExcelRows(data);
 
                 updateSourceUI(fileName, fileSize, 'xlsx');
                 mapData();
@@ -3506,6 +4082,26 @@
             } catch (error) {
                 showStatus('error', 'Failed to parse Excel file: ' + error.message);
             }
+        }
+
+        function parseExcelRows(data) {
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+            if (jsonData.length < 1) {
+                throw new Error('Excel file appears to be empty or invalid');
+            }
+
+            return jsonData.map(row => {
+                const normalizedRow = {};
+                for (const key in row) {
+                    const value = row[key];
+                    normalizedRow[key.trim()] = typeof value === 'string' ? value.trim() : String(value ?? '');
+                }
+                return normalizedRow;
+            });
         }
 
         // Get value with case-insensitive key lookup
@@ -3518,6 +4114,12 @@
                 // Try title case
                 const title = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
                 if (row[title] !== undefined && row[title] !== '') return row[title];
+            }
+            const normalizedRowEntries = Object.entries(row).map(([rowKey, value]) => [normalizeColumnKey(rowKey), value]);
+            for (const key of keys) {
+                const normalizedKey = normalizeColumnKey(key);
+                const match = normalizedRowEntries.find(([rowKey, value]) => rowKey === normalizedKey && value !== undefined && value !== '');
+                if (match) return match[1];
             }
             return '';
         }
@@ -4223,6 +4825,12 @@
 
         function normalizeHeaderKey(value) {
             return String(value ?? '').toLowerCase().replace(/\s+/g, '');
+        }
+
+        function normalizeColumnKey(value) {
+            return String(value ?? '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '');
         }
 
         function parseCountCell(value) {
