@@ -4985,8 +4985,20 @@
             renderAppMessage(type, message);
         }
 
-        function escapeCSVValue(value) {
+        const excelTextColumns = new Set([
+            'EID Number',
+            'IMEI Number',
+            'Serial Number',
+            'Physical SIM Card Number'
+        ]);
+
+        function escapeCSVValue(value, header = '') {
             const text = String(value ?? '');
+            if (text && excelTextColumns.has(header)) {
+                const excelTextFormula = `="${text.replace(/"/g, '""')}"`;
+                return `"${excelTextFormula.replace(/"/g, '""')}"`;
+            }
+
             return text.includes(',') || text.includes('"') || text.includes('\n')
                 ? `"${text.replace(/"/g, '""')}"`
                 : text;
@@ -4996,7 +5008,7 @@
             const csvContent = [
                 destHeaders.join(','),
                 ...mappedData.map(row =>
-                    destHeaders.map(header => escapeCSVValue(row[header])).join(',')
+                    destHeaders.map(header => escapeCSVValue(row[header], header)).join(',')
                 )
             ].join('\n');
 
